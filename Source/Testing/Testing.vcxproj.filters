@@ -18,5 +18,8 @@
     <ClCompile Include="TestRunner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RigidbodyTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

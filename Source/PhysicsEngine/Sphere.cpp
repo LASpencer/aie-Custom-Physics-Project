@@ -1,5 +1,6 @@
 #include "Sphere.h"
 #include "ExternalLibraries.h"
+#include "Plane.h"
 
 void physics::Sphere::makeGizmo()
 {
@@ -14,7 +15,7 @@ physics::Collision physics::Sphere::checkCollision(PhysicsObject * other)
 
 physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
 {
-	Collision collision = { false, this, other, {0,0} };
+	Collision collision(false, this, other);
 	glm::vec2 displacement = m_position - other->m_position;
 	float distance = glm::length(displacement);
 	if (distance < m_radius + other->m_radius) {
@@ -27,6 +28,11 @@ physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
 		}
 	}
 	return collision;
+}
+
+physics::Collision physics::Sphere::checkPlaneCollision(Plane * other)
+{
+	return other->checkSphereCollision(this);
 }
 
 ShapeType physics::Sphere::getShapeID()

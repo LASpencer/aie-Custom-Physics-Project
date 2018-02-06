@@ -8,9 +8,14 @@ enum ShapeType {
 };
 
 class Sphere;
+class Plane;
 
 namespace physics {
 	struct Collision {
+		Collision(bool a_success, PhysicsObject* a_first, PhysicsObject* a_second, glm::vec2 a_normal = glm::vec2(0))
+			: success(a_success), first(a_first), second(a_second), normal(a_normal)
+		{};
+
 		bool success;
 
 		PhysicsObject* first;
@@ -21,7 +26,7 @@ namespace physics {
 		operator bool() { return success; }
 
 		Collision reverse() {
-			return { success, second, first, -normal };
+			return Collision(success, second, first, -normal);
 		}
 	};
 
@@ -42,6 +47,7 @@ namespace physics {
 
 		virtual Collision checkCollision(PhysicsObject* other) = 0;
 		virtual Collision checkSphereCollision(Sphere* other) = 0;
+		virtual Collision checkPlaneCollision(Plane* other) = 0;
 		virtual void resolveCollision(Collision collision) = 0;
 
 		virtual ShapeType getShapeID() = 0;

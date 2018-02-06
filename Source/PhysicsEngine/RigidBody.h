@@ -15,6 +15,17 @@ namespace physics
 		void applyForce(glm::vec2 force);
 		void applyForceFromOther(RigidBody* other, glm::vec2 force);
 
+		glm::vec2 getPosition() { return m_position; }
+		void setPosition(glm::vec2 position);
+
+		glm::vec2 getVelocity() { return m_velocity; }
+		void setVelocity(glm::vec2 velocity);
+
+		float getMass() { return m_mass; }
+		void setMass(float mass);
+
+		float getOrientation() { return m_orientation; }
+		void setOrientation(float orientation);
 
 	protected:
 		glm::vec2 m_position;

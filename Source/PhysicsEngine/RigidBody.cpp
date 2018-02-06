@@ -23,3 +23,24 @@ void physics::RigidBody::applyForceFromOther(RigidBody * other, glm::vec2 force)
 {
 }
 
+void physics::RigidBody::setPosition(glm::vec2 position)
+{
+	m_position = position;
+}
+
+void physics::RigidBody::setVelocity(glm::vec2 velocity)
+{
+	m_velocity = velocity;
+}
+
+void physics::RigidBody::setMass(float mass)
+{
+	m_mass = mass;
+}
+
+void physics::RigidBody::setOrientation(float orientation)
+{
+	// TODO decide if degrees should be used instead
+	m_orientation = fmod(orientation, glm::pi<float>());
+}
+
