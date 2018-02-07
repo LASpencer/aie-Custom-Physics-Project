@@ -1,18 +1,21 @@
 #pragma once
 #include "ExternalLibraries.h"
 
-enum ShapeType {
-	plane,
-	sphere,
-	box
-};
-
-class Sphere;
-class Plane;
-
 namespace physics {
+
+	enum ShapeType {
+		plane,
+		sphere,
+		box
+	};
+
+	class PhysicsObject;
+	class Sphere;
+	class Plane;
+
+
 	struct Collision {
-		Collision(bool a_success, PhysicsObject* a_first, PhysicsObject* a_second, glm::vec2 a_normal = glm::vec2(0))
+		Collision(bool a_success = false, PhysicsObject* a_first = nullptr, PhysicsObject* a_second = nullptr, glm::vec2 a_normal = glm::vec2(0))
 			: success(a_success), first(a_first), second(a_second), normal(a_normal)
 		{};
 
@@ -23,7 +26,7 @@ namespace physics {
 
 		glm::vec2 normal;
 
-		operator bool() { return success; }
+		operator bool() const { return success; }
 
 		Collision reverse() {
 			return Collision(success, second, first, -normal);
@@ -48,7 +51,6 @@ namespace physics {
 		virtual Collision checkCollision(PhysicsObject* other) = 0;
 		virtual Collision checkSphereCollision(Sphere* other) = 0;
 		virtual Collision checkPlaneCollision(Plane* other) = 0;
-		virtual void resolveCollision(Collision collision) = 0;
 
 		virtual ShapeType getShapeID() = 0;
 	};

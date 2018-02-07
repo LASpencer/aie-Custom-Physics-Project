@@ -2,6 +2,8 @@
 #include "ExternalLibraries.h"
 #include "PhysicsObject.h"
 
+using namespace physics;
+
 physics::PhysicsScene::PhysicsScene(float timeStep, glm::vec2 gravity) 
 	: m_timeStep(timeStep), m_gravity(gravity), m_accumulatedTime(0)
 {
@@ -47,7 +49,7 @@ void physics::PhysicsScene::update(float deltaTime)
 				// TODO check layers and masks
 				Collision col = (*firstActor)->checkCollision(*otherActor);
 				if (col) {
-					(*firstActor)->resolveCollision(col);
+					resolveCollision(col);
 				}
 			}
 		}
@@ -59,4 +61,9 @@ void physics::PhysicsScene::update(float deltaTime)
 void physics::PhysicsScene::updateGizmos()
 {
 	// TODO have actors create their gizmos
+}
+
+void physics::PhysicsScene::resolveCollision(Collision collision)
+{
+	//TODO
 }

@@ -17,7 +17,7 @@ namespace physics {
 		void setNormal(glm::vec2 normal);
 
 		float getDistance() { return m_distance; }
-		void setDistance(float distance) { m_distance = distance; }
+		void setDistance(float distance);
 
 		inline float distanceToPoint(glm::vec2 point);
 

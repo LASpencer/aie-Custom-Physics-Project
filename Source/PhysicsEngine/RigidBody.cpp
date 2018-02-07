@@ -35,6 +35,9 @@ void physics::RigidBody::setVelocity(glm::vec2 velocity)
 
 void physics::RigidBody::setMass(float mass)
 {
+	if (mass <= 0 || isnan(mass)) {
+		throw std::invalid_argument("Radius must be positive");
+	}
 	m_mass = mass;
 }
 

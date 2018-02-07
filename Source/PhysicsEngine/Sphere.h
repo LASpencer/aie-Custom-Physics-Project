@@ -11,9 +11,12 @@ namespace physics {
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);
 		virtual Collision checkPlaneCollision(Plane* other);
+
+
 		virtual ShapeType getShapeID();
 
 		float getRadius() { return m_radius; }
+		void setRadius(float radius);
 
 	protected:
 		float m_radius;

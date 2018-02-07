@@ -4,7 +4,12 @@
 physics::Plane::Plane(glm::vec2 normal, float distance, glm::vec4 colour)
 	: PhysicsObject(colour), m_normal(glm::normalize(normal)), m_distance(distance)
 {
-	//TODO check normalization succeeded
+	if (isinf(distance) || isnan(distance)) {
+		throw std::invalid_argument("Distance must be finite");
+	}
+	if (isnan(m_normal.x) || isnan(m_normal.y)) {
+		throw std::invalid_argument("Invalid normal");
+	}
 }
 
 void physics::Plane::fixedUpdate(glm::vec2 gravity, float timeStep)
@@ -45,15 +50,27 @@ physics::Collision physics::Plane::checkPlaneCollision(Plane * other)
 void physics::Plane::setNormal(glm::vec2 normal)
 {
 	// TODO check normalization succeeded
-	m_normal = glm::normalize(normal);
+	glm::vec2 normalized = glm::normalize(normal);
+	if (isnan(normalized.x) || isnan(normalized.y)) {
+		throw std::invalid_argument("Invalid normal");
+	}
+	m_normal = normalized;
+}
+
+void physics::Plane::setDistance(float distance)
+{
+	if (isinf(distance) || isnan(distance)) {
+		throw std::invalid_argument("Distance must be finite");
+	}
+	m_distance = distance;
 }
 
 inline float physics::Plane::distanceToPoint(glm::vec2 point)
 {
-	return glm::dot(point, m_normal) - m_distance;
+	return glm::dot(point, m_normal) + m_distance;
 }
 
-ShapeType physics::Plane::getShapeID()
+physics::ShapeType physics::Plane::getShapeID()
 {
 	return ShapeType::plane;
 }

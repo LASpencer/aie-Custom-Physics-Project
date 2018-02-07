@@ -1,8 +1,10 @@
 #pragma once
 #include "ExternalLibraries.h"
-class PhysicsObject;
 
 namespace physics {
+	class PhysicsObject;
+	struct Collision;
+
 	class PhysicsScene {
 	public:
 		PhysicsScene(float timeStep = 0.1f, glm::vec2 gravity = glm::vec2(0,-10)); //TODO default gravity, timestep arguments
@@ -22,6 +24,8 @@ namespace physics {
 
 		void setTimeStep(const float timeStep) { m_timeStep = timeStep; }
 		float getTimeStep() const { return m_timeStep; }
+
+		void resolveCollision(Collision collision);
 
 	protected:
 		glm::vec2 m_gravity;
