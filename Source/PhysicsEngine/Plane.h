@@ -7,6 +7,8 @@ namespace physics {
 	public:
 		Plane(glm::vec2 normal, float distance, glm::vec4 colour = { 1,1,1,1, });
 
+
+		virtual void earlyUpdate(float timeStep);
 		virtual void fixedUpdate(glm::vec2 gravity, float timeStep);
 		virtual void makeGizmo();
 		virtual Collision checkCollision(PhysicsObject* other);

@@ -13,6 +13,8 @@ bool vectorApprox(glm::vec2 v1, glm::vec2 v2, float margin = 0) {
 	return (v1.x == Approx(v2.x).margin(margin)) && (v1.y == Approx(v2.y).margin(margin));
 }
 
+static const float k_margin = 0.00001f;
+
 TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 	SECTION("Mass must be positive") {
 		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1, -1));
@@ -208,4 +210,114 @@ TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 		col = p.checkCollision(&s);
 		REQUIRE_FALSE(col);
 	}
+}
+
+TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
+	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
+	Sphere* t = new Sphere({ 0,0 }, { 0,0 }, 1, 2.5f);
+	float timestep = 0.1f;
+	glm::vec2 noGravity = { 0,0 };
+	glm::vec2 gravity = { 0,-10 };
+	SECTION("Sphere kinematic motion") {
+		SECTION("Sphere at rest stays at rest") {
+			s->fixedUpdate(noGravity, timestep);
+			REQUIRE(vectorApprox(s->getPosition(), { 0,0 }));
+			REQUIRE(vectorApprox(s->getVelocity(), { 0,0 }));
+		}
+		SECTION("Sphere moves") {
+			s->setVelocity({ 2,-1 });
+			s->fixedUpdate(noGravity, timestep);
+			REQUIRE(vectorApprox(s->getPosition(), { 0.2f,-0.1f }, k_margin));
+			REQUIRE(vectorApprox(s->getVelocity(), { 2,-1 }));
+			for (int i = 0; i < 5; ++i) {
+				s->fixedUpdate(noGravity, timestep);
+			}
+			REQUIRE(vectorApprox(s->getPosition(), { 1.2f,-0.6f }, k_margin));
+		}
+	}
+	SECTION("Sphere dynamic motion") {
+		SECTION("Sphere velocity changes on impulse applied") {
+			s->setVelocity({ -3,6.5f });
+			t->setVelocity({ -3,6.5f });
+			glm::vec2 force = { 0.4f, 0.2f };
+			s->applyImpulse(force);
+			s->fixedUpdate(noGravity, timestep);
+			REQUIRE(vectorApprox(s->getVelocity(), { -2.6f,6.7f }, k_margin));
+			REQUIRE(vectorApprox(s->getPosition(), { -0.26f, 0.67f }, k_margin));
+			t->applyImpulse(force);
+			t->fixedUpdate(noGravity, timestep);
+			REQUIRE(vectorApprox(t->getVelocity(), { -2.84f,6.58f }, k_margin));
+			REQUIRE(vectorApprox(t->getPosition(), { -0.284f, 0.658f }, k_margin));
+		}
+		// TODO may have to change tests/margins based on decisions re position error vs energy error
+		SECTION("Sphere velocity changes on force applied") {
+			s->setVelocity({ -3,6.5f });
+			t->setVelocity({ -3,6.5f });
+			glm::vec2 force = { 3, -2 };
+			s->applyForce(force);
+			t->applyForce(force);
+			s->fixedUpdate(noGravity, timestep);
+			REQUIRE(vectorApprox(s->getVelocity(), { -2.6f,6.7f }, k_margin));
+			REQUIRE(vectorApprox(s->getPosition(), { -0.26f, 0.67f }, k_margin));
+			t->fixedUpdate(noGravity, timestep);
+			REQUIRE(vectorApprox(t->getVelocity(), { -2.84f,6.58f }, k_margin));
+			REQUIRE(vectorApprox(t->getPosition(), { -0.284f, 0.658f }, k_margin));
+		}
+		SECTION("Gravity") {
+			SECTION("Stationary") {
+				s->fixedUpdate(gravity, timestep);
+				t->fixedUpdate(gravity, timestep);
+				REQUIRE(vectorApprox(s->getVelocity(), { 0,-1 }, k_margin));
+				REQUIRE(vectorApprox(t->getVelocity(), { 0,-1 }, k_margin));
+				REQUIRE(vectorApprox(s->getPosition(), { 0,-0.05f }, k_margin));
+				REQUIRE(vectorApprox(t->getPosition(), { 0,-0.05f }, k_margin));
+			}
+			SECTION("Gravity works over time") {
+				for (int i = 0; i < 50; ++i) {
+					s->fixedUpdate(gravity, timestep);
+					t->fixedUpdate(gravity, timestep);
+				}
+				glm::vec2 expectedPosition = { 0, -125 };	// 0.5 * a * t^2 = 0.5 * -10 * 5^2
+				float error = 0.1f; // Movement in first timestep ()
+				REQUIRE(vectorApprox(s->getVelocity(), { 0,-50 }, k_margin));
+				REQUIRE(vectorApprox(t->getVelocity(), { 0,-50 }, k_margin));
+				REQUIRE(vectorApprox(s->getPosition(), expectedPosition, error));
+				REQUIRE(vectorApprox(t->getPosition(), expectedPosition, error));
+			}
+			//TODO ballistic arc
+			SECTION("Ballistic arc") {
+				s->setVelocity({ 8,20 });
+				t->setVelocity({ 8,20 });
+				for (int i = 0; i < 50; ++i) {
+					s->fixedUpdate(gravity, timestep);
+					t->fixedUpdate(gravity, timestep);
+				}
+				glm::vec2 expectedPosition = { 40, -25 };
+				float error = 0.1f; // Movement in first timestep ()
+				REQUIRE(vectorApprox(s->getVelocity(), { 40,-30 }, k_margin));
+				REQUIRE(vectorApprox(t->getVelocity(), { 40,-30 }, k_margin));
+				REQUIRE(vectorApprox(s->getPosition(), expectedPosition, error));
+				REQUIRE(vectorApprox(t->getPosition(), expectedPosition, error));
+			}
+		}
+		SECTION("Reaction forces") {
+			//TODO apply force to other sphere
+			SECTION("Stationary") {
+				glm::vec2 force = {8,-3};
+				SECTION("Impulse") {
+					s->applyImpulseFromOther(t, force);
+					REQUIRE(vectorApprox(s->getVelocity(), { 8,-3 }, k_margin));
+					REQUIRE(vectorApprox(t->getVelocity(), { -8,3 }, k_margin));
+				}
+				SECTION("Force") {
+					s->applyForceFromOther(t, force);
+					s->fixedUpdate(gravity, timestep);
+					t->fixedUpdate(gravity, timestep);
+					REQUIRE(vectorApprox(s->getVelocity(), { 0.8f,-0.3f }, k_margin));
+					REQUIRE(vectorApprox(t->getVelocity(), { -0.8f,0.3f }, k_margin));
+				}
+			}
+		}
+	}
+	delete s;
 }

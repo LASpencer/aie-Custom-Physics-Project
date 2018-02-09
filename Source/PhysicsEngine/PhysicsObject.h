@@ -43,6 +43,7 @@ namespace physics {
 		glm::vec4 m_colour;
 
 	public:
+		virtual void earlyUpdate(float timestep) = 0;	//
 		virtual void fixedUpdate(glm::vec2 gravity, float timestep) = 0;
 		virtual void makeGizmo() = 0;
 		virtual glm::vec4 getColour() { return m_colour; }

@@ -26,6 +26,8 @@ bool physics::PhysicsScene::addActor(PhysicsObject * actor)
 
 bool physics::PhysicsScene::removeActor(PhysicsObject * actor)
 {
+	//TODO rewrite so m_actors won't be changed during loop
+	// maybe change to shared_ptr or have a "will die" flag to avoid dangling pointers
 	m_actors.erase(std::remove(m_actors.begin(), m_actors.end(), actor), m_actors.end());
 	delete actor;
 	return true;

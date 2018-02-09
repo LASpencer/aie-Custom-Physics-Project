@@ -12,6 +12,10 @@ physics::Plane::Plane(glm::vec2 normal, float distance, glm::vec4 colour)
 	}
 }
 
+void physics::Plane::earlyUpdate(float timeStep)
+{
+}
+
 void physics::Plane::fixedUpdate(glm::vec2 gravity, float timeStep)
 {
 	// Do nothing
