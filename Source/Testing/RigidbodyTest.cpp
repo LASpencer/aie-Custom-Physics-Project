@@ -183,6 +183,12 @@ TEST_CASE("Plane setters", "[plane]") {
 	}
 }
 
+TEST_CASE("Planes don't have energy or momentum", "[plane],[energy],[momentum]") {
+	Plane p({ 1,0 }, 0);
+	REQUIRE(p.calculateEnergy({ 0,-10 }) == 0);
+	REQUIRE(p.calculateMomentum() == glm::vec2(0));
+}
+
 TEST_CASE("Plane to point distance", "[plane], [collision]") {
 	Plane p({ 1,0 }, 0);
 	SECTION("Vertical plane") {
