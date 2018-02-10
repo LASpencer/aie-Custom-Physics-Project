@@ -63,6 +63,9 @@ void physics::PhysicsScene::update(float deltaTime)
 void physics::PhysicsScene::updateGizmos()
 {
 	// TODO have actors create their gizmos
+	for (auto actor : m_actors) {
+		actor->makeGizmo(m_accumulatedTime/m_timeStep);
+	}
 }
 
 void physics::PhysicsScene::resolveCollision(Collision collision)

@@ -71,3 +71,15 @@ void physics::RigidBody::setOrientation(float orientation)
 	m_orientation = fmod(orientation, glm::pi<float>());
 }
 
+bool physics::RigidBody::calculateEnergy(glm::vec2 gravity)
+{
+	float potential = glm::dot(m_position, gravity) * m_mass;
+	float kinetic = 0.5f * m_mass * glm::dot(m_velocity, m_velocity);
+	return potential + kinetic;
+}
+
+glm::vec2 physics::RigidBody::calculateMomentum()
+{
+	return m_velocity * m_mass;
+}
+

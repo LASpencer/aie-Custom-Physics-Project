@@ -45,7 +45,7 @@ namespace physics {
 	public:
 		virtual void earlyUpdate(float timestep) = 0;	//
 		virtual void fixedUpdate(glm::vec2 gravity, float timestep) = 0;
-		virtual void makeGizmo() = 0;
+		virtual void makeGizmo(float timeRatio) = 0;
 		virtual glm::vec4 getColour() { return m_colour; }
 		virtual void setColour(glm::vec4 colour) { m_colour = colour; }
 
@@ -54,5 +54,8 @@ namespace physics {
 		virtual Collision checkPlaneCollision(Plane* other) = 0;
 
 		virtual ShapeType getShapeID() = 0;
+
+		virtual bool calculateEnergy(glm::vec2 gravity) = 0;
+		virtual glm::vec2 calculateMomentum() = 0;
 	};
 }

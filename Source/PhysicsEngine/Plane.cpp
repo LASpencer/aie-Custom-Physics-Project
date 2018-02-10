@@ -21,7 +21,7 @@ void physics::Plane::fixedUpdate(glm::vec2 gravity, float timeStep)
 	// Do nothing
 }
 
-void physics::Plane::makeGizmo()
+void physics::Plane::makeGizmo(float timeRatio)
 {
 	float lineSegmentLength = 300;
 	glm::vec2 centerPoint = m_normal * m_distance;

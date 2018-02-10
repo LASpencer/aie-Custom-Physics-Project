@@ -14,7 +14,7 @@ physics::Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float radius, fl
 	}
 }
 
-void physics::Sphere::makeGizmo()
+void physics::Sphere::makeGizmo(float timeRatio)
 {
 	aie::Gizmos::add2DCircle(m_position, m_radius, 20, m_colour);		//TODO have segments be set as a constant
 }
