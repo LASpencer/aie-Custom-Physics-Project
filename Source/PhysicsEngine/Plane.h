@@ -25,7 +25,7 @@ namespace physics {
 
 		virtual ShapeType getShapeID();
 
-		virtual bool calculateEnergy(glm::vec2 gravity) { return 0; };
+		virtual float calculateEnergy(glm::vec2 gravity) { return 0; };
 		virtual glm::vec2 calculateMomentum() { return { 0,0 }; };
 
 	protected:

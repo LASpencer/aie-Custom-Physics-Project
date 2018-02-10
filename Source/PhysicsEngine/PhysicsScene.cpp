@@ -58,6 +58,7 @@ void physics::PhysicsScene::update(float deltaTime)
 
 		m_accumulatedTime -= m_timeStep;
 	}
+	updateGizmos();
 }
 
 void physics::PhysicsScene::updateGizmos()

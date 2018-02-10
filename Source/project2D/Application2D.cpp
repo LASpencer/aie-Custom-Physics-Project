@@ -4,6 +4,8 @@
 #include "Input.h"
 #include "Gizmos.h"
 
+#include "Sphere.h"
+
 Application2D::Application2D() {
 
 }
@@ -24,9 +26,10 @@ bool Application2D::startup() {
 	m_cameraY = 0;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.05f);
+	m_scene = new physics::PhysicsScene(0.05f, { 0,-3 });
 
 	//TODO put objects in scene
+	m_scene->addActor(new physics::Sphere({ 0,100 }, { 3,0 },3));
 
 	return true;
 }
@@ -60,6 +63,8 @@ void Application2D::update(float deltaTime) {
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+
+	aie::Gizmos::clear();
 
 	m_scene->update(deltaTime);
 }

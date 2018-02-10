@@ -33,7 +33,7 @@ namespace physics
 		float getOrientation() { return m_orientation; }
 		void setOrientation(float orientation);
 
-		virtual bool calculateEnergy(glm::vec2 gravity);
+		virtual float calculateEnergy(glm::vec2 gravity);
 
 		virtual glm::vec2 calculateMomentum();
 

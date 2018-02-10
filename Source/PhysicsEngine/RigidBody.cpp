@@ -4,7 +4,9 @@
 physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, glm::vec4 colour)
 	: PhysicsObject(colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_mass(mass), m_totalForce({0,0})
 {
-	// TODO check arguments for validity
+	if (mass < 0 || isnan(mass)) {
+		throw std::invalid_argument("Mass must be positive");
+	}
 }
 
 void physics::RigidBody::earlyUpdate(float timestep)
@@ -71,9 +73,9 @@ void physics::RigidBody::setOrientation(float orientation)
 	m_orientation = fmod(orientation, glm::pi<float>());
 }
 
-bool physics::RigidBody::calculateEnergy(glm::vec2 gravity)
+float physics::RigidBody::calculateEnergy(glm::vec2 gravity)
 {
-	float potential = glm::dot(m_position, gravity) * m_mass;
+	float potential = -glm::dot(m_position, gravity) * m_mass;
 	float kinetic = 0.5f * m_mass * glm::dot(m_velocity, m_velocity);
 	return potential + kinetic;
 }
