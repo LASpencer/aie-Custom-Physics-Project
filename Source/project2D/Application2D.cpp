@@ -26,10 +26,11 @@ bool Application2D::startup() {
 	m_cameraY = 0;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.05f, { 0,-3 });
+	m_scene = new physics::PhysicsScene(0.05f, { 0,0 });
 
 	//TODO put objects in scene
-	m_scene->addActor(new physics::Sphere({ 0,100 }, { 3,0 },3));
+	m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,0 },3,0.16f));
+	m_scene->addActor(new physics::Sphere({ -20,0 }, { 11.11f,0.1f }, 3,0.17f));
 
 	return true;
 }

@@ -3,17 +3,16 @@
 #include "Sphere.h"
 #include "Plane.h"
 
+#include "Utility.h"
+
 using namespace physics;
 
 //TODO testing rigidbody updating, applying forces to bodies, reaction forces, testing collision resolution
 
 // TODO decide whether zero/infinite mass is allowed, and test for that
 
-bool vectorApprox(glm::vec2 v1, glm::vec2 v2, float margin = 0) {
-	return (v1.x == Approx(v2.x).margin(margin)) && (v1.y == Approx(v2.y).margin(margin));
-}
+// TODO test static/kinematic behaviour
 
-static const float k_margin = 0.00001f;
 
 TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 	SECTION("Mass must be positive") {
@@ -26,6 +25,7 @@ TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), INFINITY, 1));
 		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), NAN, 1));
 	}
+	// TODO check that setting mass to 0 or infinity works correctly
 }
 
 TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
@@ -43,7 +43,7 @@ TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
 		}
 		s.setMass(3);
 		REQUIRE(s.getMass() == 3);
-
+		// TODO check that setting mass to 0 or infinity works correctly
 		SECTION("Radius must be positive and finite") {
 			REQUIRE_THROWS(s.setRadius(0));
 			REQUIRE_THROWS(s.setRadius(-1));

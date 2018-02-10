@@ -10,6 +10,7 @@ namespace physics {
 	};
 
 	class PhysicsObject;
+	class RigidBody;
 	class Sphere;
 	class Plane;
 
@@ -49,13 +50,20 @@ namespace physics {
 		virtual glm::vec4 getColour() { return m_colour; }
 		virtual void setColour(glm::vec4 colour) { m_colour = colour; }
 
+		//TODO maybe collision data should be passed by reference instead of the return value
 		virtual Collision checkCollision(PhysicsObject* other) = 0;
 		virtual Collision checkSphereCollision(Sphere* other) = 0;
 		virtual Collision checkPlaneCollision(Plane* other) = 0;
+
+		virtual void resolveCollision(PhysicsObject* other, const Collision& col) = 0;
+		virtual void resolveRigidbodyCollision(RigidBody * other, const Collision& col) = 0;
+		virtual void resolvePlaneCollision(Plane* other, const Collision& col) = 0;
 
 		virtual ShapeType getShapeID() = 0;
 
 		virtual float calculateEnergy(glm::vec2 gravity) = 0;
 		virtual glm::vec2 calculateMomentum() = 0;
+
+		virtual bool isStatic() = 0;
 	};
 }

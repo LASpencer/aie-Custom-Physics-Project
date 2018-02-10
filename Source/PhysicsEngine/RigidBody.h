@@ -27,8 +27,16 @@ namespace physics
 		glm::vec2 getVelocity() { return m_velocity; }
 		void setVelocity(glm::vec2 velocity);
 
-		float getMass() { return m_mass; }
+		float getMass();
 		void setMass(float mass);
+
+		float getInvMass();
+
+		virtual bool isStatic();
+
+		void setStatic(bool value);
+
+		inline bool isKinematic();	//HACK maybe this is unnecessary, just use isStatic for it
 
 		float getOrientation() { return m_orientation; }
 		void setOrientation(float orientation);
@@ -37,13 +45,21 @@ namespace physics
 
 		virtual glm::vec2 calculateMomentum();
 
+		virtual void resolveCollision(PhysicsObject* other, const Collision & col) override;
+		virtual void resolveRigidbodyCollision(RigidBody * other, const Collision & col) override;
+		virtual void resolvePlaneCollision(Plane* other, const Collision & col) override;
+
 	protected:
 		glm::vec2 m_position;
 		glm::vec2 m_pastPosition; // Used to avoid temporal aliasing
 		glm::vec2 m_velocity;
 		glm::vec2 m_totalForce;
+		
 		float m_mass;
+		float m_invMass;
 		float m_orientation;
+
+		bool m_static;
 		// TODO settings for controlling physics (gravity on/off, dynamic or static)
 
 	};

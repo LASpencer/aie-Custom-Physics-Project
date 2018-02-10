@@ -7,7 +7,9 @@ using namespace physics;
 physics::PhysicsScene::PhysicsScene(float timeStep, glm::vec2 gravity) 
 	: m_timeStep(timeStep), m_gravity(gravity), m_accumulatedTime(0)
 {
-
+	if (timeStep <= 0 || isnan(timeStep) || isinf(timeStep)) {
+		throw std::invalid_argument("Timestep must be positive and finite");
+	}
 }
 
 physics::PhysicsScene::~PhysicsScene()
@@ -69,7 +71,20 @@ void physics::PhysicsScene::updateGizmos()
 	}
 }
 
+void physics::PhysicsScene::setTimeStep(const float timeStep)
+{
+	if (timeStep <= 0 || isnan(timeStep) || isinf(timeStep)) {
+		throw std::invalid_argument("Timestep must be positive and finite");
+	}
+	m_timeStep = timeStep;
+}
+
 void physics::PhysicsScene::resolveCollision(Collision collision)
 {
 	//TODO
+
+	//TODO check for static
+	collision.first->resolveCollision(collision.second, collision);
+
+
 }

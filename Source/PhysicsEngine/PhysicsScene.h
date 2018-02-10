@@ -7,7 +7,7 @@ namespace physics {
 
 	class PhysicsScene {
 	public:
-		PhysicsScene(float timeStep = 0.1f, glm::vec2 gravity = glm::vec2(0,-10)); //TODO default gravity, timestep arguments
+		PhysicsScene(float timeStep = 0.01f, glm::vec2 gravity = glm::vec2(0,-10)); //TODO default gravity, timestep arguments
 		~PhysicsScene();
 
 		bool addActor(PhysicsObject* actor);
@@ -15,14 +15,12 @@ namespace physics {
 		// TODO have some kind of FixedUpdateListener object that can have FixedUpdate called
 
 		void update(float deltaTime);
-		
-		void updateGizmos();
-		// TODO figure out what kind of drawing to do (gizmos or renderer2d)
+	
 
 		glm::vec2 getGravity() { return m_gravity; }
 		void setGravity(glm::vec2 gravity) { m_gravity = gravity; }
 
-		void setTimeStep(const float timeStep) { m_timeStep = timeStep; }
+		void setTimeStep(const float timeStep);
 		float getTimeStep() const { return m_timeStep; }
 
 		void resolveCollision(Collision collision);
@@ -32,5 +30,9 @@ namespace physics {
 		float m_timeStep;
 		float m_accumulatedTime;
 		std::vector<PhysicsObject*> m_actors;
+
+		void updateGizmos();
+
+
 	};
 }

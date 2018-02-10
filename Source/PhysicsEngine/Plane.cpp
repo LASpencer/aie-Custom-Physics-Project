@@ -78,3 +78,18 @@ physics::ShapeType physics::Plane::getShapeID()
 {
 	return ShapeType::plane;
 }
+
+void physics::Plane::resolveCollision(PhysicsObject* other, const Collision & col)
+{
+	other->resolvePlaneCollision(this, col);
+}
+
+void physics::Plane::resolveRigidbodyCollision(RigidBody * other, const Collision & col)
+{
+	other->resolvePlaneCollision(this, col);
+}
+
+void physics::Plane::resolvePlaneCollision(Plane* other, const Collision & col)
+{
+	// Nothing happens, they're both static
+}

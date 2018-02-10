@@ -19,8 +19,7 @@ void physics::Sphere::makeGizmo(float timeRatio)
 
 physics::Collision physics::Sphere::checkCollision(PhysicsObject * other)
 {
-	Collision collision = other->checkSphereCollision(this);
-	return collision;
+	return other->checkSphereCollision(this);
 }
 
 physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
