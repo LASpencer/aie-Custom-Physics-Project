@@ -30,25 +30,72 @@ TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 
 TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
 	Sphere s(glm::vec2(1, 2), glm::vec2(3, 4), 5, 6);
-	SECTION("Getters") {
-		REQUIRE(s.getPosition() == glm::vec2(1, 2));
-		REQUIRE(s.getOrientation() == 0);
-		REQUIRE(s.getRadius() == 5);
-		REQUIRE(s.getMass() == 6);
-	}
-	SECTION("Setters") {
-		SECTION("Mass must be positive") {
-			REQUIRE_THROWS(s.setMass(-1));
-			REQUIRE_THROWS(s.setMass(NAN));
+	// TODO check static cannot have mass or velocity changed
+	// TODO check setting static makes it infinite mass
+	// TODO check invMass
+	SECTION("Dynamic Sphere") {
+		SECTION("Getters") {
+			REQUIRE(s.getPosition() == glm::vec2(1, 2));
+			REQUIRE(s.getOrientation() == 0);
+			REQUIRE(s.getRadius() == 5);
+			REQUIRE(s.getMass() == 6);
+			REQUIRE(s.getInvMass() == Approx(1.f / 6.f));
+			REQUIRE(s.isDynamic());
+			REQUIRE_FALSE(s.isKinematic());
+			REQUIRE_FALSE(s.isStatic());
 		}
-		s.setMass(3);
-		REQUIRE(s.getMass() == 3);
-		// TODO check that setting mass to 0 or infinity works correctly
-		SECTION("Radius must be positive and finite") {
-			REQUIRE_THROWS(s.setRadius(0));
-			REQUIRE_THROWS(s.setRadius(-1));
-			REQUIRE_THROWS(s.setRadius(INFINITY));
-			REQUIRE_THROWS(s.setRadius(NAN));
+		SECTION("Setters") {
+			SECTION("Mass must be positive") {
+				REQUIRE_THROWS(s.setMass(-1));
+				REQUIRE_THROWS(s.setMass(NAN));
+			}
+			s.setMass(3);
+			REQUIRE(s.getMass() == 3);
+			REQUIRE(s.getInvMass() == Approx(1.f / 3.f));
+			SECTION("Radius must be positive and finite") {
+				REQUIRE_THROWS(s.setRadius(0));
+				REQUIRE_THROWS(s.setRadius(-1));
+				REQUIRE_THROWS(s.setRadius(INFINITY));
+				REQUIRE_THROWS(s.setRadius(NAN));
+			}
+		}
+	}
+	SECTION("Kinematic Sphere") {
+		Sphere kinematic(glm::vec2(1, 2), glm::vec2(3, 4), 2, 0);
+		Sphere kin2(glm::vec2(1, 2), glm::vec2(3, 4), 2, INFINITY);
+		SECTION("Getters") {
+			REQUIRE(kinematic.isKinematic());
+			REQUIRE(kin2.isKinematic());
+			REQUIRE(kinematic.getMass() == INFINITY);
+			REQUIRE(kinematic.getInvMass() == 0);
+			REQUIRE(kin2.getInvMass() == 0);
+			REQUIRE_FALSE(kinematic.isDynamic());
+			REQUIRE_FALSE(kinematic.isStatic());
+			REQUIRE(kinematic.getVelocity() == glm::vec2(3, 4));
+		}
+		SECTION("Setters") {
+			// Setting a sphere to kinematic
+			s.setMass(0);
+			REQUIRE(s.getMass() == INFINITY);
+			REQUIRE(s.getInvMass() == 0);
+			REQUIRE(s.isKinematic());
+			s.setVelocity({ 2,1 });
+			REQUIRE(s.getVelocity() == glm::vec2(2, 1));
+		}
+	}
+	SECTION("Static Sphere") {
+		s.setStatic(true);
+		REQUIRE(s.getMass() == INFINITY);
+		REQUIRE(s.getInvMass() == 0);
+		REQUIRE(s.isKinematic());
+		REQUIRE(s.getVelocity() == glm::vec2(0,0));
+		REQUIRE(s.isStatic());
+		SECTION("Setters") {
+			s.setMass(3);
+			REQUIRE(s.getMass() == INFINITY);
+			REQUIRE(s.getInvMass() == 0);
+			s.setVelocity({ 2,3 });
+			REQUIRE(s.getVelocity() == glm::vec2(0, 0));
 		}
 	}
 }
@@ -96,7 +143,20 @@ TEST_CASE("Sphere energy and momentum", "[rigidbody],[sphere],[energy],[momentum
 		s.setVelocity({ -2,8.5f });
 		REQUIRE(vectorApprox(s.calculateMomentum(), { -10,42.5f }));
 	}
+	SECTION("Kinematic has no momentum or velocity") {
+		s.setMass(0);
+		s.setPosition({ 3,3 });
+		REQUIRE(s.calculateEnergy(gravity) == 0);
+		REQUIRE(s.calculateMomentum() == glm::vec2(0, 0));
+	}
+	SECTION("Static has no momentum or velocity") {
+		s.setPosition({ 3,3 });
+		s.setStatic(true);
+		REQUIRE(s.calculateEnergy(gravity) == 0);
+		REQUIRE(s.calculateMomentum() == glm::vec2(0, 0));
+	}
 }
+
 
 TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 	Sphere s1(glm::vec2(0, 0), glm::vec2(0, 0), 5);
@@ -127,7 +187,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.success == true);
 		REQUIRE(collision.first == &s1);
 		REQUIRE(collision.second == &s2);
-		REQUIRE(vectorApprox(collision.normal, { 0.447, -0.894 }, 0.001));
+		REQUIRE(vectorApprox(collision.normal, { 0.447, -0.894 }, 0.001f));
 
 		s2.setPosition({ 0, 0 });
 		collision = s1.checkSphereCollision(&s2);
@@ -381,3 +441,5 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 	}
 	delete s;
 }
+
+//TODO set up and resolve collisions between dynamic and kinematic/static

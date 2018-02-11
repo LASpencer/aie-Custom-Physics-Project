@@ -32,11 +32,14 @@ namespace physics
 
 		float getInvMass();
 
-		virtual bool isStatic();
+		virtual bool isStatic() { return m_static; };
 
+		// Sets body as static. On becoming static, body gets infinite mass and zero velocity
 		void setStatic(bool value);
 
-		inline bool isKinematic();	//HACK maybe this is unnecessary, just use isStatic for it
+		inline bool isKinematic() { return m_invMass == 0; }
+
+		inline bool isDynamic() { return !(isKinematic() || isStatic()); };
 
 		float getOrientation() { return m_orientation; }
 		void setOrientation(float orientation);

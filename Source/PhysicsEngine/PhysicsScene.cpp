@@ -51,9 +51,13 @@ void physics::PhysicsScene::update(float deltaTime)
 			for (auto otherActor = firstActor + 1; otherActor != m_actors.end(); ++otherActor) {
 				// TODO skip if set to not collide
 				// TODO check layers and masks
-				Collision col = (*firstActor)->checkCollision(*otherActor);
-				if (col) {
-					resolveCollision(col);
+				if (!(*firstActor)->isStatic() || !(*otherActor)->isStatic())
+				{
+					Collision col = (*firstActor)->checkCollision(*otherActor);
+					//TODO maybe add collisions to list, and resolve collisions all at once
+					if (col) {
+						resolveCollision(col);
+					}
 				}
 			}
 		}
