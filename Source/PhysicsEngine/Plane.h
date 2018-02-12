@@ -10,7 +10,7 @@ namespace physics {
 
 	class Plane : public PhysicsObject {
 	public:
-		Plane(glm::vec2 normal, float distance, glm::vec4 colour = { 1,1,1,1, });
+		Plane(glm::vec2 normal, float distance, float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1, });
 
 
 		virtual void earlyUpdate(float timeStep);

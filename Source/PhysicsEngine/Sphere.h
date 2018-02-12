@@ -10,7 +10,7 @@ namespace physics {
 
 	class Sphere : public RigidBody {
 	public:
-		Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass = 1.f, glm::vec4 colour = { 1,1,1,1 });
+		Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass = 1.f, float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1 });
 
 		virtual void makeGizmo(float timeRatio);
 		virtual Collision checkCollision(PhysicsObject* other);

@@ -1,8 +1,8 @@
 #include "Plane.h"
 #include "Sphere.h"
 
-physics::Plane::Plane(glm::vec2 normal, float distance, glm::vec4 colour)
-	: PhysicsObject(colour), m_normal(glm::normalize(normal)), m_distance(distance)
+physics::Plane::Plane(glm::vec2 normal, float distance, float elasticity, glm::vec4 colour)
+	: PhysicsObject(elasticity, colour), m_normal(glm::normalize(normal)), m_distance(distance)
 {
 	if (isinf(distance) || isnan(distance)) {
 		throw std::invalid_argument("Distance must be finite");

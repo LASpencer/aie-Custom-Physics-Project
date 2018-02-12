@@ -45,10 +45,11 @@ namespace physics {
 		// TODO system for having different layers for collision detection (scene has map of layers to bitmask?), turn collisions on or off
 
 	protected:
-		PhysicsObject(glm::vec4 colour);
+		PhysicsObject(float elasticity, glm::vec4 colour);
 
 		glm::vec4 m_colour;
 
+		float m_elasticity;
 		bool m_alive;
 
 	public:
@@ -57,6 +58,9 @@ namespace physics {
 		virtual void makeGizmo(float timeRatio) = 0;
 		virtual glm::vec4 getColour() { return m_colour; }
 		virtual void setColour(glm::vec4 colour) { m_colour = colour; }
+
+		float getElasticity() { return m_elasticity; };
+		virtual void setElasticity(float elasticity);
 
 		//TODO maybe collision data should be passed by reference instead of the return value
 		virtual Collision checkCollision(PhysicsObject* other) = 0;
@@ -71,6 +75,8 @@ namespace physics {
 
 		virtual float calculateEnergy(glm::vec2 gravity) = 0;
 		virtual glm::vec2 calculateMomentum() = 0;
+
+		static float combineElasticity(PhysicsObject* e1, PhysicsObject* e2);
 
 		virtual bool isStatic() = 0;
 		

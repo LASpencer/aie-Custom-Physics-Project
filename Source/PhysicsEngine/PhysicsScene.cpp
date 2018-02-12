@@ -18,12 +18,12 @@ physics::PhysicsScene::~PhysicsScene()
 
 bool physics::PhysicsScene::inScene(PhysicsObject * actor)
 {
-	return std::any_of(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) { a.get() == actor; });
+	return std::any_of(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) { return a.get() == actor; });
 }
 
 bool physics::PhysicsScene::inScene(PhysicsObjectPtr actor)
 {
-	return std::any_of(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) { a == actor; });
+	return std::any_of(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) { return a == actor; });
 }
 
 bool physics::PhysicsScene::addActor(PhysicsObject * actor)
@@ -72,6 +72,9 @@ void physics::PhysicsScene::update(float deltaTime)
 
 		// TODO inform other objects about fixed update
 		for (auto actor : m_actors) {
+			actor->earlyUpdate(m_timeStep);
+		}
+		for (auto actor : m_actors) {
 			actor->fixedUpdate(m_gravity, m_timeStep);
 		}
 		// TODO collision detection
@@ -92,11 +95,10 @@ void physics::PhysicsScene::update(float deltaTime)
 				}
 			}
 		}
-
+		removeDeadActors();
 		m_accumulatedTime -= m_timeStep;
 	}
 	updateGizmos();
-	removeDeadActors();
 }
 
 void physics::PhysicsScene::updateGizmos()

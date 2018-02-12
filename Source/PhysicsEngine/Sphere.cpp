@@ -2,8 +2,8 @@
 #include "ExternalLibraries.h"
 #include "Plane.h"
 
-physics::Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass, glm::vec4 colour)
-	: RigidBody(position,velocity, 0,mass,colour), m_radius(radius)
+physics::Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass, float elasticity, glm::vec4 colour)
+	: RigidBody(position,velocity, 0,mass,elasticity,colour), m_radius(radius)
 {
 
 	if (radius <= 0 || isnan(radius) || isinf(radius)) {

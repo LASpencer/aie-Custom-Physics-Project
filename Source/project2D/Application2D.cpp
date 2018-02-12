@@ -30,14 +30,14 @@ bool Application2D::startup() {
 	m_scene = new physics::PhysicsScene(0.05f, { 0,-10 });
 
 	//TODO put objects in scene
-	m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,0 },3,0.16f));
+	m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,0 },3,0.16f,0.5f));
 	m_scene->addActor(new physics::Sphere({ -20,0 }, { 30,0.1f }, 3,0.17f));
 	m_scene->addActor(new physics::Sphere({ 20,-20 }, { 0,0 }, 3, 0.17f));
 	m_scene->addActor(new physics::Plane({ -1,0 }, 40));
 	m_scene->addActor(new physics::Plane({ -1,-1 }, 40));
 	m_scene->addActor(new physics::Plane({  1,0 }, 40));
-	m_scene->addActor(new physics::Plane({ -1,1 }, 40));
-	m_scene->addActor(new physics::Plane({ 0,1 }, 40));
+	m_scene->addActor(new physics::Plane({ -1,1 }, 40,0));
+	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 0.5f));
 
 	return true;
 }

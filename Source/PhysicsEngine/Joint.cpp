@@ -4,7 +4,7 @@
 #include "Plane.h"
 
 physics::Joint::Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec4 colour) 
-	: PhysicsObject(colour), m_end1(end1), m_end2(end2)
+	: PhysicsObject(0.f,colour), m_end1(end1), m_end2(end2)
 {
 }
 

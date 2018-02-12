@@ -12,7 +12,7 @@ namespace physics
 	class RigidBody : public PhysicsObject
 	{
 	public:
-		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, glm::vec4 colour);
+		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, glm::vec4 colour);
 
 
 		virtual void earlyUpdate(float timestep);

@@ -1,8 +1,10 @@
 #include "RigidBody.h"
 #include "ExternalLibraries.h"
 
-physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, glm::vec4 colour)
-	: PhysicsObject(colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_totalForce({0,0}),
+#include "Plane.h"
+
+physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, glm::vec4 colour)
+	: PhysicsObject(elasticity, colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_totalForce({0,0}),
 	m_static(false)
 {
 	setMass(mass);
@@ -143,7 +145,7 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 
 	if (isDynamic() || other->isDynamic()) {
 		//TODO get elasticity (from collision? Calculate and get rule from somewhere? Where is rule determined)
-		float elasticity = 1;
+		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
 		if (col.first != this) {
 			normal = -normal;
@@ -167,9 +169,8 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 
 void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & col)
 {
-	//TODO get elasticity (from collision? Calculate and get rule from somewhere? Where is rule determined)
 	if (isDynamic()) {
-		float elasticity = 1;
+		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
 		if (col.first != this) {
 			normal = -normal;
