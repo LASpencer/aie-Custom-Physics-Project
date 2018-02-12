@@ -35,6 +35,7 @@ physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
 		else {
 			collision.normal = { 1,0 };
 		}
+		collision.depth = m_radius + other->m_radius - distance;
 	}
 	return collision;
 }

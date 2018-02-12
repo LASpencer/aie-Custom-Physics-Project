@@ -155,9 +155,14 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 			float impulse = normalRvel * (1 + elasticity) / (m_invMass + other->getInvMass());
 			applyImpulseFromOther(other, impulse * normal);
 		}
+		// Get new relative velocity
+		relative = other->getVelocity() - getVelocity();
+		normalRvel = glm::dot(relative, normal);
+		// TODO maybe check if moving apart fast enough before resolving penetration?
+		seperateObjects(other, normal * col.depth);
+		
 	}
-
-	// TODO deal with interpenetration (penalty force? just move apart? )
+	
 }
 
 void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & col)
@@ -176,6 +181,22 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 			float impulse = normalRvel * (1 + elasticity) * m_mass;
 			applyImpulse(impulse * normal);
 		}
+		// TODO maybe only do it if not moving apart fast enough?
+		m_position += normal * col.depth;
+	}
+}
+
+void physics::RigidBody::seperateObjects(RigidBody * other, glm::vec2 displacement)
+{
+	float proportion = 1;
+	if (isDynamic() && other->isDynamic()) {
+		proportion = 0.5f;
+	}
+	if (isDynamic()) {
+		m_position += displacement * proportion;
+	}
+	if (other->isDynamic()) {
+		other->m_position -= displacement * proportion;
 	}
 }
 

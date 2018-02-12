@@ -25,11 +25,13 @@ namespace physics {
 
 		void resolveCollision(Collision collision);
 
+		float calculateEnergy();
+
 	protected:
 		glm::vec2 m_gravity;
 		float m_timeStep;
 		float m_accumulatedTime;
-		std::vector<PhysicsObject*> m_actors;
+		std::vector<PhysicsObject*> m_actors;		//TODO start using smart pointers
 
 		void updateGizmos();
 

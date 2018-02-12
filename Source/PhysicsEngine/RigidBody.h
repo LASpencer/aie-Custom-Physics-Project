@@ -65,5 +65,6 @@ namespace physics
 		bool m_static;
 		// TODO settings for controlling physics (gravity on/off, dynamic or static)
 
+		void seperateObjects(RigidBody* other, glm::vec2 displacement);
 	};
 }

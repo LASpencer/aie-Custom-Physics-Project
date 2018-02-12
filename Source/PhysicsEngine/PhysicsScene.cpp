@@ -92,3 +92,12 @@ void physics::PhysicsScene::resolveCollision(Collision collision)
 
 
 }
+
+float physics::PhysicsScene::calculateEnergy()
+{
+	float energy = 0;
+	for (auto actor : m_actors) {
+		energy += actor->calculateEnergy(m_gravity);
+	}
+	return energy;
+}

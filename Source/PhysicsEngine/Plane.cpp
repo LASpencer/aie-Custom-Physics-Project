@@ -24,7 +24,7 @@ void physics::Plane::fixedUpdate(glm::vec2 gravity, float timeStep)
 void physics::Plane::makeGizmo(float timeRatio)
 {
 	float lineSegmentLength = 300;
-	glm::vec2 centerPoint = m_normal * m_distance;
+	glm::vec2 centerPoint = -m_normal * m_distance;
 	glm::vec2 parallel(m_normal.y, -m_normal.x);
 	glm::vec2 start = centerPoint + (parallel * lineSegmentLength);
 	glm::vec2 end = centerPoint - (parallel * lineSegmentLength);
@@ -39,9 +39,11 @@ physics::Collision physics::Plane::checkCollision(PhysicsObject * other)
 physics::Collision physics::Plane::checkSphereCollision(Sphere * other)
 {
 	Collision collision(false, other, this);
-	if (distanceToPoint(other->getPosition()) < other->getRadius()) {
+	float distance = distanceToPoint(other->getPosition());
+	if (distance < other->getRadius()) {
 		collision.success = true;
 		collision.normal = m_normal;
+		collision.depth = other->getRadius() - distance;
 	}
 	return collision;
 }

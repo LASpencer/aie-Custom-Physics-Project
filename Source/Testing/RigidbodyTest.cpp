@@ -173,6 +173,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.first == &s1);
 		REQUIRE(collision.second == &s2);
 		REQUIRE(vectorApprox(collision.normal, { -1,0 }));
+		REQUIRE(collision.depth == Approx(6.f));
 
 		s2.setPosition({ 0,9 });
 		collision = s1.checkSphereCollision(&s2);
@@ -180,6 +181,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.first == &s1);
 		REQUIRE(collision.second == &s2);
 		REQUIRE(vectorApprox(collision.normal, {0,-1 }));
+		REQUIRE(collision.depth == Approx(1.f));
 
 		s2.setRadius(1);
 		s2.setPosition({ -1,2 });
@@ -188,6 +190,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.first == &s1);
 		REQUIRE(collision.second == &s2);
 		REQUIRE(vectorApprox(collision.normal, { 0.447, -0.894 }, 0.001f));
+		REQUIRE(collision.depth == Approx(3.7639f).margin(0.001f));
 
 		s2.setPosition({ 0, 0 });
 		collision = s1.checkSphereCollision(&s2);
@@ -195,6 +198,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.first == &s1);
 		REQUIRE(collision.second == &s2);
 		REQUIRE(glm::length(collision.normal) == Approx(1));
+		REQUIRE(collision.depth == Approx(6.f));
 	}
 }
 
@@ -208,11 +212,13 @@ TEST_CASE("Collision struct reversal", "[collision]") {
 	REQUIRE(col.first == &s1);
 	REQUIRE(col.second == &s2);
 	REQUIRE(vectorApprox(col.normal, { -1,0 }));
+	REQUIRE(col.depth == Approx(2.f));
 	reverse = col.reverse();
 	REQUIRE(reverse.success == true);
 	REQUIRE(reverse.first == &s2);
 	REQUIRE(reverse.second == &s1);
 	REQUIRE(vectorApprox(reverse.normal, { 1,0 }));
+	REQUIRE(reverse.depth == Approx(2.f));
 }
 
 TEST_CASE("Plane constructor", "[plane]") {
@@ -303,6 +309,7 @@ TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 		REQUIRE(col.first == &s);
 		REQUIRE(col.second == &p);
 		REQUIRE(vectorApprox(col.normal, { 1,0 }));
+		REQUIRE(col.depth == Approx(1));
 
 		s.setPosition({ -10, 20 });
 		col = p.checkCollision(&s);
@@ -313,6 +320,7 @@ TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 		REQUIRE(col.first == &s);
 		REQUIRE(col.second == &p);
 		REQUIRE(vectorApprox(col.normal, { 1,0 }));
+		REQUIRE(col.depth == Approx(19.f));
 
 		s.setPosition({ 10, -2 });
 		col = p.checkCollision(&s);
@@ -443,3 +451,19 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 }
 
 //TODO set up and resolve collisions between dynamic and kinematic/static
+TEST_CASE("Forces don't affect kinematic and static spheres", "[rigidbody],[sphere]") {
+	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
+	Sphere* t = new Sphere({ 0,0 }, { 0,0 }, 1, 0);
+	Sphere* u = new Sphere({ 0,0 }, { 0,0 }, 1, 0);
+	u->setStatic(true);
+
+	glm::vec2 force = { 8,-3 };
+
+	t->applyImpulse(force);
+	REQUIRE(t->getVelocity() == glm::vec2(0, 0));
+	t->applyImpulseFromOther(s, force);
+	REQUIRE(t->getVelocity() == glm::vec2(0, 0));
+	REQUIRE(vectorApprox(s->getVelocity(), { -8,3 },k_margin));
+	u->applyImpulse(force);
+	REQUIRE(u->getVelocity() == glm::vec2(0, 0));
+}

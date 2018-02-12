@@ -5,6 +5,7 @@
 #include "Gizmos.h"
 
 #include "Sphere.h"
+#include "Plane.h"
 
 Application2D::Application2D() {
 
@@ -26,11 +27,17 @@ bool Application2D::startup() {
 	m_cameraY = 0;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.05f, { 0,0 });
+	m_scene = new physics::PhysicsScene(0.05f, { 0,-10 });
 
 	//TODO put objects in scene
 	m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,0 },3,0.16f));
-	m_scene->addActor(new physics::Sphere({ -20,0 }, { 11.11f,0.1f }, 3,0.17f));
+	m_scene->addActor(new physics::Sphere({ -20,0 }, { 30,0.1f }, 3,0.17f));
+	m_scene->addActor(new physics::Sphere({ 20,-20 }, { 0,0 }, 3, 0.17f));
+	m_scene->addActor(new physics::Plane({ -1,0 }, 40));
+	m_scene->addActor(new physics::Plane({ -1,-1 }, 40));
+	m_scene->addActor(new physics::Plane({  1,0 }, 40));
+	m_scene->addActor(new physics::Plane({ -1,1 }, 40));
+	m_scene->addActor(new physics::Plane({ 0,1 }, 40));
 
 	return true;
 }
@@ -90,8 +97,11 @@ void Application2D::draw() {
 	m_2dRenderer->setRenderColour(1, 1, 0, 1);
 	char fps[32];
 	sprintf_s(fps, 32, "FPS: %i", getFPS());
+	char energy[32];
+	sprintf_s(energy, 32, "Energy: %f", m_scene->calculateEnergy());
 	m_2dRenderer->drawText(m_font, fps, 0, 720 - 32);
-	m_2dRenderer->drawText(m_font, "Press ESC to quit!", 0, 720 - 64);
+	m_2dRenderer->drawText(m_font, energy, 0, 720 - 64);
+	m_2dRenderer->drawText(m_font, "Press ESC to quit!", 0, 720 - 96);
 
 	// done drawing sprites
 	m_2dRenderer->end();

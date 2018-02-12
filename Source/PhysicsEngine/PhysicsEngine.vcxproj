@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ExternalLibraries.h" />
+    <ClInclude Include="Joint.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="PhysicsScene.h" />
