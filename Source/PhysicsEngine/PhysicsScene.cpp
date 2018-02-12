@@ -14,13 +14,15 @@ physics::PhysicsScene::PhysicsScene(float timeStep, glm::vec2 gravity)
 
 physics::PhysicsScene::~PhysicsScene()
 {
-	// Destroy remaining objects
-	for (PhysicsObject* actor : m_actors) {
-		delete actor;
-	}
 }
 
 bool physics::PhysicsScene::addActor(PhysicsObject * actor)
+{
+	m_actors.push_back(PhysicsObjectPtr(actor));
+	return true;
+}
+
+bool physics::PhysicsScene::addActor(PhysicsObjectPtr actor)
 {
 	m_actors.push_back(actor);
 	return true;
@@ -30,8 +32,15 @@ bool physics::PhysicsScene::removeActor(PhysicsObject * actor)
 {
 	//TODO rewrite so m_actors won't be changed during loop
 	// maybe change to shared_ptr or have a "will die" flag to avoid dangling pointers
+	m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) {return a.get() == actor; }), m_actors.end());
+	actor->kill();
+	return true;
+}
+
+bool physics::PhysicsScene::removeActor(PhysicsObjectPtr actor)
+{
 	m_actors.erase(std::remove(m_actors.begin(), m_actors.end(), actor), m_actors.end());
-	delete actor;
+	actor->kill();
 	return true;
 }
 
@@ -53,7 +62,7 @@ void physics::PhysicsScene::update(float deltaTime)
 				// TODO check layers and masks
 				if (!(*firstActor)->isStatic() || !(*otherActor)->isStatic())
 				{
-					Collision col = (*firstActor)->checkCollision(*otherActor);
+					Collision col = (*firstActor)->checkCollision(otherActor->get());
 					//TODO maybe add collisions to list, and resolve collisions all at once
 					if (col) {
 						resolveCollision(col);
@@ -73,6 +82,12 @@ void physics::PhysicsScene::updateGizmos()
 	for (auto actor : m_actors) {
 		actor->makeGizmo(m_accumulatedTime/m_timeStep);
 	}
+}
+
+void physics::PhysicsScene::removeDeadActors()
+{
+	m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [](PhysicsObjectPtr a) {return !(a->isAlive()); }), m_actors.end());
+
 }
 
 void physics::PhysicsScene::setTimeStep(const float timeStep)

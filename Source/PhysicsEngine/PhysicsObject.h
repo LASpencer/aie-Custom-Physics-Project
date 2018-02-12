@@ -47,6 +47,8 @@ namespace physics {
 
 		glm::vec4 m_colour;
 
+		bool m_alive;
+
 	public:
 		virtual void earlyUpdate(float timestep) = 0;	//
 		virtual void fixedUpdate(glm::vec2 gravity, float timestep) = 0;
@@ -69,5 +71,9 @@ namespace physics {
 		virtual glm::vec2 calculateMomentum() = 0;
 
 		virtual bool isStatic() = 0;
+		
+		bool isAlive() { return m_alive; };
+
+		void kill();
 	};
 }

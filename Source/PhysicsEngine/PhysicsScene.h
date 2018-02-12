@@ -5,13 +5,19 @@ namespace physics {
 	class PhysicsObject;
 	struct Collision;
 
+	typedef std::shared_ptr<PhysicsObject> PhysicsObjectPtr;
+	typedef std::weak_ptr<PhysicsObject> PhysicsObjectWeakPtr;
+
 	class PhysicsScene {
 	public:
 		PhysicsScene(float timeStep = 0.01f, glm::vec2 gravity = glm::vec2(0,-10)); //TODO default gravity, timestep arguments
 		~PhysicsScene();
 
 		bool addActor(PhysicsObject* actor);
+		bool addActor(PhysicsObjectPtr actor);
+
 		bool removeActor(PhysicsObject* actor);
+		bool removeActor(PhysicsObjectPtr actor);
 		// TODO have some kind of FixedUpdateListener object that can have FixedUpdate called
 
 		void update(float deltaTime);
@@ -31,10 +37,10 @@ namespace physics {
 		glm::vec2 m_gravity;
 		float m_timeStep;
 		float m_accumulatedTime;
-		std::vector<PhysicsObject*> m_actors;		//TODO start using smart pointers
+		std::List<PhysicsObjectPtr> m_actors;		//TODO start using smart pointers
 
 		void updateGizmos();
 
-
+		void removeDeadActors();
 	};
 }
