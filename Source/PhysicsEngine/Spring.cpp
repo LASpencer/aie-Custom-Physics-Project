@@ -50,9 +50,9 @@ void physics::Spring::earlyUpdate(float timestep)
 		float distance = glm::length(displacement);
 		glm::vec2 direction = { 1,0 };
 		if (distance > 0) {
-			glm::vec2 direction = glm::normalize(displacement);
+			direction = glm::normalize(displacement);
 		}
-		glm::vec2 force = direction * (m_length - distance) * m_tightness;
+		glm::vec2 force = direction * (distance - m_length) * m_tightness;
 		// get relative velocity along spring, multiply by damping
 		glm::vec2 rVel = m_end1->getVelocity() - m_end2->getVelocity();
 		float rSpeed = glm::dot(rVel, direction);

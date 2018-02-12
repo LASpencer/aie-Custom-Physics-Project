@@ -30,7 +30,7 @@ bool Application2D::startup() {
 	m_cameraY = 0;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.05f, { 0,0 });
+	m_scene = new physics::PhysicsScene(0.05f, { 0, -10 });
 
 	//TODO put objects in scene
 	/*m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,0 },3,0.16f,0.5f));
@@ -43,9 +43,9 @@ bool Application2D::startup() {
 	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 0.5f));*/
 
 
-	SpherePtr s1(new Sphere({ 20,0 }, { 0,0 }, 3, 1));
-	SpherePtr s2(new Sphere({ -20,0 }, { 0,0 }, 3, 1));
-	SpringPtr spring(new Spring(1, 30, 0, s1, s2));
+	SpherePtr s1(new Sphere({ 20,0 }, { 0,0 }, 3, INFINITY));
+	SpherePtr s2(new Sphere({ -20,-10 }, { -26,-18 }, 3, 1));
+	SpringPtr spring(new Spring(10, 30, 0.1f, s1, s2));
 	m_scene->addActor(s1);
 	m_scene->addActor(s2);
 	m_scene->addActor(spring);
