@@ -29,6 +29,8 @@ namespace physics
 		glm::vec2 getPosition() { return m_position; }
 		void setPosition(glm::vec2 position);
 
+		glm::vec2 getPastPosition() { return m_pastPosition; }
+
 		glm::vec2 getVelocity() { return m_velocity; }
 		void setVelocity(glm::vec2 velocity);
 

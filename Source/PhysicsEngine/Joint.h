@@ -36,6 +36,10 @@ namespace physics {
 		virtual void resolveRigidbodyCollision(RigidBody * other, const Collision& col);
 		virtual void resolvePlaneCollision(Plane* other, const Collision& col);
 
+		virtual glm::vec2 calculateMomentum() { return { 0,0 }; };
+
+		virtual bool isStatic() { return true; };
+
 	protected:
 		RigidBodyPtr m_end1;
 		RigidBodyPtr m_end2;

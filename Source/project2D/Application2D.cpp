@@ -6,6 +6,9 @@
 
 #include "Sphere.h"
 #include "Plane.h"
+#include "Spring.h"
+
+using namespace physics;
 
 Application2D::Application2D() {
 
@@ -27,17 +30,25 @@ bool Application2D::startup() {
 	m_cameraY = 0;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.05f, { 0,-10 });
+	m_scene = new physics::PhysicsScene(0.05f, { 0,0 });
 
 	//TODO put objects in scene
-	m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,0 },3,0.16f,0.5f));
+	/*m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,0 },3,0.16f,0.5f));
 	m_scene->addActor(new physics::Sphere({ -20,0 }, { 30,0.1f }, 3,0.17f));
 	m_scene->addActor(new physics::Sphere({ 20,-20 }, { 0,0 }, 3, 0.17f));
 	m_scene->addActor(new physics::Plane({ -1,0 }, 40));
 	m_scene->addActor(new physics::Plane({ -1,-1 }, 40));
 	m_scene->addActor(new physics::Plane({  1,0 }, 40));
 	m_scene->addActor(new physics::Plane({ -1,1 }, 40,0));
-	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 0.5f));
+	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 0.5f));*/
+
+
+	SpherePtr s1(new Sphere({ 20,0 }, { 0,0 }, 3, 1));
+	SpherePtr s2(new Sphere({ -20,0 }, { 0,0 }, 3, 1));
+	SpringPtr spring(new Spring(2, 20, 0, s1, s2));
+	m_scene->addActor(s1);
+	m_scene->addActor(s2);
+	m_scene->addActor(spring);
 
 	return true;
 }

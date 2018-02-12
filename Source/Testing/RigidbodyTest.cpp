@@ -11,8 +11,6 @@ using namespace physics;
 
 // TODO decide whether zero/infinite mass is allowed, and test for that
 
-// TODO test static/kinematic behaviour
-
 
 TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 	SECTION("Mass must be positive") {

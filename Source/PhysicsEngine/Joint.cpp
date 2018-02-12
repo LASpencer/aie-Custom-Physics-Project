@@ -6,6 +6,9 @@
 physics::Joint::Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec4 colour) 
 	: PhysicsObject(0.f,colour), m_end1(end1), m_end2(end2)
 {
+	if (m_end1 == m_end2) {
+		m_end2.reset();
+	}
 }
 
 void physics::Joint::fixedUpdate(glm::vec2 gravity, float timestep)
