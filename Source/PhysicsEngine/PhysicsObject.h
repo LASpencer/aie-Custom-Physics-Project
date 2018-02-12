@@ -4,9 +4,11 @@
 namespace physics {
 
 	enum ShapeType {
+		spring,
 		plane,
 		sphere,
-		box
+		aabox,
+		obox
 	};
 
 	class PhysicsObject;

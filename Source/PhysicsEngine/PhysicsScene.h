@@ -13,6 +13,9 @@ namespace physics {
 		PhysicsScene(float timeStep = 0.01f, glm::vec2 gravity = glm::vec2(0,-10)); //TODO default gravity, timestep arguments
 		~PhysicsScene();
 
+		bool inScene(PhysicsObject* actor);
+		bool inScene(PhysicsObjectPtr actor);
+
 		bool addActor(PhysicsObject* actor);
 		bool addActor(PhysicsObjectPtr actor);
 
@@ -37,7 +40,7 @@ namespace physics {
 		glm::vec2 m_gravity;
 		float m_timeStep;
 		float m_accumulatedTime;
-		std::List<PhysicsObjectPtr> m_actors;		//TODO start using smart pointers
+		std::vector<PhysicsObjectPtr> m_actors;		//TODO start using smart pointers
 
 		void updateGizmos();
 

@@ -16,16 +16,36 @@ physics::PhysicsScene::~PhysicsScene()
 {
 }
 
+bool physics::PhysicsScene::inScene(PhysicsObject * actor)
+{
+	return std::any_of(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) { a.get() == actor; });
+}
+
+bool physics::PhysicsScene::inScene(PhysicsObjectPtr actor)
+{
+	return std::any_of(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) { a == actor; });
+}
+
 bool physics::PhysicsScene::addActor(PhysicsObject * actor)
 {
-	m_actors.push_back(PhysicsObjectPtr(actor));
-	return true;
+	if (!inScene(actor)) {
+		m_actors.push_back(PhysicsObjectPtr(actor));
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 bool physics::PhysicsScene::addActor(PhysicsObjectPtr actor)
 {
-	m_actors.push_back(actor);
-	return true;
+	if (!inScene(actor)) {
+		m_actors.push_back(actor);
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 bool physics::PhysicsScene::removeActor(PhysicsObject * actor)
@@ -57,8 +77,10 @@ void physics::PhysicsScene::update(float deltaTime)
 		// TODO collision detection
 		for (auto firstActor = m_actors.begin(); firstActor != m_actors.end(); ++firstActor) {
 			// TODO skip if set to not collide
+			// TODO skip if killed
 			for (auto otherActor = firstActor + 1; otherActor != m_actors.end(); ++otherActor) {
 				// TODO skip if set to not collide
+				// TODO skip if killed
 				// TODO check layers and masks
 				if (!(*firstActor)->isStatic() || !(*otherActor)->isStatic())
 				{
@@ -74,6 +96,7 @@ void physics::PhysicsScene::update(float deltaTime)
 		m_accumulatedTime -= m_timeStep;
 	}
 	updateGizmos();
+	removeDeadActors();
 }
 
 void physics::PhysicsScene::updateGizmos()
