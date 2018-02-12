@@ -14,7 +14,8 @@ namespace physics {
 	class Sphere;
 	class Plane;
 
-
+	typedef std::shared_ptr<PhysicsObject> PhysicsObjectPtr;
+	typedef std::weak_ptr<PhysicsObject> PhysicsObjectWeakPtr;
 
 	struct Collision {
 		Collision(bool a_success = false, PhysicsObject* a_first = nullptr, PhysicsObject* a_second = nullptr, glm::vec2 a_normal = glm::vec2(0), float a_depth = 0)

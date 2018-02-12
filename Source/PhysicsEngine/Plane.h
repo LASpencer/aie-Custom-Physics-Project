@@ -3,6 +3,11 @@
 #include "PhysicsObject.h"
 
 namespace physics {
+	class Plane;
+
+	typedef std::shared_ptr<Plane> PlanePtr;
+	typedef std::weak_ptr<Plane> PlaneWeakPtr;
+
 	class Plane : public PhysicsObject {
 	public:
 		Plane(glm::vec2 normal, float distance, glm::vec4 colour = { 1,1,1,1, });

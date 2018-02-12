@@ -3,6 +3,11 @@
 #include "RigidBody.h"
 
 namespace physics {
+	class Sphere;
+
+	typedef std::shared_ptr<Sphere> SpherePtr;
+	typedef std::weak_ptr<Sphere> SphereWeakPtr;
+
 	class Sphere : public RigidBody {
 	public:
 		Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass = 1.f, glm::vec4 colour = { 1,1,1,1 });

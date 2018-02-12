@@ -4,6 +4,11 @@
 
 namespace physics
 {
+	class RigidBody;
+
+	typedef std::shared_ptr<RigidBody> RigidBodyPtr;
+	typedef std::weak_ptr<RigidBody> RigidBodyWeakPtr;
+
 	class RigidBody : public PhysicsObject
 	{
 	public:
@@ -67,4 +72,5 @@ namespace physics
 
 		void seperateObjects(RigidBody* other, glm::vec2 displacement);
 	};
+
 }
