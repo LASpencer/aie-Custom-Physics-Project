@@ -15,6 +15,7 @@ namespace physics {
 	class Plane;
 
 
+
 	struct Collision {
 		Collision(bool a_success = false, PhysicsObject* a_first = nullptr, PhysicsObject* a_second = nullptr, glm::vec2 a_normal = glm::vec2(0), float a_depth = 0)
 			: success(a_success), first(a_first), second(a_second), normal(a_normal), depth(a_depth)
