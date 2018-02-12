@@ -24,11 +24,8 @@ void physics::RigidBody::fixedUpdate(glm::vec2 gravity, float timestep)
 		}
 		else {
 			applyForce(gravity * m_mass);
-			// Move before and after changing velocity to avoid integration error
-			// This treats acceleration as constant over timestep
-			m_position += 0.5f * m_velocity * timestep;
 			applyImpulse(m_totalForce * timestep);
-			m_position += 0.5f * m_velocity * timestep;
+			m_position +=  m_velocity * timestep;
 		}
 	}
 	m_totalForce = { 0,0 };

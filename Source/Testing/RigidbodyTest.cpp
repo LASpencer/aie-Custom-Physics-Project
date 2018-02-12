@@ -372,10 +372,10 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 			t->applyForce(force);
 			s->fixedUpdate(noGravity, timestep);
 			REQUIRE(vectorApprox(s->getVelocity(), { -2.7f,6.3f }, k_margin));
-			REQUIRE(vectorApprox(s->getPosition(), { -0.285f, 0.64f }, k_margin));
+			REQUIRE(vectorApprox(s->getPosition(), { -0.27f, 0.63f }, k_margin));
 			t->fixedUpdate(noGravity, timestep);
 			REQUIRE(vectorApprox(t->getVelocity(), { -2.88f,6.42f }, k_margin));
-			REQUIRE(vectorApprox(t->getPosition(), { -0.294f, 0.646f }, k_margin));
+			REQUIRE(vectorApprox(t->getPosition(), { -0.288f, 0.642f }, k_margin));
 		}
 		SECTION("Gravity") {
 			SECTION("Stationary") {
@@ -383,8 +383,6 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 				t->fixedUpdate(gravity, timestep);
 				REQUIRE(vectorApprox(s->getVelocity(), { 0,-1 }, k_margin));
 				REQUIRE(vectorApprox(t->getVelocity(), { 0,-1 }, k_margin));
-				REQUIRE(vectorApprox(s->getPosition(), { 0,-0.05f }, k_margin));
-				REQUIRE(vectorApprox(t->getPosition(), { 0,-0.05f }, k_margin));
 			}
 			SECTION("Gravity works over time") {
 				float startEnergyS = s->calculateEnergy(gravity);
@@ -394,7 +392,7 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 					t->fixedUpdate(gravity, timestep);
 				}
 				glm::vec2 expectedPosition = { 0, -125 };	// 0.5 * a * t^2 = 0.5 * -10 * 5^2
-				float error = 0.1f; // Movement in first timestep ()
+				float error = 2.5001f; // timestep * time * gravity /2
 				REQUIRE(vectorApprox(s->getVelocity(), { 0,-50 }, k_margin));
 				REQUIRE(vectorApprox(t->getVelocity(), { 0,-50 }, k_margin));
 				REQUIRE(vectorApprox(s->getPosition(), expectedPosition, error));
@@ -413,7 +411,7 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 					t->fixedUpdate(gravity, timestep);
 				}
 				glm::vec2 expectedPosition = { 40, -25 };
-				float error = 0.1f; // Movement in first timestep ()
+				float error = 2.5001f; // timestep * time * gravity /2
 				REQUIRE(vectorApprox(s->getVelocity(), { 8,-30 }, k_margin));
 				REQUIRE(vectorApprox(t->getVelocity(), { 8,-30 }, k_margin));
 				REQUIRE(vectorApprox(s->getPosition(), expectedPosition, error));

@@ -45,7 +45,7 @@ bool Application2D::startup() {
 
 	SpherePtr s1(new Sphere({ 20,0 }, { 0,0 }, 3, 1));
 	SpherePtr s2(new Sphere({ -20,0 }, { 0,0 }, 3, 1));
-	SpringPtr spring(new Spring(2, 20, 0, s1, s2));
+	SpringPtr spring(new Spring(1, 30, 0, s1, s2));
 	m_scene->addActor(s1);
 	m_scene->addActor(s2);
 	m_scene->addActor(spring);

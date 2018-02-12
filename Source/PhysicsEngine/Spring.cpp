@@ -1,4 +1,7 @@
 #include "Spring.h"
+
+#include "ExternalLibraries.h"
+
 #include "Rigidbody.h"
 
 physics::Spring::Spring(float tightness, float length, float damping, RigidBodyPtr end1, RigidBodyPtr end2, glm::vec4 colour)
@@ -41,9 +44,27 @@ void physics::Spring::setDamping(float damping)
 
 void physics::Spring::earlyUpdate(float timestep)
 {
-	// TODO get distance between ends, calculate difference to length, multiply by tightness
-	// TODO get relative velocity along spring, multiply by damping
-	// TODO apply force to both
+	if (m_end1 && m_end2 && m_end1->isAlive() && m_end2->isAlive()) {
+		// get distance between ends, calculate difference to length, multiply by tightness
+		glm::vec2 displacement = m_end2->getPosition() - m_end1->getPosition();
+		float distance = glm::length(displacement);
+		glm::vec2 direction = { 1,0 };
+		if (distance > 0) {
+			glm::vec2 direction = glm::normalize(displacement);
+		}
+		glm::vec2 force = direction * (m_length - distance) * m_tightness;
+		// get relative velocity along spring, multiply by damping
+		glm::vec2 rVel = m_end1->getVelocity() - m_end2->getVelocity();
+		float rSpeed = glm::dot(rVel, direction);
+		force -= rSpeed * direction * m_damping;
+		// apply force to both
+		//m_end1->applyImpulseFromOther(m_end2.get(), force * timestep);
+		m_end1->applyForceFromOther(m_end2.get(), force);
+		// TODO maybe fix how forces get applied, 
+	}
+	else {
+		removeKilledEnd();
+	}
 }
 
 void physics::Spring::makeGizmo(float timeRatio)
@@ -57,6 +78,13 @@ void physics::Spring::makeGizmo(float timeRatio)
 
 float physics::Spring::calculateEnergy(glm::vec2 gravity)
 {
-	// TODO multiply absolute difference from length by tightness
-	return 0.0f;
+	if (m_end1 && m_end2 && m_end1->isAlive() && m_end2->isAlive()) {
+		// get distance between ends, calculate difference to length, multiply by tightness
+		glm::vec2 displacement = m_end2->getPosition() - m_end1->getPosition();
+		float distance = m_length - glm::length(displacement);
+		return 0.5f * distance * distance * m_tightness;
+	}
+	else {
+		return 0;
+	}
 }
