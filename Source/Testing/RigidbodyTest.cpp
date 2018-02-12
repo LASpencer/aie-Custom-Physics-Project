@@ -397,9 +397,9 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 				REQUIRE(vectorApprox(t->getVelocity(), { 0,-50 }, k_margin));
 				REQUIRE(vectorApprox(s->getPosition(), expectedPosition, error));
 				REQUIRE(vectorApprox(t->getPosition(), expectedPosition, error));
-				//TODO figure out error margin for energy
-				REQUIRE(s->calculateEnergy(gravity) == Approx(startEnergyS));
-				REQUIRE(t->calculateEnergy(gravity) == Approx(startEnergyT));
+				float energyError = 25.0001f; // Height error * gravity
+				REQUIRE(s->calculateEnergy(gravity) == Approx(startEnergyS).margin(energyError * s->getMass()));
+				REQUIRE(t->calculateEnergy(gravity) == Approx(startEnergyT).margin(energyError * t->getMass()));
 			}
 			SECTION("Ballistic arc") {
 				s->setVelocity({ 8,20 });
@@ -416,9 +416,9 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 				REQUIRE(vectorApprox(t->getVelocity(), { 8,-30 }, k_margin));
 				REQUIRE(vectorApprox(s->getPosition(), expectedPosition, error));
 				REQUIRE(vectorApprox(t->getPosition(), expectedPosition, error));
-				//TODO figure out error margin for energy
-				REQUIRE(s->calculateEnergy(gravity) == Approx(startEnergyS));
-				REQUIRE(t->calculateEnergy(gravity) == Approx(startEnergyT));
+				float energyError = 25.0001f; // Height error * gravity
+				REQUIRE(s->calculateEnergy(gravity) == Approx(startEnergyS).margin(energyError * s->getMass()));
+				REQUIRE(t->calculateEnergy(gravity) == Approx(startEnergyT).margin(energyError * t->getMass()));
 			}
 		}
 		SECTION("Reaction forces") {
