@@ -9,13 +9,30 @@
 using namespace physics;
 
 TEST_CASE("Adding ends to spring", "[joint],[spring]") {
-	//TODO can add ends
-	//TODO both ends can't be the same object
+	SpringPtr spring(new Spring(3, 2, 0));
+	SpherePtr s1(new Sphere({ 3,-4 }, { 0,0 }, 1, 1));
+	SpherePtr s2(new Sphere({ -3,4 }, { 0,0 }, 1, 2.5f));
+	spring->setEnd1(s1);
+	REQUIRE(spring->getEnd1() == s1);
+	spring->setEnd2(s1);
+	// Ends can't be same object
+	REQUIRE_FALSE(spring->getEnd2());
+	spring->setEnd2(s2);
+	REQUIRE(spring->getEnd2() == s2);
+	spring->setEnd1(s2);
+	// Invalid change to end doesn't remove previous end
+	REQUIRE(spring->getEnd1() == s1);
 }
 
 TEST_CASE("Removing ends from spring", "[joint],[spring]") {
-	//TODO removing end
-	//TODO killing end leads to its removal
+	SpherePtr s1(new Sphere({ 3,-4 }, { 0,0 }, 1, 1));
+	SpherePtr s2(new Sphere({ -3,4 }, { 0,0 }, 1, 2.5f));
+	SpringPtr spring(new Spring(5, 8, 0, s1, s2));
+	SECTION("Kill object to remove") {
+		s1->kill();
+		spring->earlyUpdate(0.1f);
+		REQUIRE_FALSE(spring->getEnd1());
+	}
 }
 
 TEST_CASE("Getters and Setters", "[joint],[spring]") {
@@ -25,6 +42,16 @@ TEST_CASE("Getters and Setters", "[joint],[spring]") {
 TEST_CASE("Calculate energy", "[joint],[spring]") {
 	//TODO spring with a missing end has no energy
 	//TODO spring calculates energy correctly
+	SpherePtr s1(new Sphere({ 3,0 }, { 0,0 }, 1, 1));
+	SpherePtr s2(new Sphere({ 0,4 }, { 0,0 }, 1, 2.5f));
+	SpringPtr spring(new Spring(5, 7, 0, s1));
+	SECTION("Spring with missing end has no energy") {
+		REQUIRE(spring->calculateEnergy({ 0,-10 }) == 0);
+	}
+	SECTION("Energy calculated correctly") {
+		spring->setEnd2(s2);
+		REQUIRE(spring->calculateEnergy({ 0,-10 }) == Approx(10.f));
+	}
 }
 
 TEST_CASE("Spring forces", "[joint],spring]") {
