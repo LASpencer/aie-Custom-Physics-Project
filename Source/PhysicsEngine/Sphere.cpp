@@ -17,9 +17,8 @@ void physics::Sphere::makeGizmo(float timeRatio)
 	glm::vec2 interpolated = glm::mix(m_pastPosition, m_position, timeRatio );
 	aie::Gizmos::add2DCircle(interpolated, m_radius, 20, m_colour);		//TODO have segments be set as a constant
 	//TODO draw a line or dot at end to show orientation
-	float interpolatedRotate = glm::mix(m_pastOrientation, m_orientation, timeRatio);
-	glm::vec2 orient = { -sinf(interpolatedRotate), cosf(interpolatedRotate) };
-	aie::Gizmos::add2DLine(interpolated, interpolated + orient * m_radius, { 0,0,0,1 });
+	glm::vec2 interpolatedLine = glm::mix(m_pastY * m_radius, m_localY * m_radius, timeRatio);
+	aie::Gizmos::add2DLine(interpolated, interpolatedLine + interpolated, { 0,0,0,1 });
 }
 
 physics::Collision physics::Sphere::checkCollision(PhysicsObject * other)
@@ -41,6 +40,9 @@ physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
 			collision.normal = { 1,0 };
 		}
 		collision.depth = m_radius + other->m_radius - distance;
+
+		// point of contact is at half depth from edge
+		collision.contact = (0.5f * collision.depth - m_radius) * collision.normal + m_position;
 	}
 	return collision;
 }

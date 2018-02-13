@@ -20,8 +20,8 @@ namespace physics {
 	typedef std::weak_ptr<PhysicsObject> PhysicsObjectWeakPtr;
 
 	struct Collision {
-		Collision(bool a_success = false, PhysicsObject* a_first = nullptr, PhysicsObject* a_second = nullptr, glm::vec2 a_normal = glm::vec2(0), float a_depth = 0)
-			: success(a_success), first(a_first), second(a_second), normal(a_normal), depth(a_depth)
+		Collision(bool a_success = false, PhysicsObject* a_first = nullptr, PhysicsObject* a_second = nullptr, glm::vec2 a_normal = glm::vec2(0), glm::vec2 a_contact = glm::vec2(0), float a_depth = 0)
+			: success(a_success), first(a_first), second(a_second), normal(a_normal), contact(a_contact), depth(a_depth)
 		{};
 
 		bool success;
@@ -30,13 +30,14 @@ namespace physics {
 		PhysicsObject* second;
 
 		glm::vec2 normal;
+		glm::vec2 contact;
 
 		float depth;
 
 		operator bool() const { return success; }
 
 		Collision reverse() {
-			return Collision(success, second, first, -normal, depth);
+			return Collision(success, second, first, -normal, contact, depth);
 		}
 	};
 

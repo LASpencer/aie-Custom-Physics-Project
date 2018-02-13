@@ -63,6 +63,10 @@ namespace physics
 
 		inline bool isDynamic() { return !(isKinematic() || isStatic()); };
 
+		virtual glm::vec2 localToWorldSpace(glm::vec2 localPos);
+
+		virtual glm::vec2 worldToLocalSpace(glm::vec2 worldPos);
+
 		virtual float calculateEnergy(glm::vec2 gravity);
 
 		virtual glm::vec2 calculateMomentum();
@@ -84,7 +88,12 @@ namespace physics
 		float m_invMoment;
 
 		float m_orientation;
-		float m_pastOrientation;
+
+		glm::vec2 m_localX;
+		glm::vec2 m_localY;
+
+		glm::vec2 m_pastX;
+		glm::vec2 m_pastY;
 
 		float m_angularVelocity;
 		float m_totalTorque;
@@ -96,6 +105,8 @@ namespace physics
 
 		// Calculates moment of inertia using correct formula for shape
 		virtual void calculateMoment() = 0;
+
+		void calculateAxes();
 	};
 
 }

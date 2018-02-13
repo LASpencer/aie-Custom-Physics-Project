@@ -22,8 +22,12 @@ physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orie
 			m_invMass = 1 / mass;
 		}
 	}
+
 	m_pastPosition = m_position;
-	m_pastOrientation = m_orientation;
+	
+	calculateAxes();
+	m_pastX = m_localX;
+	m_pastY = m_localY;
 }
 
 void physics::RigidBody::earlyUpdate(float timestep)
@@ -34,7 +38,8 @@ void physics::RigidBody::fixedUpdate(glm::vec2 gravity, float timestep)
 {
 	// Update previous position
 	m_pastPosition = m_position; 
-	m_pastOrientation = m_orientation;
+	m_pastX = m_localX;
+	m_pastY = m_localY;
 	if (!m_static) {
 		if (!isKinematic()) {
 			applyForce(gravity * m_mass);
@@ -45,6 +50,7 @@ void physics::RigidBody::fixedUpdate(glm::vec2 gravity, float timestep)
 		m_orientation += m_angularVelocity * timestep;
 		// TODO modulus of 2pi?
 		// TODO threshold contraints on velocity/angular velocity
+		calculateAxes();
 	}
 	m_totalForce = { 0,0 };
 	m_totalTorque = 0;
@@ -59,7 +65,10 @@ void physics::RigidBody::applyImpulse(glm::vec2 force)
 void physics::RigidBody::applyImpulse(glm::vec2 force, glm::vec2 contact)
 {
 	// TODO apply the torque from this
-	// TODO apply the 
+	// TODO apply some force
+	m_velocity += force * m_invMass;
+	glm::vec2 pos = contact - m_position;
+	m_angularVelocity += (force.y * pos.x - force.x * pos.y) * m_invMoment;
 }
 
 void physics::RigidBody::applyImpulseFromOther(RigidBody * other, glm::vec2 force)
@@ -68,15 +77,34 @@ void physics::RigidBody::applyImpulseFromOther(RigidBody * other, glm::vec2 forc
 	other->applyImpulse(-force);
 }
 
+void physics::RigidBody::applyImpulseFromOther(RigidBody * other, glm::vec2 force, glm::vec2 contact)
+{
+	applyImpulse(force, contact);
+	other->applyImpulse(-force, contact);
+}
+
 void physics::RigidBody::applyForce(glm::vec2 force)
 {
 	m_totalForce += force;
+}
+
+void physics::RigidBody::applyForce(glm::vec2 force, glm::vec2 contact)
+{
+	m_totalForce += force;
+	glm::vec2 pos = contact - m_position;
+	m_totalTorque += (force.y * pos.x - force.x * pos.y);
 }
 
 void physics::RigidBody::applyForceFromOther(RigidBody * other, glm::vec2 force)
 {
 	applyForce(force);
 	other->applyForce(-force);
+}
+
+void physics::RigidBody::applyForceFromOther(RigidBody * other, glm::vec2 force, glm::vec2 contact)
+{
+	applyForce(force, contact);
+	other->applyForce(-force, contact);
 }
 
 void physics::RigidBody::setPosition(glm::vec2 position)
@@ -152,6 +180,7 @@ void physics::RigidBody::setOrientation(float orientation)
 {
 	// TODO decide if degrees should be used instead
 	m_orientation = orientation;	// TODO maybe limit to +- 2pi?
+	calculateAxes();
 }
 
 float physics::RigidBody::getAngularVelocity()
@@ -162,6 +191,17 @@ float physics::RigidBody::getAngularVelocity()
 void physics::RigidBody::setAngularVelocity(float angularVelocity)
 {
 	m_angularVelocity = angularVelocity;
+}
+
+glm::vec2 physics::RigidBody::localToWorldSpace(glm::vec2 localPos)
+{
+	return m_position + localPos.x * m_localX + localPos.y * m_localY;
+}
+
+glm::vec2 physics::RigidBody::worldToLocalSpace(glm::vec2 worldPos)
+{
+	glm::vec2 displacement = worldPos - m_position;
+	return { glm::dot(displacement, m_localX), glm::dot(displacement, m_localY) };
 }
 
 float physics::RigidBody::calculateEnergy(glm::vec2 gravity)
@@ -202,11 +242,20 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 		if (col.first != this) {
 			normal = -normal;
 		}
+		glm::vec2 perpendicular(-normal.y, normal.x);
+
+		//HACK maybe signs on perpendicular/v1 v2 are wrong, check when boxes implemented
+		float r1 = glm::dot(col.contact - m_position, perpendicular);
+		float r2 = glm::dot(col.contact - other->m_position, -perpendicular);
+
 		glm::vec2 relative = other->getVelocity() - getVelocity();
-		float normalRvel = glm::dot(relative, normal);
+		float normalRvel = glm::dot(relative, normal) + r1 * m_angularVelocity + r2 * other->m_angularVelocity;
 		if (normalRvel > 0) {
+			float invEffMass1 = m_invMass + r1 * r1 * m_invMoment;
+			float invEffMass2 = other->m_invMass + r2 * r2 * other->m_invMoment;
+
 			// Apply impulse
-			float impulse = normalRvel * (1 + elasticity) / (m_invMass + other->getInvMass());
+			float impulse = normalRvel * (1 + elasticity) / (invEffMass1 + invEffMass2);
 			applyImpulseFromOther(other, impulse * normal);
 		}
 		// Get new relative velocity
@@ -252,5 +301,13 @@ void physics::RigidBody::seperateObjects(RigidBody * other, glm::vec2 displaceme
 	if (other->isDynamic()) {
 		other->m_position -= displacement * proportion;
 	}
+}
+
+void physics::RigidBody::calculateAxes()
+{
+	float cos = cosf(m_orientation);
+	float sin = sinf(m_orientation);
+	m_localX = { cos,sin };
+	m_localY = { -sin,cos };
 }
 

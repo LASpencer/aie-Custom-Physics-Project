@@ -198,6 +198,9 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.second == &s2);
 		REQUIRE(glm::length(collision.normal) == Approx(1));
 		REQUIRE(collision.depth == Approx(6.f));
+
+		//TODO calculate collision point for each
+		REQUIRE(false);
 	}
 }
 
@@ -218,6 +221,8 @@ TEST_CASE("Collision struct reversal", "[collision]") {
 	REQUIRE(reverse.second == &s1);
 	REQUIRE(vectorApprox(reverse.normal, { 1,0 }));
 	REQUIRE(reverse.depth == Approx(2.f));
+	//TODO calculate collision point
+	REQUIRE(false);
 }
 
 TEST_CASE("Plane constructor", "[plane]") {
@@ -471,6 +476,10 @@ TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
 	s->fixedUpdate({ 0,0 }, 0.1f);
 	REQUIRE(s->getAngularVelocity() == 1.f);
 	REQUIRE(s->getOrientation() == Approx(0.1f));
+}
+
+TEST_CASE("Local to world coordinate conversion") {
+
 }
 
 TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {

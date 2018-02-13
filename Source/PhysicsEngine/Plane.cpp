@@ -44,6 +44,7 @@ physics::Collision physics::Plane::checkSphereCollision(Sphere * other)
 		collision.success = true;
 		collision.normal = m_normal;
 		collision.depth = other->getRadius() - distance;
+		collision.contact = other->getPosition() - m_normal * distance;
 	}
 	return collision;
 }
