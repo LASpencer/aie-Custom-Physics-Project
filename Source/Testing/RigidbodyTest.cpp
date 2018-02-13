@@ -11,6 +11,7 @@ using namespace physics;
 
 // TODO decide whether zero/infinite mass is allowed, and test for that
 
+//TODO test cases for rotation: object rotates over time, apply torque, calculating moment of inertia, etc
 
 TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 	SECTION("Mass must be positive") {
@@ -462,4 +463,22 @@ TEST_CASE("Forces don't affect kinematic and static spheres", "[rigidbody],[sphe
 	REQUIRE(vectorApprox(s->getVelocity(), { -8,3 },k_margin));
 	u->applyImpulse(force);
 	REQUIRE(u->getVelocity() == glm::vec2(0, 0));
+}
+
+TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
+	Sphere* s = new Sphere({ 0,0, }, { 0,0 }, 1);
+	s->setAngularVelocity(1);
+	s->fixedUpdate({ 0,0 }, 0.1f);
+	REQUIRE(s->getAngularVelocity() == 1.f);
+	REQUIRE(s->getOrientation() == Approx(0.1f));
+}
+
+TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
+	// TODO write tests for sphere moment of inertia calculations
+	REQUIRE(false);
+}
+
+TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
+	// TODO write tests for applying torque
+	REQUIRE(false);
 }

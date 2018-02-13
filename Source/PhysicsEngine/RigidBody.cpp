@@ -3,11 +3,27 @@
 
 #include "Plane.h"
 
-physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, glm::vec4 colour)
-	: PhysicsObject(elasticity, colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_totalForce({0,0}),
-	m_static(false)
+physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, glm::vec4 colour)
+	: PhysicsObject(elasticity, colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_angularVelocity(angularVelocity)
+	, m_totalForce({0,0}), m_totalTorque(0), m_static(false)
 {
-	setMass(mass);
+	if (mass < 0 || isnan(mass)) {
+		throw std::invalid_argument("Mass must be positive");
+	}
+	else {
+		if (mass == 0 || isinf(mass)) {
+			m_mass = INFINITY;
+			m_invMass = 0;
+			m_moment = INFINITY;
+			m_invMoment = 0;
+		}
+		else {
+			m_mass = mass;
+			m_invMass = 1 / mass;
+		}
+	}
+	m_pastPosition = m_position;
+	m_pastOrientation = m_orientation;
 }
 
 void physics::RigidBody::earlyUpdate(float timestep)
@@ -18,23 +34,32 @@ void physics::RigidBody::fixedUpdate(glm::vec2 gravity, float timestep)
 {
 	// Update previous position
 	m_pastPosition = m_position; 
+	m_pastOrientation = m_orientation;
 	if (!m_static) {
-		if (isKinematic()) {
-			m_position += m_velocity * timestep;
-		}
-		else {
+		if (!isKinematic()) {
 			applyForce(gravity * m_mass);
 			applyImpulse(m_totalForce * timestep);
-			m_position +=  m_velocity * timestep;
+			m_angularVelocity += m_totalTorque * m_invMoment * timestep;
 		}
+		m_position +=  m_velocity * timestep;
+		m_orientation += m_angularVelocity * timestep;
+		// TODO modulus of 2pi?
+		// TODO threshold contraints on velocity/angular velocity
 	}
 	m_totalForce = { 0,0 };
+	m_totalTorque = 0;
 }
 
 void physics::RigidBody::applyImpulse(glm::vec2 force)
 {
 	// TODO decide how to deal with infinite/zero masses
 	m_velocity += force * m_invMass;
+}
+
+void physics::RigidBody::applyImpulse(glm::vec2 force, glm::vec2 contact)
+{
+	// TODO apply the torque from this
+	// TODO apply the 
 }
 
 void physics::RigidBody::applyImpulseFromOther(RigidBody * other, glm::vec2 force)
@@ -80,10 +105,13 @@ void physics::RigidBody::setMass(float mass)
 		 if (mass == 0 || isinf(mass)) {
 			m_mass = INFINITY;
 			m_invMass = 0;
+			m_moment = INFINITY;
+			m_invMoment = 0;
 		}
 		else {
 			m_mass = mass;
 			m_invMass = 1 / mass;
+			calculateMoment();
 		}
 	}
 }
@@ -93,20 +121,47 @@ float physics::RigidBody::getInvMass()
 	return m_invMass;
 }
 
+float physics::RigidBody::getMoment()
+{
+	return m_moment;
+}
+
+float physics::RigidBody::getInvMoment()
+{
+	return m_invMoment;
+}
+
 void physics::RigidBody::setStatic(bool value)
 {
 	m_static = value;
 	if (m_static) {
 		m_mass = INFINITY;
 		m_invMass = 0;
+		m_moment = INFINITY;
+		m_invMoment = 0;
 		m_velocity = { 0,0 };
 	}
+}
+
+float physics::RigidBody::getOrientation()
+{
+	return m_orientation;
 }
 
 void physics::RigidBody::setOrientation(float orientation)
 {
 	// TODO decide if degrees should be used instead
-	m_orientation = fmod(orientation, glm::pi<float>());
+	m_orientation = orientation;	// TODO maybe limit to +- 2pi?
+}
+
+float physics::RigidBody::getAngularVelocity()
+{
+	return m_angularVelocity;
+}
+
+void physics::RigidBody::setAngularVelocity(float angularVelocity)
+{
+	m_angularVelocity = angularVelocity;
 }
 
 float physics::RigidBody::calculateEnergy(glm::vec2 gravity)

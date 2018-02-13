@@ -12,7 +12,7 @@ namespace physics
 	class RigidBody : public PhysicsObject
 	{
 	public:
-		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, glm::vec4 colour);
+		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, glm::vec4 colour);
 
 
 		virtual void earlyUpdate(float timestep);
@@ -20,11 +20,16 @@ namespace physics
 		virtual void fixedUpdate(glm::vec2 gravity, float timestep);
 
 		void applyImpulse(glm::vec2 force);
+		void applyImpulse(glm::vec2 force, glm::vec2 contact);
+
 		void applyImpulseFromOther(RigidBody* other, glm::vec2 force);
+		void applyImpulseFromOther(RigidBody* other, glm::vec2 force, glm::vec2 contact);
 
 		void applyForce(glm::vec2 force);
+		void applyForce(glm::vec2 force, glm::vec2 contact);
 
 		void applyForceFromOther(RigidBody* other, glm::vec2 force);
+		void applyForceFromOther(RigidBody* other, glm::vec2 force, glm::vec2 contact);
 
 		glm::vec2 getPosition() { return m_position; }
 		void setPosition(glm::vec2 position);
@@ -34,10 +39,20 @@ namespace physics
 		glm::vec2 getVelocity() { return m_velocity; }
 		void setVelocity(glm::vec2 velocity);
 
+		float getOrientation();
+		void setOrientation(float orientation);
+
+		float getAngularVelocity();
+		void setAngularVelocity(float angularVelocity);
+
 		float getMass();
 		void setMass(float mass);
 
 		float getInvMass();
+
+		float getMoment();
+
+		float getInvMoment();
 
 		virtual bool isStatic() { return m_static; };
 
@@ -47,9 +62,6 @@ namespace physics
 		inline bool isKinematic() { return m_invMass == 0; }
 
 		inline bool isDynamic() { return !(isKinematic() || isStatic()); };
-
-		float getOrientation() { return m_orientation; }
-		void setOrientation(float orientation);
 
 		virtual float calculateEnergy(glm::vec2 gravity);
 
@@ -67,12 +79,23 @@ namespace physics
 		
 		float m_mass;
 		float m_invMass;
+
+		float m_moment;
+		float m_invMoment;
+
 		float m_orientation;
+		float m_pastOrientation;
+
+		float m_angularVelocity;
+		float m_totalTorque;
 
 		bool m_static;
 		// TODO settings for controlling physics (gravity on/off, dynamic or static)
 
 		void seperateObjects(RigidBody* other, glm::vec2 displacement);
+
+		// Calculates moment of inertia using correct formula for shape
+		virtual void calculateMoment() = 0;
 	};
 
 }

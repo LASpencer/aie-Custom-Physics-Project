@@ -25,5 +25,7 @@ namespace physics {
 
 	protected:
 		float m_radius;
+
+		virtual void calculateMoment();
 	};
 }

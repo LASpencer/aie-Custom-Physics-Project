@@ -46,6 +46,7 @@ bool Application2D::startup() {
 	SpherePtr s1(new Sphere({ 20,0 }, { 0,0 }, 3, INFINITY));
 	SpherePtr s2(new Sphere({ -20,-10 }, { -26,-18 }, 3, 1));
 	SpringPtr spring(new Spring(10, 30, 0.1f, s1, s2));
+	s1->setAngularVelocity(1);
 	m_scene->addActor(s1);
 	m_scene->addActor(s2);
 	m_scene->addActor(spring);

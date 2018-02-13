@@ -40,8 +40,6 @@ TEST_CASE("Getters and Setters", "[joint],[spring]") {
 }
 
 TEST_CASE("Calculate energy", "[joint],[spring]") {
-	//TODO spring with a missing end has no energy
-	//TODO spring calculates energy correctly
 	SpherePtr s1(new Sphere({ 3,0 }, { 0,0 }, 1, 1));
 	SpherePtr s2(new Sphere({ 0,4 }, { 0,0 }, 1, 2.5f));
 	SpringPtr spring(new Spring(5, 7, 0, s1));
@@ -55,8 +53,6 @@ TEST_CASE("Calculate energy", "[joint],[spring]") {
 }
 
 TEST_CASE("Spring forces", "[joint],spring]") {
-	//TODO spring attached to bodies, call one earlyUpdate/fixedUpdate and check new velocity
-	//TODO also a case with damping, with velocity starting at some value
 	SpherePtr s1(new Sphere({ 3,-4 }, { 0,0 },1,1));
 	SpherePtr s2(new Sphere({ -3,4 }, { 0,0 }, 1,2.5f));
 	SpringPtr spring(new Spring(5, 8, 0, s1,s2));

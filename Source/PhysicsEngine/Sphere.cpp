@@ -3,18 +3,23 @@
 #include "Plane.h"
 
 physics::Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass, float elasticity, glm::vec4 colour)
-	: RigidBody(position,velocity, 0,mass,elasticity,colour), m_radius(radius)
+	: RigidBody(position,velocity, 0,mass,elasticity,0,colour), m_radius(radius)
 {
 
 	if (radius <= 0 || isnan(radius) || isinf(radius)) {
 		throw std::invalid_argument("Radius must be positive and finite");
 	}
+	calculateMoment();
 }
 
 void physics::Sphere::makeGizmo(float timeRatio)
 {
 	glm::vec2 interpolated = glm::mix(m_pastPosition, m_position, timeRatio );
 	aie::Gizmos::add2DCircle(interpolated, m_radius, 20, m_colour);		//TODO have segments be set as a constant
+	//TODO draw a line or dot at end to show orientation
+	float interpolatedRotate = glm::mix(m_pastOrientation, m_orientation, timeRatio);
+	glm::vec2 orient = { -sinf(interpolatedRotate), cosf(interpolatedRotate) };
+	aie::Gizmos::add2DLine(interpolated, interpolated + orient * m_radius, { 0,0,0,1 });
 }
 
 physics::Collision physics::Sphere::checkCollision(PhysicsObject * other)
@@ -57,4 +62,18 @@ void physics::Sphere::setRadius(float radius)
 		throw std::invalid_argument("Radius must be positive and finite");
 	}
 	m_radius = radius;
+	if (isDynamic()) {
+		calculateMoment();
+	}
+}
+
+void physics::Sphere::calculateMoment()
+{
+	m_moment = 0.5f * m_mass * m_radius * m_radius;
+	if (m_moment == INFINITY) {
+		m_invMoment = 0;
+	}
+	else {
+		m_invMoment = 1.f / m_moment;
+	}
 }
