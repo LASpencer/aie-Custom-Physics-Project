@@ -14,6 +14,7 @@ namespace physics {
 	class PhysicsObject;
 	class RigidBody;
 	class Sphere;
+	class Box;
 	class Plane;
 
 	typedef std::shared_ptr<PhysicsObject> PhysicsObjectPtr;
@@ -66,6 +67,7 @@ namespace physics {
 		//TODO maybe collision data should be passed by reference instead of the return value
 		virtual Collision checkCollision(PhysicsObject* other) = 0;
 		virtual Collision checkSphereCollision(Sphere* other) = 0;
+		virtual Collision checkBoxCollision(Box* other) = 0;
 		virtual Collision checkPlaneCollision(Plane* other) = 0;
 
 		virtual void resolveCollision(PhysicsObject* other, const Collision& col) = 0;
