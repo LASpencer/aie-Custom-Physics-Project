@@ -153,9 +153,27 @@ physics::Collision physics::Box::checkBoxCollision(Box * other)
 	if (collision.success) {
 		collision.normal = minAxis;
 		collision.depth = minOverlap;
-		// contact point is midway between edges on axis of collision
-		
+		// Find best edges involved in collision
+		Edge myEdge = findBestEdge(-minAxis);
+		Edge otherEdge = other->findBestEdge(minAxis);
+		// Clip each edge's endpoints to within the other
+		otherEdge.clip(myEdge.direction, glm::dot(myEdge.direction, myEdge.start));
+		otherEdge.clip(-myEdge.direction, glm::dot(-myEdge.direction, myEdge.end));
+		myEdge.clip(otherEdge.direction, glm::dot(otherEdge.direction, otherEdge.start));
+		myEdge.clip(-otherEdge.direction, glm::dot(-otherEdge.direction, otherEdge.end));
+		// TODO check for intersection to determine if triangle or quad manifold
+		glm::vec2 intersection;
+		bool linesIntersect = myEdge.checkIntersection(otherEdge, intersection);
+		if (linesIntersect) {
+			//TODO figure out what other two points are used
+			// TODO figure out contact from three points
 
+		}
+		else {
+			// TODO figure out contact point from four points
+			collision.contact = 0.25f * (myEdge.start + myEdge.end + otherEdge.start + otherEdge.end);
+		}
+		
 	}
 	return collision;
 }
@@ -247,4 +265,73 @@ std::array<glm::vec2, 4> physics::Box::getCorners()
 	glm::vec2 y = m_yExtent * m_localY;
 	return { m_position - x - y, m_position + x - y,
 			 m_position + x + y, m_position - x + y };
+}
+
+physics::Edge physics::Box::findBestEdge(glm::vec2 normal)
+{
+	Edge edge;
+	glm::vec2 first, second, direction;
+	bool positive;
+	float x = glm::dot(normal, m_localX);
+	float y = glm::dot(normal, m_localY);
+	
+	// Figure out if best edge is on x or y axis
+	if (abs(x) > abs(y)) {
+		first = m_localX * m_xExtent - m_localY * m_yExtent;
+		second = m_localX * m_xExtent + m_localY * m_yExtent;
+		direction = m_localY;
+		positive = x > 0;
+	}
+	else {
+		first = m_localY * m_yExtent + m_localX * m_xExtent;
+		second = m_localY * m_yExtent - m_localX * m_xExtent;
+		direction = -m_localX;
+		positive = y > 0;
+	}
+
+	// If on negative side, reverse vectors
+	if (positive) {
+		edge.start = m_position + first;
+		edge.end = m_position + second;
+		edge.direction = direction;
+	}
+	else {
+		edge.start = m_position - first;
+		edge.end = m_position - second;
+		edge.direction = -direction;
+	}
+	return edge;
+}
+
+void physics::Edge::clip(glm::vec2 normal, float offset)
+{
+	float startDistance = glm::dot(start, normal) - offset;
+	float endDistance = glm::dot(end, normal) - offset;
+	if (startDistance * endDistance < 0) {
+		// Proportion of edge at which zero is found
+		float zeroPoint = startDistance / (startDistance - endDistance);
+		glm::vec2 endpoint = start + zeroPoint * (end - start);
+		if (startDistance < 0) {
+			start = endpoint;
+		}
+		else {
+			end = endpoint;
+		}
+	}
+}
+
+bool physics::Edge::checkIntersection(Edge & const other, glm::vec2 & intersection)
+{
+	float det = (direction.y * other.direction.x) - (direction.x * other.direction.y);
+	if (det != 0) {
+		float detFactor = 1.f / det;
+		glm::vec2 displacement = other.start - start;
+		float myDistance = detFactor * glm::dot({ -other.direction.y, other.direction.x }, displacement);
+		float otherDistance = detFactor * glm::dot({ -direction.y, direction.x }, displacement);
+		if (myDistance >= 0 && otherDistance >= 0 && myDistance <= getLength() && otherDistance <= other.getLength()) {
+			intersection = start + myDistance * direction;
+			return true;
+		}
+	}
+	return false;
 }

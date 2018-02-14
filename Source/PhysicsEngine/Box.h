@@ -9,6 +9,18 @@ namespace physics {
 	typedef std::shared_ptr<Box> BoxPtr;
 	typedef std::weak_ptr<Box> BoxWeakPtr;
 
+	struct Edge {
+		glm::vec2 start;
+		glm::vec2 end;
+		glm::vec2 direction;
+		glm::vec2 getNormal() { return {direction.y, -direction.x}; };
+		float getLength() { return glm::dot(direction, end - start); }
+
+		void clip(glm::vec2 normal, float offset);
+
+		bool checkIntersection(Edge& const other, glm::vec2& intersection);
+	};
+
 	class Box : public RigidBody {
 	public:
 		Box(glm::vec2 position, float width, float height, float orientation,
@@ -34,10 +46,14 @@ namespace physics {
 
 		std::array<glm::vec2, 4> getCorners();
 
+		Edge findBestEdge(glm::vec2 normal);
+
 	protected:
 		float m_xExtent;
 		float m_yExtent;
 
 		virtual void calculateMoment();
 	};
+
+
 }

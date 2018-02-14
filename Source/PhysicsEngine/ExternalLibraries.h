@@ -9,5 +9,6 @@
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <glm/matrix.hpp>
 
 #include "Gizmos.h"
