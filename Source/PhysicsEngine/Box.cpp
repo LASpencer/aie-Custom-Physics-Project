@@ -1,5 +1,8 @@
 #include "Box.h"
 
+#include "Plane.h"
+#include "Sphere.h"
+
 physics::Box::Box(glm::vec2 position, float width, float height, float orientation, glm::vec2 velocity,
 	float angularVelocity, float mass, float elasticity, glm::vec4 colour) :
 	RigidBody(position,velocity,orientation,mass,elasticity,angularVelocity,colour), m_xExtent(0.5f * width), m_yExtent(0.5f * height)
@@ -34,6 +37,27 @@ physics::Collision physics::Box::checkCollision(PhysicsObject * other)
 	return other->checkBoxCollision(this);
 }
 
+physics::Collision physics::Box::checkSphereCollision(Sphere * other)
+{
+	glm::vec2 circleLocalPos = worldToLocalSpace(other->getPosition());
+	bool withinWidth = abs(circleLocalPos.x) <= m_xExtent;
+	bool withinHeight = abs(circleLocalPos.y) <= m_yExtent;
+	if (withinHeight && withinWidth) {
+		// TODO centre entirely within box
+	}
+	else if (withinWidth) {
+		//TODO check circle.y is less that yExtent + radius
+	}
+	else if (withinHeight) {
+		// TODO check circle.x is less than xExtent + radius
+	}
+	else {
+		// TODO check corner distances 
+	}
+
+	return Collision();
+}
+
 void physics::Box::calculateMoment()
 {
 	// based on 1/12 * m * width * height. Some sources say 1/12 * mass * (width^2 + height^2)
@@ -44,6 +68,34 @@ void physics::Box::calculateMoment()
 	else {
 		m_invMoment = 1.f / m_moment;
 	}
+}
+
+physics::Collision physics::Box::checkPlaneCollision(Plane * other)
+{
+	Collision collision(false, this, other);
+	std::array<glm::vec2, 4> corners = getCorners();
+	float minDistance = INFINITY;
+	float sumDepth = 0;
+	glm::vec2 contact = { 0,0 };
+	// Check each corner's distance to plane, and get lowest
+	for (size_t i = 0; i < 4; ++i) {
+		float distance = other->distanceToPoint(corners[i]);
+		if (distance < minDistance) {
+			minDistance = distance;
+		}
+		if (distance < 0) {
+			// If colliding, add to contact for weighted average
+			collision.success = true;
+			sumDepth += distance;
+			contact += corners[i] * distance;
+		}
+	}
+	if (collision.success) {
+		collision.depth = -minDistance;
+		collision.normal = other->getNormal();
+		collision.contact = contact / sumDepth;
+	}
+	return collision;
 }
 
 physics::ShapeType physics::Box::getShapeID()
@@ -85,4 +137,12 @@ glm::vec2 physics::Box::getXExtent()
 glm::vec2 physics::Box::getYExtent()
 {
 	return m_localY * m_yExtent;
+}
+
+std::array<glm::vec2, 4> physics::Box::getCorners()
+{
+	glm::vec2 x = m_xExtent * m_localX;
+	glm::vec2 y = m_yExtent * m_localY;
+	return { m_position - x - y, m_position + x - y,
+			 m_position + x + y, m_position - x + y };
 }

@@ -479,7 +479,7 @@ TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
 }
 
 TEST_CASE("Local to world coordinate conversion") {
-
+	REQUIRE(false);
 }
 
 TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {

@@ -276,6 +276,7 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 		if (col.first != this) {
 			normal = -normal;
 		}
+		// TODO URGENT relative velocity must include contact point's rotation
 		glm::vec2 relative = -getVelocity();
 		float normalRvel = glm::dot(relative, normal);
 		if (normalRvel > 0) {

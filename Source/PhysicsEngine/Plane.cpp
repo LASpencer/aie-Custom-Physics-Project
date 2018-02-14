@@ -1,5 +1,6 @@
 #include "Plane.h"
 #include "Sphere.h"
+#include "Box.h"
 
 physics::Plane::Plane(glm::vec2 normal, float distance, float elasticity, glm::vec4 colour)
 	: PhysicsObject(elasticity, colour), m_normal(glm::normalize(normal)), m_distance(distance)
@@ -44,9 +45,14 @@ physics::Collision physics::Plane::checkSphereCollision(Sphere * other)
 		collision.success = true;
 		collision.normal = m_normal;
 		collision.depth = other->getRadius() - distance;
-		collision.contact = other->getPosition() - m_normal * distance;
+		collision.contact = other->getPosition() - m_normal * other->getRadius();
 	}
 	return collision;
+}
+
+physics::Collision physics::Plane::checkBoxCollision(Box * other)
+{
+	return other->checkPlaneCollision(this);
 }
 
 physics::Collision physics::Plane::checkPlaneCollision(Plane * other)

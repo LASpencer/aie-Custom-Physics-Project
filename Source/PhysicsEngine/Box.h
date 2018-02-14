@@ -32,6 +32,8 @@ namespace physics {
 		glm::vec2 getXExtent();
 		glm::vec2 getYExtent();
 
+		std::array<glm::vec2, 4> getCorners();
+
 	protected:
 		float m_xExtent;
 		float m_yExtent;
