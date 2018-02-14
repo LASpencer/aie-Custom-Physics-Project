@@ -23,10 +23,10 @@ void physics::Box::makeGizmo(float timeRatio)
 	glm::vec2 interX = glm::mix(m_pastX, m_localX , timeRatio) * m_xExtent;
 	glm::vec2 interY = glm::mix(m_pastY, m_localY, timeRatio) * m_yExtent;
 
-	glm::vec2 p1 = m_position - interX - interY;
-	glm::vec2 p2 = m_position + interX - interY;
-	glm::vec2 p3 = m_position + interX + interY;
-	glm::vec2 p4 = m_position - interX + interY;
+	glm::vec2 p1 = interpPos - interX - interY;
+	glm::vec2 p2 = interpPos + interX - interY;
+	glm::vec2 p3 = interpPos + interX + interY;
+	glm::vec2 p4 = interpPos - interX + interY;
 
 	aie::Gizmos::add2DTri(p1, p2, p3, m_colour);
 	aie::Gizmos::add2DTri(p1, p3, p4, m_colour);
@@ -166,6 +166,7 @@ physics::Collision physics::Box::checkBoxCollision(Box * other)
 		bool linesIntersect = myEdge.checkIntersection(otherEdge, intersection);
 		if (linesIntersect) {
 			//TODO figure out what other two points are used
+			// Probably: get whichever from other is furthest "in" from collision normal, and based on that determine own point
 			// TODO figure out contact from three points
 
 		}
