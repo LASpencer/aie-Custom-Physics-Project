@@ -39,23 +39,125 @@ physics::Collision physics::Box::checkCollision(PhysicsObject * other)
 
 physics::Collision physics::Box::checkSphereCollision(Sphere * other)
 {
-	glm::vec2 circleLocalPos = worldToLocalSpace(other->getPosition());
-	bool withinWidth = abs(circleLocalPos.x) <= m_xExtent;
-	bool withinHeight = abs(circleLocalPos.y) <= m_yExtent;
-	if (withinHeight && withinWidth) {
-		// TODO centre entirely within box
-	}
-	else if (withinWidth) {
-		//TODO check circle.y is less that yExtent + radius
-	}
-	else if (withinHeight) {
-		// TODO check circle.x is less than xExtent + radius
+	Collision collision(true, this, other);
+	// Start by assuming collision
+	glm::vec2 displacement = other->getPosition() - m_position;
+	if (displacement != glm::zero<glm::vec2>()) {
+		glm::vec2 minAxis;
+		float minOverlap = INFINITY;
+		std::array<glm::vec2, 4> corners = getCorners();
+		// Get axes to test: x, y, and 
+		glm::vec2 axes[3] = { m_localX, m_localY, glm::normalize(displacement) };
+		// Test circle/box overlap on each axis
+		for(size_t a = 0; a < 3; ++a ) {
+			float boxMin = INFINITY;
+			float boxMax = -INFINITY;
+			for(size_t i = 0; i < 4; ++i ) {
+				float projection = glm::dot(corners[i], axes[a]);
+				boxMin = fmin(boxMin, projection);
+				boxMax = fmax(boxMax, projection);
+			}
+			float circleProjection = glm::dot(other->getPosition(), axes[a]);
+			float circleMax = circleProjection + other->getRadius();
+			float circleMin = circleProjection - other->getRadius();
+			float overlap = fmin(boxMax - circleMin, circleMax - boxMin);
+			if (overlap <= 0) {
+				// Axis separation found, so stop checking
+				collision.success = false;
+				break;
+			}
+			else if (overlap < minOverlap) {
+				//TODO if new smallest overlap, set axis and depth
+				minOverlap = overlap;
+				// If axis points to circle, reverse its direction
+				if (boxMax - circleMin < circleMax - boxMin) {
+					minAxis = -axes[a];
+				}
+				else {
+					minAxis = axes[a];
+				}
+
+			}
+		}
+		if (collision.success) {
+			collision.normal = minAxis;
+			collision.depth = minOverlap;
+			collision.contact = other->getPosition() + minAxis * (other->getRadius() - 0.5f * minOverlap);
+		}
 	}
 	else {
-		// TODO check corner distances 
+		// Circle is at position
+		// Collision normal is towards shortest axis
+		if (m_xExtent < m_yExtent) {
+			collision.normal = m_localX;
+			collision.contact = m_position;
+			collision.depth = m_xExtent + other->getRadius();
+		}
+		else {
+			collision.normal = m_localY;
+			collision.contact = m_position;
+			collision.depth = m_yExtent + other->getRadius();
+		}
 	}
 
-	return Collision();
+	return collision;
+}
+
+physics::Collision physics::Box::checkBoxCollision(Box * other)
+{
+	// Start by assuming collision
+	Collision collision(true, this, other);
+	std::array<glm::vec2, 4> myCorners = getCorners();
+	std::array<glm::vec2, 4> otherCorners = other->getCorners();
+	// Get axes to test
+	glm::vec2 axes[4] = { m_localX, m_localY, other->getLocalX(), other->getLocalY() };
+	glm::vec2 minAxis;
+	float minOverlap = INFINITY;
+	float myDistance, otherDistance; // Distance of points from overlap along axis
+	for (size_t a = 0; a < 4; ++a) {
+		// Get min and max projections along axis
+		float myMin = INFINITY;
+		float otherMin = INFINITY;
+		float myMax = -INFINITY;
+		float otherMax = -INFINITY;
+		for (size_t i = 0; i < 4; ++i) {
+			float myProjection = glm::dot(axes[a], myCorners[i]);
+			float otherProjection = glm::dot(axes[a], otherCorners[i]);
+			myMin = fmin(myMin, myProjection);
+			myMax = fmax(myMax, myProjection);
+			otherMin = fmin(otherMin, otherProjection);
+			otherMax = fmax(otherMax, otherProjection);
+		}
+		// Check overlap
+		float overlap = fmin(myMax - otherMin, otherMax - myMin);
+		if (overlap <= 0) {
+			// If negative, collision fails
+			collision.success = false;
+			break;
+		}
+		else if (overlap < minOverlap) {
+			// If new minimum, set as axis of collision
+			minOverlap = overlap;
+			if (myMax - otherMin < otherMax - myMin) {
+				minAxis = -axes[a];
+				myDistance = -myMax;
+				otherDistance = -otherMin;
+			}
+			else {
+				minAxis = axes[a];
+				myDistance = myMin;
+				otherDistance = otherMax;
+			}
+		}
+	}
+	if (collision.success) {
+		collision.normal = minAxis;
+		collision.depth = minOverlap;
+		// contact point is midway between edges on axis of collision
+		
+
+	}
+	return collision;
 }
 
 void physics::Box::calculateMoment()

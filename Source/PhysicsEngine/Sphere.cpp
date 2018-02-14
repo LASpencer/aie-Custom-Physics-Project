@@ -1,6 +1,7 @@
 #include "Sphere.h"
 #include "ExternalLibraries.h"
 #include "Plane.h"
+#include "Box.h"
 
 physics::Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass, float elasticity, glm::vec4 colour)
 	: RigidBody(position,velocity, 0,mass,elasticity,0,colour), m_radius(radius)
@@ -45,6 +46,11 @@ physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
 		collision.contact = (0.5f * collision.depth - m_radius) * collision.normal + m_position;
 	}
 	return collision;
+}
+
+physics::Collision physics::Sphere::checkBoxCollision(Box * other)
+{
+	return other->checkSphereCollision(this);
 }
 
 physics::Collision physics::Sphere::checkPlaneCollision(Plane * other)

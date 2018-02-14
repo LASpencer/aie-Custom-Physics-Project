@@ -42,6 +42,9 @@ namespace physics
 		float getOrientation();
 		void setOrientation(float orientation);
 
+		glm::vec2 getLocalX() { return m_localX; }
+		glm::vec2 getLocalY() { return m_localY; }
+
 		float getAngularVelocity();
 		void setAngularVelocity(float angularVelocity);
 
