@@ -30,6 +30,7 @@ namespace physics {
 
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);
+		virtual Collision checkBoxCollision(Box* other);
 		virtual Collision checkPlaneCollision(Plane* other);
 
 		virtual void resolveCollision(PhysicsObject* other, const Collision& col);

@@ -13,12 +13,12 @@ namespace physics {
 		glm::vec2 start;
 		glm::vec2 end;
 		glm::vec2 direction;
-		glm::vec2 getNormal() { return {direction.y, -direction.x}; };
-		float getLength() { return glm::dot(direction, end - start); }
+		glm::vec2 getNormal() const { return {direction.y, -direction.x}; };
+		float getLength() const { return glm::dot(direction, end - start); }
 
 		void clip(glm::vec2 normal, float offset);
 
-		bool checkIntersection(Edge& const other, glm::vec2& intersection);
+		bool checkIntersection(const Edge& other, glm::vec2& intersection) const;
 	};
 
 	class Box : public RigidBody {
@@ -36,10 +36,10 @@ namespace physics {
 		virtual ShapeType getShapeID();
 
 		float getWidth();
-		float setWidth(float width);
+		void setWidth(float width);
 
 		float getHeight();
-		float setHeight(float height);
+		void setHeight(float height);
 
 		glm::vec2 getXExtent();
 		glm::vec2 getYExtent();

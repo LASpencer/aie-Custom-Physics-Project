@@ -228,7 +228,7 @@ float physics::Box::getWidth()
 	return 2 * m_xExtent;
 }
 
-float physics::Box::setWidth(float width)
+void physics::Box::setWidth(float width)
 {
 	if (width <= 0 || isnan(width) || isinf(width)) {
 		throw std::invalid_argument("Width must be positive and finite");
@@ -241,7 +241,7 @@ float physics::Box::getHeight()
 	return 2 * m_yExtent;
 }
 
-float physics::Box::setHeight(float height)
+void physics::Box::setHeight(float height)
 {
 	if (height <= 0 || isnan(height) || isinf(height)) {
 		throw std::invalid_argument("Height must be positive and finite");
@@ -320,7 +320,7 @@ void physics::Edge::clip(glm::vec2 normal, float offset)
 	}
 }
 
-bool physics::Edge::checkIntersection(Edge & const other, glm::vec2 & intersection)
+bool physics::Edge::checkIntersection(const Edge & other, glm::vec2 & intersection) const
 {
 	float det = (direction.y * other.direction.x) - (direction.x * other.direction.y);
 	if (det != 0) {

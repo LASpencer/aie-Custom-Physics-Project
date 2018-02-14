@@ -2,6 +2,7 @@
 #include "RigidBody.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "Box.h"
 
 physics::Joint::Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec4 colour) 
 	: PhysicsObject(0.f,colour), m_end1(end1), m_end2(end2)
@@ -45,6 +46,11 @@ physics::Collision physics::Joint::checkCollision(PhysicsObject * other)
 physics::Collision physics::Joint::checkSphereCollision(Sphere * other)
 {
 	return Collision(false, this, other);
+}
+
+physics::Collision physics::Joint::checkBoxCollision(Box * other)
+{
+	return Collision(false, this,other);
 }
 
 physics::Collision physics::Joint::checkPlaneCollision(Plane * other)

@@ -210,7 +210,8 @@ float physics::RigidBody::calculateEnergy(glm::vec2 gravity)
 	if (isDynamic()) {
 		float potential = -glm::dot(m_position, gravity) * m_mass;
 		float kinetic = 0.5f * m_mass * glm::dot(m_velocity, m_velocity);
-		return potential + kinetic;
+		float rotational = 0.5f * m_moment * m_angularVelocity * m_angularVelocity;
+		return potential + kinetic + rotational;
 	}
 	else {
 		return 0;
@@ -256,7 +257,7 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 
 			// Apply impulse
 			float impulse = normalRvel * (1 + elasticity) / (invEffMass1 + invEffMass2);
-			applyImpulseFromOther(other, impulse * normal);
+			applyImpulseFromOther(other, impulse * normal, col.contact);
 		}
 		// Get new relative velocity
 		relative = other->getVelocity() - getVelocity();
@@ -276,13 +277,16 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 		if (col.first != this) {
 			normal = -normal;
 		}
+		glm::vec2 perpendicular(-normal.y, normal.x);
+		float radius = glm::dot(col.contact - m_position, perpendicular);
 		// TODO URGENT relative velocity must include contact point's rotation
 		glm::vec2 relative = -getVelocity();
-		float normalRvel = glm::dot(relative, normal);
+		float normalRvel = glm::dot(relative, normal) + radius * m_angularVelocity;
 		if (normalRvel > 0) {
+			float invEffMass = m_invMass + radius * radius * m_invMoment;
 			// Apply impulse
-			float impulse = normalRvel * (1 + elasticity) * m_mass;
-			applyImpulse(impulse * normal);
+			float impulse = normalRvel * (1 + elasticity) / invEffMass;
+			applyImpulse(impulse * normal, col.contact);
 		}
 		// TODO maybe only do it if not moving apart fast enough?
 		m_position += normal * col.depth;
