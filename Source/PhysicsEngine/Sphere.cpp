@@ -36,14 +36,17 @@ physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
 		collision.success = true;
 		if (distance != 0) {		//TODO use a "nearly zero" check instead
 			collision.normal = glm::normalize(displacement);
+			collision.depth = m_radius + other->m_radius - distance;
+
+			// point of contact is at half depth from edge
+			collision.contact = (0.5f * collision.depth - m_radius) * collision.normal + m_position;
 		}
 		else {
 			collision.normal = { 1,0 };
+			collision.depth = m_radius + other->m_radius;
+			collision.contact = m_position;
 		}
-		collision.depth = m_radius + other->m_radius - distance;
 
-		// point of contact is at half depth from edge
-		collision.contact = (0.5f * collision.depth - m_radius) * collision.normal + m_position;
 	}
 	return collision;
 }

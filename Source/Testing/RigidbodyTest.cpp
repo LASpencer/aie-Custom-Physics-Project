@@ -173,6 +173,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.second == &s2);
 		REQUIRE(vectorApprox(collision.normal, { -1,0 }));
 		REQUIRE(collision.depth == Approx(6.f));
+		REQUIRE(vectorApprox(collision.contact, { 2,0 }, k_margin));
 
 		s2.setPosition({ 0,9 });
 		collision = s1.checkSphereCollision(&s2);
@@ -181,6 +182,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.second == &s2);
 		REQUIRE(vectorApprox(collision.normal, {0,-1 }));
 		REQUIRE(collision.depth == Approx(1.f));
+		REQUIRE(vectorApprox(collision.contact, {0,4.5f }, k_margin));
 
 		s2.setRadius(1);
 		s2.setPosition({ -1,2 });
@@ -190,6 +192,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.second == &s2);
 		REQUIRE(vectorApprox(collision.normal, { 0.447, -0.894 }, 0.001f));
 		REQUIRE(collision.depth == Approx(3.7639f).margin(0.001f));
+		REQUIRE(vectorApprox(collision.contact, { -1.3937f, 2.7875f }, 0.01f));
 
 		s2.setPosition({ 0, 0 });
 		collision = s1.checkSphereCollision(&s2);
@@ -198,9 +201,7 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 		REQUIRE(collision.second == &s2);
 		REQUIRE(glm::length(collision.normal) == Approx(1));
 		REQUIRE(collision.depth == Approx(6.f));
-
-		//TODO calculate collision point for each
-		REQUIRE(false);
+		REQUIRE(collision.contact == glm::vec2(0, 0));
 	}
 }
 
@@ -215,14 +216,14 @@ TEST_CASE("Collision struct reversal", "[collision]") {
 	REQUIRE(col.second == &s2);
 	REQUIRE(vectorApprox(col.normal, { -1,0 }));
 	REQUIRE(col.depth == Approx(2.f));
+	REQUIRE(vectorApprox(col.contact, { 4,0 }, k_margin));
 	reverse = col.reverse();
 	REQUIRE(reverse.success == true);
 	REQUIRE(reverse.first == &s2);
 	REQUIRE(reverse.second == &s1);
 	REQUIRE(vectorApprox(reverse.normal, { 1,0 }));
 	REQUIRE(reverse.depth == Approx(2.f));
-	//TODO calculate collision point
-	REQUIRE(false);
+	REQUIRE(vectorApprox(col.contact, { 4,0 }, k_margin));
 }
 
 TEST_CASE("Plane constructor", "[plane]") {
@@ -314,6 +315,7 @@ TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 		REQUIRE(col.second == &p);
 		REQUIRE(vectorApprox(col.normal, { 1,0 }));
 		REQUIRE(col.depth == Approx(1));
+		REQUIRE(vectorApprox(col.contact, { 3,200 }, k_margin));
 
 		s.setPosition({ -10, 20 });
 		col = p.checkCollision(&s);
@@ -325,6 +327,7 @@ TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 		REQUIRE(col.second == &p);
 		REQUIRE(vectorApprox(col.normal, { 1,0 }));
 		REQUIRE(col.depth == Approx(19.f));
+		REQUIRE(vectorApprox(col.contact, { -15,20 }, k_margin));
 
 		s.setPosition({ 10, -2 });
 		col = p.checkCollision(&s);
@@ -471,23 +474,50 @@ TEST_CASE("Forces don't affect kinematic and static spheres", "[rigidbody],[sphe
 }
 
 TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
-	Sphere* s = new Sphere({ 0,0, }, { 0,0 }, 1);
+	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
 	s->setAngularVelocity(1);
 	s->fixedUpdate({ 0,0 }, 0.1f);
 	REQUIRE(s->getAngularVelocity() == 1.f);
 	REQUIRE(s->getOrientation() == Approx(0.1f));
 }
 
-TEST_CASE("Local to world coordinate conversion") {
-	REQUIRE(false);
-}
-
 TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
 	// TODO write tests for sphere moment of inertia calculations
-	REQUIRE(false);
+	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1, 1);
+	REQUIRE(s->getMoment() == Approx(0.5f));
+	REQUIRE(s->getInvMoment() == Approx(2));
+	s->setMass(3);
+	REQUIRE(s->getMoment() == Approx(1.5f));
+	REQUIRE(s->getInvMoment() == Approx(0.66667f).margin(0.0001f));
+	s->setRadius(2.5f);
+	REQUIRE(s->getMoment() == Approx(9.375f));
+	REQUIRE(s->getInvMoment() == Approx(0.10667f).margin(0.0001f));
+	
+	SECTION("Kinematic has infinite moment") {
+		s->setMass(0);
+		REQUIRE(s->getMoment() == INFINITY);
+		REQUIRE(s->getInvMoment() == 0);
+	}
+	SECTION("Static has infinite moment") {
+		s->setStatic(true);
+		REQUIRE(s->getMoment() == INFINITY);
+		REQUIRE(s->getInvMoment() == 0);
+	}
 }
 
 TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
 	// TODO write tests for applying torque
-	REQUIRE(false);
+	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 4, 3);
+	REQUIRE(s->getMoment() == Approx(24));
+	SECTION("Applying impulse") {
+		s->applyImpulse({ 0,2 }, { 3,0 });
+		REQUIRE(s->getAngularVelocity() == Approx(0.25f));
+		s->applyImpulse({ 3,0 }, {1,1});
+		REQUIRE(s->getAngularVelocity() == Approx(0.125f));
+	}
+	SECTION("Applying force") {
+		s->applyForce({ 3,2 }, { 3,1 });
+		s->fixedUpdate({ 0,0 }, 0.1f);
+		REQUIRE(s->getAngularVelocity() == Approx(0.0125f));
+	}
 }
