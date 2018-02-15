@@ -167,11 +167,41 @@ physics::Collision physics::Box::checkBoxCollision(Box * other)
 		if (linesIntersect) {
 			//TODO figure out what other two points are used
 			// Probably: get whichever from other is furthest "in" from collision normal, and based on that determine own point
-			// TODO figure out contact from three points
-
+			float otherAlignment = glm::dot(otherEdge.direction, collision.normal);
+			float myAlignment = glm::dot(myEdge.direction, collision.normal);
+			glm::vec2 myPoint, otherPoint;
+			// Check which edge is less perpendicular to collision normal
+			if (abs(otherAlignment) > abs(myAlignment)) {
+				if (otherAlignment > 0) {
+					// End of other is closest to me
+					otherPoint = otherEdge.end;
+					myPoint = myEdge.start;	// Known through winding
+				}
+				else {
+					// Start of other is closest to me
+					otherPoint = otherEdge.start;
+					myPoint = myEdge.end; // Known through winding
+				}
+			}
+			else {
+				// Since normal points to this, opposite of above case
+				if (myAlignment > 0) {
+					// My start is further behind edge
+					myPoint = myEdge.start;
+					otherPoint = otherEdge.end;
+				}
+				else {
+					// My end is further behind edge
+					myPoint = myEdge.end;
+					otherPoint = otherEdge.start;
+				}
+			}
+			// Triangle centroid is average
+			collision.contact = (myPoint + otherPoint + intersection) * (1.f / 3.f);
 		}
 		else {
-			// TODO figure out contact point from four points
+			// TODO maybe try centroid calculation?
+			// Average 
 			collision.contact = 0.25f * (myEdge.start + myEdge.end + otherEdge.start + otherEdge.end);
 		}
 		
