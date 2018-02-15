@@ -18,5 +18,5 @@ void physics::PhysicsObject::kill()
 
 void physics::PhysicsObject::setElasticity(float elasticity)
 {
-	m_elasticity = std::fmax(std::fmin(elasticity, 1.f), 0.f);
+	m_elasticity = std::max(std::min(elasticity, 1.f), 0.f);
 }

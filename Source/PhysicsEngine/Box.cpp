@@ -54,13 +54,13 @@ physics::Collision physics::Box::checkSphereCollision(Sphere * other)
 			float boxMax = -INFINITY;
 			for(size_t i = 0; i < 4; ++i ) {
 				float projection = glm::dot(corners[i], axes[a]);
-				boxMin = fmin(boxMin, projection);
-				boxMax = fmax(boxMax, projection);
+				boxMin = std::min(boxMin, projection);
+				boxMax = std::max(boxMax, projection);
 			}
 			float circleProjection = glm::dot(other->getPosition(), axes[a]);
 			float circleMax = circleProjection + other->getRadius();
 			float circleMin = circleProjection - other->getRadius();
-			float overlap = fmin(boxMax - circleMin, circleMax - boxMin);
+			float overlap = std::min(boxMax - circleMin, circleMax - boxMin);
 			if (overlap <= 0) {
 				// Axis separation found, so stop checking
 				collision.success = false;
@@ -123,13 +123,13 @@ physics::Collision physics::Box::checkBoxCollision(Box * other)
 		for (size_t i = 0; i < 4; ++i) {
 			float myProjection = glm::dot(axes[a], myCorners[i]);
 			float otherProjection = glm::dot(axes[a], otherCorners[i]);
-			myMin = fmin(myMin, myProjection);
-			myMax = fmax(myMax, myProjection);
-			otherMin = fmin(otherMin, otherProjection);
-			otherMax = fmax(otherMax, otherProjection);
+			myMin = std::min(myMin, myProjection);
+			myMax = std::max(myMax, myProjection);
+			otherMin = std::min(otherMin, otherProjection);
+			otherMax = std::max(otherMax, otherProjection);
 		}
 		// Check overlap
-		float overlap = fmin(myMax - otherMin, otherMax - myMin);
+		float overlap = std::min(myMax - otherMin, otherMax - myMin);
 		if (overlap <= 0) {
 			// If negative, collision fails
 			collision.success = false;
