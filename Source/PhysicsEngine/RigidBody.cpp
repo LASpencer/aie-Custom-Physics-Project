@@ -178,7 +178,6 @@ float physics::RigidBody::getOrientation()
 
 void physics::RigidBody::setOrientation(float orientation)
 {
-	// TODO decide if degrees should be used instead
 	m_orientation = orientation;	// TODO maybe limit to +- 2pi?
 	calculateAxes();
 }

@@ -453,6 +453,7 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 		}
 	}
 	delete s;
+	delete t;
 }
 
 //TODO set up and resolve collisions between dynamic and kinematic/static
@@ -471,6 +472,9 @@ TEST_CASE("Forces don't affect kinematic and static spheres", "[rigidbody],[sphe
 	REQUIRE(vectorApprox(s->getVelocity(), { -8,3 },k_margin));
 	u->applyImpulse(force);
 	REQUIRE(u->getVelocity() == glm::vec2(0, 0));
+	delete s;
+	delete t;
+	delete u;
 }
 
 TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
@@ -479,6 +483,7 @@ TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
 	s->fixedUpdate({ 0,0 }, 0.1f);
 	REQUIRE(s->getAngularVelocity() == 1.f);
 	REQUIRE(s->getOrientation() == Approx(0.1f));
+	delete s;
 }
 
 TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
@@ -503,6 +508,7 @@ TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
 		REQUIRE(s->getMoment() == INFINITY);
 		REQUIRE(s->getInvMoment() == 0);
 	}
+	delete s;
 }
 
 TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
@@ -520,4 +526,5 @@ TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
 		s->fixedUpdate({ 0,0 }, 0.1f);
 		REQUIRE(s->getAngularVelocity() == Approx(0.0125f));
 	}
+	delete s;
 }

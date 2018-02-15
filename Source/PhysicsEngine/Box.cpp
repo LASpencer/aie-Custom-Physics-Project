@@ -265,6 +265,7 @@ void physics::Box::setWidth(float width)
 		throw std::invalid_argument("Width must be positive and finite");
 	}
 	m_xExtent = 0.5f * width;
+	calculateMoment();
 }
 
 float physics::Box::getHeight()
@@ -278,6 +279,7 @@ void physics::Box::setHeight(float height)
 		throw std::invalid_argument("Height must be positive and finite");
 	}
 	m_yExtent = 0.5f * height;
+	calculateMoment();
 }
 
 glm::vec2 physics::Box::getXExtent()
