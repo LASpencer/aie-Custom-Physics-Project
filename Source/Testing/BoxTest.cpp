@@ -1,6 +1,8 @@
 #include "catch.hpp"
 
 #include "Box.h"
+#include "Sphere.h"
+#include "Plane.h"
 
 #include "Utility.h"
 
@@ -91,19 +93,74 @@ TEST_CASE("Local to world coordinate conversion") {
 
 TEST_CASE("Box-Box collision") {
 	//TODO collision tests
-	REQUIRE(false);
+	Box* b1 = new Box({ 0,0 }, 4, 3, 0);
+	Box* b2 = new Box({ 0,4 }, 3, 4, 0);
+
+	// Miss
+	Collision col = b1->checkBoxCollision(b2);
+	
+	REQUIRE_FALSE(col);
+
+	// Edge to edge
+	b2->setPosition({ 0,3 });
+	col = b1->checkBoxCollision(b2);
+	if (col.first != b1) {
+		col = col.reverse();
+	}
+
+	REQUIRE(col);
+	REQUIRE(vectorApprox(col.normal, { 0,-1 }));
+	REQUIRE(col.depth == Approx(0.5f));
+	REQUIRE(vectorApprox(col.contact, { 0,1.25f }, k_margin));
+
+	// TODO corner to edge
+	b2->setOrientation(0.5236f);
+	col = b1->checkBoxCollision(b2);
+	if (col.first != b1) {
+		col = col.reverse();
+	}
+
+	REQUIRE(col);
+	REQUIRE(vectorApprox(col.normal, { 0,-1 }));
+	REQUIRE(col.depth == Approx(0.982f).margin(0.001f));
+	REQUIRE(vectorApprox(col.contact, { 0.079f,1.173f }, 0.001f));
+
+	delete b1;
+	delete b2;
 }
 
 TEST_CASE("Box-Sphere collision") {
-	REQUIRE(false);
+	Box* b = new Box({ 0,0 }, 4, 3, 0);
+	Sphere* s = new Sphere({ 3,3 }, { 0,0 }, 1);
+	Collision col = b->checkSphereCollision(s);
+	REQUIRE_FALSE(col);
+	s->setPosition({ 2.5f,2 });
+	col = b->checkSphereCollision(s);
+	REQUIRE(col);
+	REQUIRE(vectorApprox(col.normal, { -0.7809f,-0.6247f }, 0.001f));
+	REQUIRE(col.depth == Approx(0.297f).margin(0.005f));
+	REQUIRE(vectorApprox(col.contact, { 1.835f,1.468f }, 0.005f));
+
+	delete b;
+	delete s;
 }
 
 TEST_CASE("Box-Plane collision") {
-	REQUIRE(false);
+	Box* b = new Box({ 0,0 }, 4, 3, 0);
+	Plane* p = new Plane({1,0},3);
+	Collision col = b->checkPlaneCollision(p);
+	REQUIRE_FALSE(col);
+	p->setDistance(1);
+	col = b->checkPlaneCollision(p);
+	REQUIRE(col);
+	REQUIRE(vectorApprox(col.normal, { 1,0 }));
+	REQUIRE(col.depth == Approx(1));
+	delete b;
+	delete p;
 }
 
 TEST_CASE("Moment of Inertia") {
-	//TODO calculate moment of inertia after changing mass, width, height
+	//calculate moment of inertia after changing mass, width, height
 	Box* b = new Box({ 0,0 }, 2, 3, 0);
 	SECTION("Moment of dynamic box") {
 		REQUIRE(b->getMoment() == Approx(0.5f));
@@ -145,7 +202,14 @@ TEST_CASE("Find best edge") {
 	delete b;
 }
 TEST_CASE("Clipping edges") {
-	//TODO test clipping edges against each other
+	Edge e1 = { {3,0},{10,0},{1,0} };
+	Edge e2 = { {12,3},{5,3},{-1,0} };
+	e1.clip({ -1,0 }, 12);	// No change
+	REQUIRE(e1.start.x == Approx(3));
+	REQUIRE(e1.end.x == Approx(10));
+	e1.clip({ 1,0 }, 5);	// cuts off start
+	REQUIRE(e1.start.x == Approx(5));
+	REQUIRE(e1.end.x == Approx(10));
 	// TODO test oblique case
 	REQUIRE(false);
 }

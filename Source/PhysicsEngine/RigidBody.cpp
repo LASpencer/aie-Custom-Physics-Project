@@ -295,6 +295,12 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 void physics::RigidBody::seperateObjects(RigidBody * other, glm::vec2 displacement)
 {
 	// TODO maybe proportion = 1/ (invMass + other->invMass), apply movement as proportion * invMass
+	 /*float total = m_invMass + other->m_invMass;
+	 if (total != 0) {
+	     float factor = 1.f / total;
+	     m_position += displacement * factor * m_invMass;
+	     other->m_position -= displacement * factor * other->m_invMass;
+	 }*/
 	float proportion = 1;
 	if (isDynamic() && other->isDynamic()) {
 		proportion = 0.5f;
