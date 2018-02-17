@@ -16,17 +16,22 @@ namespace physics {
 	// Base class for springs, any other joints
 	class Joint : public PhysicsObject {
 	public:
-		Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec4 colour);
+		Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec2 anchor1, glm::vec2 anchor2, glm::vec4 colour);
 		//TODO have ends connected at contact points (when rotational forces to be done)
 	
 		void fixedUpdate(glm::vec2 gravity, float timestep);
 
-		virtual bool setEnd1(RigidBodyPtr end);
-		virtual bool setEnd2(RigidBodyPtr end);
+		bool setEnd1(RigidBodyPtr end);
+		bool setEnd2(RigidBodyPtr end);
 
-		virtual RigidBodyPtr getEnd1() { return m_end1; }
-		virtual RigidBodyPtr getEnd2() { return m_end2; }
+		void setAnchor1(glm::vec2 anchorPoint);
+		void setAnchor2(glm::vec2 anchorPoint);
+
+		RigidBodyPtr getEnd1() { return m_end1; }
+		RigidBodyPtr getEnd2() { return m_end2; }
 		
+		glm::vec2 getAnchor1() { return m_anchor1; }
+		glm::vec2 getAnchor2() { return m_anchor2; }
 
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);
@@ -44,6 +49,9 @@ namespace physics {
 	protected:
 		RigidBodyPtr m_end1;
 		RigidBodyPtr m_end2;
+
+		glm::vec2 m_anchor1;
+		glm::vec2 m_anchor2;
 
 		void removeKilledEnd();
 	};

@@ -58,11 +58,12 @@ namespace physics {
 		virtual void earlyUpdate(float timestep) = 0;	//
 		virtual void fixedUpdate(glm::vec2 gravity, float timestep) = 0;
 		virtual void makeGizmo(float timeRatio) = 0;
-		virtual glm::vec4 getColour() { return m_colour; }
-		virtual void setColour(glm::vec4 colour) { m_colour = colour; }
+
+		glm::vec4 getColour() { return m_colour; }
+		void setColour(glm::vec4 colour) { m_colour = colour; }
 
 		float getElasticity() { return m_elasticity; };
-		virtual void setElasticity(float elasticity);
+		void setElasticity(float elasticity);
 
 		//TODO maybe collision data should be passed by reference instead of the return value
 		virtual Collision checkCollision(PhysicsObject* other) = 0;

@@ -9,7 +9,9 @@ namespace physics {
 
 	class Spring : public Joint {
 	public:
-		Spring(float tightness, float length, float damping, RigidBodyPtr end1 = RigidBodyPtr(), RigidBodyPtr end2 = RigidBodyPtr(), glm::vec4 colour = { 1,1,1,1 });
+		Spring(float tightness, float length, float damping, 
+			RigidBodyPtr end1 = RigidBodyPtr(), RigidBodyPtr end2 = RigidBodyPtr(), 
+			glm::vec2 anchor1 = { 0,0 }, glm::vec2 anchor2 = { 0,0 }, glm::vec4 colour = { 1,1,1,1 });
 
 		float getTightness() {return m_tightness;};
 		void setTightness(float tightness);

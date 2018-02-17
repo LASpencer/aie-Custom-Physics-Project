@@ -4,8 +4,8 @@
 #include "Plane.h"
 #include "Box.h"
 
-physics::Joint::Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec4 colour) 
-	: PhysicsObject(0.f,colour), m_end1(end1), m_end2(end2)
+physics::Joint::Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec2 anchor1, glm::vec2 anchor2, glm::vec4 colour)
+	: PhysicsObject(0.f,colour), m_end1(end1), m_end2(end2), m_anchor1(anchor1), m_anchor2(anchor2)
 {
 	if (m_end1 == m_end2) {
 		m_end2.reset();
@@ -36,6 +36,16 @@ bool physics::Joint::setEnd2(RigidBodyPtr end)
 	else {
 		return false;
 	}
+}
+
+void physics::Joint::setAnchor1(glm::vec2 anchorPoint)
+{
+	m_anchor1 = anchorPoint;
+}
+
+void physics::Joint::setAnchor2(glm::vec2 anchorPoint)
+{
+	m_anchor2 = anchorPoint;
 }
 
 physics::Collision physics::Joint::checkCollision(PhysicsObject * other)

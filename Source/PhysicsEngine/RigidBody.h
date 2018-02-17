@@ -66,9 +66,11 @@ namespace physics
 
 		inline bool isDynamic() { return !(isKinematic() || isStatic()); };
 
-		virtual glm::vec2 localToWorldSpace(glm::vec2 localPos);
+		glm::vec2 localToWorldSpace(glm::vec2 localPos);
 
-		virtual glm::vec2 worldToLocalSpace(glm::vec2 worldPos);
+		glm::vec2 pastLocalToWorldSpace(glm::vec2 localPos);
+
+		glm::vec2 worldToLocalSpace(glm::vec2 worldPos);
 
 		virtual float calculateEnergy(glm::vec2 gravity);
 

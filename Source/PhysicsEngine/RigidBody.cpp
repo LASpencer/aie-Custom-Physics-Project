@@ -197,6 +197,11 @@ glm::vec2 physics::RigidBody::localToWorldSpace(glm::vec2 localPos)
 	return m_position + localPos.x * m_localX + localPos.y * m_localY;
 }
 
+glm::vec2 physics::RigidBody::pastLocalToWorldSpace(glm::vec2 localPos)
+{
+	return m_pastPosition + m_pastX * localPos.x + m_pastY * localPos.y;
+}
+
 glm::vec2 physics::RigidBody::worldToLocalSpace(glm::vec2 worldPos)
 {
 	glm::vec2 displacement = worldPos - m_position;
