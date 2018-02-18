@@ -31,34 +31,34 @@ bool Application2D::startup() {
 	m_cameraY = 0;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.01f, { 0, -2 });
+	m_scene = new physics::PhysicsScene(0.01f, { 0, 0 });
 
 	//TODO put objects in scene
-	m_scene->addActor(new physics::Plane({ -1,0 }, 40));
-	m_scene->addActor(new physics::Plane({ -1,-1 }, 40));
-	m_scene->addActor(new physics::Plane({ 1,0 }, 40));
-	m_scene->addActor(new physics::Plane({ -1,1 }, 40, 0.8f));
-	m_scene->addActor(new physics::Plane({ 0,1 }, 40,0.8f));
+	//m_scene->addActor(new physics::Plane({ -1,0 }, 40));
+	//m_scene->addActor(new physics::Plane({ -1,-1 }, 40));
+	//m_scene->addActor(new physics::Plane({ 1,0 }, 40));
+	//m_scene->addActor(new physics::Plane({ -1,1 }, 40, 1));
+	//m_scene->addActor(new physics::Plane({ 0,1 }, 40, 1));
 
-	for (size_t i = 0; i < 10; ++i) {
-		//m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,-40 }, 3, 0.16f));
-		m_scene->addActor(new physics::Sphere({ -20,0 }, { 10,0.5f }, 3, 0.17f));
-		m_scene->addActor(new physics::Sphere({ 20,-20 }, { 0,0 }, 3, 0.17f));
-		m_scene->addActor(new physics::Box({ 0,10 }, 8, 3, 0.5f, { 10,-3 }, 0));
-		m_scene->addActor(new physics::Box({ 30,10 }, 5, 5, 0, { -2,-1 }, 5));
-	}
-
-	//SpherePtr s1(new Sphere({ 20,0 }, { 0,0 }, 3, INFINITY));
-	//s1->setAngularVelocity(1);
-	//m_scene->addActor(s1);
-
-	//for (size_t i = 0; i < 2; ++i) {
-	//	SpherePtr s2(new Sphere({ -20,-10 }, { -26,-18 }, 3, 1));
-	//	SpringPtr spring(new Spring(10, 30, 0.f, s1, s2));
-	//	s2->setAngularVelocity(-1);
-	//	m_scene->addActor(s2);
-	//	m_scene->addActor(spring);
+	//for (size_t i = 0; i < 10; ++i) {
+	//	m_scene->addActor(new physics::Sphere({ 20,0 }, { 0,-40 }, 3, 0.16f));
+	//	m_scene->addActor(new physics::Sphere({ -20,0 }, { 10,0.5f }, 3, 0.17f));
+	//	m_scene->addActor(new physics::Sphere({ 20,-20 }, { 0,0 }, 3, 0.17f));
+	//	m_scene->addActor(new physics::Box({ 0,10 }, 8, 3, 0.5f, { 10,-3 }, 0));
+	//	m_scene->addActor(new physics::Box({ 30,10 }, 5, 5, 0, { -2,-1 }, 5));
 	//}
+
+	SpherePtr s1(new Sphere({ 10,0 }, { 0,0 }, 3, 1));
+	//s1->setAngularVelocity(1);
+	m_scene->addActor(s1);
+
+	for (size_t i = 0; i < 1; ++i) {
+		SpherePtr s2(new Sphere({ 5,-3 }, { 0,0 }, 3, 1));
+		SpringPtr spring(new Spring(100.f, 20,3.f, s1, s2, { 0,3 }, { 0,3 }));
+		//s2->setAngularVelocity(-1);
+		m_scene->addActor(s2);
+		m_scene->addActor(spring);
+	}
 
 	return true;
 }
