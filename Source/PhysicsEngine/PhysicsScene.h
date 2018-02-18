@@ -1,6 +1,8 @@
 #pragma once
 #include "ExternalLibraries.h"
 
+#include "IFixedUpdater.h"
+
 namespace physics {
 	class PhysicsObject;
 	struct Collision;
@@ -23,6 +25,15 @@ namespace physics {
 		bool removeActor(PhysicsObjectPtr actor);
 		// TODO have some kind of FixedUpdateListener object that can have FixedUpdate called
 
+		bool inScene(IFixedUpdater* updater);
+		bool inScene(FixedUpdaterPtr updater);
+
+		bool addUpdater(IFixedUpdater* updater);
+		bool addUpdater(FixedUpdaterPtr updater);
+
+		bool removeUpdater(IFixedUpdater* updater);	
+		bool removeUpdater(FixedUpdaterPtr updater);
+
 		void update(float deltaTime);
 	
 
@@ -40,7 +51,9 @@ namespace physics {
 		glm::vec2 m_gravity;
 		float m_timeStep;
 		float m_accumulatedTime;
-		std::vector<PhysicsObjectPtr> m_actors;		//TODO start using smart pointers
+		std::vector<PhysicsObjectPtr> m_actors;
+		std::vector<FixedUpdaterPtr> m_updaters;
+		// TODO some flag to check if in loop, and toAdd and toRemove lists
 
 		void updateGizmos();
 

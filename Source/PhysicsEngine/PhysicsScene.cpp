@@ -50,8 +50,6 @@ bool physics::PhysicsScene::addActor(PhysicsObjectPtr actor)
 
 bool physics::PhysicsScene::removeActor(PhysicsObject * actor)
 {
-	//TODO rewrite so m_actors won't be changed during loop
-	// maybe change to shared_ptr or have a "will die" flag to avoid dangling pointers
 	m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [actor](PhysicsObjectPtr a) {return a.get() == actor; }), m_actors.end());
 	actor->kill();
 	return true;
@@ -64,6 +62,42 @@ bool physics::PhysicsScene::removeActor(PhysicsObjectPtr actor)
 	return true;
 }
 
+bool physics::PhysicsScene::inScene(IFixedUpdater * actor)
+{
+	// TODO
+	return false;
+}
+
+bool physics::PhysicsScene::inScene(FixedUpdaterPtr actor)
+{
+	//TODO
+	return false;
+}
+
+bool physics::PhysicsScene::addUpdater(IFixedUpdater * updater)
+{
+	//TODO
+	return false;
+}
+
+bool physics::PhysicsScene::addUpdater(FixedUpdaterPtr updater)
+{
+	//TODO
+	return false;
+}
+
+bool physics::PhysicsScene::removeUpdater(IFixedUpdater * updater)
+{
+	//TODO
+	return false;
+}
+
+bool physics::PhysicsScene::removeUpdater(FixedUpdaterPtr updater)
+{
+	//TODO
+	return false;
+}
+
 void physics::PhysicsScene::update(float deltaTime)
 {
 	m_accumulatedTime += deltaTime;
@@ -71,6 +105,9 @@ void physics::PhysicsScene::update(float deltaTime)
 	while (m_accumulatedTime >= m_timeStep) {
 
 		// TODO inform other objects about fixed update
+		for (auto updater : m_updaters) {
+			updater->fixedUpdate(this);
+		}
 		for (auto actor : m_actors) {
 			actor->earlyUpdate(this);
 		}
@@ -81,7 +118,7 @@ void physics::PhysicsScene::update(float deltaTime)
 		for (auto firstActor = m_actors.begin(); firstActor != m_actors.end(); ++firstActor) {
 			// TODO skip if set to not collide
 			// TODO skip if killed
-			for (auto otherActor = firstActor + 1; otherActor != m_actors.end(); ++otherActor) {
+			for (auto otherActor = std::next(firstActor,1); otherActor != m_actors.end(); ++otherActor) {
 				// TODO skip if set to not collide
 				// TODO skip if killed
 				// TODO check layers and masks

@@ -60,7 +60,6 @@ void physics::Spring::earlyUpdate(PhysicsScene* scene)
 		// get relative velocity along spring, multiply by damping
 		
 		// Calculate movement along spring due to rotation
-		// TODO write tests to make sure signs are right
 		float rot1 = glm::dot(pos1 - m_end1->getPosition(), -perpendicular) * m_end1->getAngularVelocity();
 		float rot2 = glm::dot(pos2 - m_end2->getPosition(), perpendicular) * m_end2->getAngularVelocity();
 

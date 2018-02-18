@@ -8,12 +8,6 @@
 
 using namespace physics;
 
-//TODO testing rigidbody updating, applying forces to bodies, reaction forces, testing collision resolution
-
-// TODO decide whether zero/infinite mass is allowed, and test for that
-
-//TODO test cases for rotation: object rotates over time, apply torque, calculating moment of inertia, etc
-
 TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 	SECTION("Mass must be positive") {
 		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1, -1));
@@ -30,9 +24,6 @@ TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 
 TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
 	Sphere s(glm::vec2(1, 2), glm::vec2(3, 4), 5, 6);
-	// TODO check static cannot have mass or velocity changed
-	// TODO check setting static makes it infinite mass
-	// TODO check invMass
 	SECTION("Dynamic Sphere") {
 		SECTION("Getters") {
 			REQUIRE(s.getPosition() == glm::vec2(1, 2));
@@ -377,7 +368,7 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 			REQUIRE(vectorApprox(t->getVelocity(), { -2.84f,6.58f }, k_margin));
 			REQUIRE(vectorApprox(t->getPosition(), { -0.284f, 0.658f }, k_margin));
 		}
-		// TODO may have to change tests/margins based on decisions re position error vs energy error
+		// HACK may have to change tests/margins based on decisions re position error vs energy error
 		SECTION("Sphere velocity changes on force applied") {
 			s->setVelocity({ -3,6.5f });
 			t->setVelocity({ -3,6.5f });
@@ -436,7 +427,6 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 			}
 		}
 		SECTION("Reaction forces") {
-			//TODO apply force to other sphere
 			SECTION("Stationary") {
 				glm::vec2 force = {8,-3};
 				glm::vec2 startMomentum = s->calculateMomentum() + t->calculateMomentum();
@@ -496,7 +486,6 @@ TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
 }
 
 TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
-	// TODO write tests for sphere moment of inertia calculations
 	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1, 1);
 	REQUIRE(s->getMoment() == Approx(0.5f));
 	REQUIRE(s->getInvMoment() == Approx(2));
@@ -521,7 +510,6 @@ TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
 }
 
 TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
-	// TODO write tests for applying torque
 	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 4, 3);
 	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,0 });
 	REQUIRE(s->getMoment() == Approx(24));
