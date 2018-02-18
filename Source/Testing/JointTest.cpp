@@ -73,4 +73,20 @@ TEST_CASE("Spring forces", "[joint],spring]") {
 		// Total damping force of 2
 		REQUIRE(vectorApprox(s1->getVelocity(), { -0.48f, 0.64f }, k_margin));
 	}
+	SECTION("Revolving objects") {
+		spring->setAnchor1({1, 0});
+		spring->setAnchor2({ 1,0 }); 
+		// Direction = {-0.6f,0.8f}, perpendicular = {-0.8f, -0.6f}
+		spring->setDamping(2);
+		SECTION("revolving towards") {
+			s1->setAngularVelocity(1);
+			// Velocity = 0.8, damping force 1.6
+
+			spring->earlyUpdate(0.1f);
+			s1->fixedUpdate({ 0,0 }, 0.1f);
+			s2->fixedUpdate({ 0,0 }, 0.1f);
+			REQUIRE(vectorApprox(s1->getVelocity(), { -0.504f, 0.672f }, k_margin));
+
+		}
+	}
 }
