@@ -4,6 +4,7 @@
 namespace physics {
 
 	class Joint;
+	class PhysicsScene;
 
 	typedef std::shared_ptr<Joint> JointPtr;
 	typedef std::weak_ptr<Joint> JointWeakPtr;
@@ -19,7 +20,7 @@ namespace physics {
 		Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec2 anchor1, glm::vec2 anchor2, glm::vec4 colour);
 		//TODO have ends connected at contact points (when rotational forces to be done)
 	
-		void fixedUpdate(glm::vec2 gravity, float timestep);
+		void fixedUpdate(PhysicsScene* scene);
 
 		bool setEnd1(RigidBodyPtr end);
 		bool setEnd2(RigidBodyPtr end);

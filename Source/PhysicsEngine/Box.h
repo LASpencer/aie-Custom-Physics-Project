@@ -5,6 +5,7 @@
 
 namespace physics {
 	class Box;
+	class PhysicsScene;
 
 	typedef std::shared_ptr<Box> BoxPtr;
 	typedef std::weak_ptr<Box> BoxWeakPtr;

@@ -1,6 +1,7 @@
 #include "Plane.h"
 #include "Sphere.h"
 #include "Box.h"
+#include "PhysicsScene.h"
 
 physics::Plane::Plane(glm::vec2 normal, float distance, float elasticity, glm::vec4 colour)
 	: PhysicsObject(elasticity, colour), m_normal(glm::normalize(normal)), m_distance(distance)
@@ -13,11 +14,11 @@ physics::Plane::Plane(glm::vec2 normal, float distance, float elasticity, glm::v
 	}
 }
 
-void physics::Plane::earlyUpdate(float timeStep)
+void physics::Plane::earlyUpdate(PhysicsScene* scene)
 {
 }
 
-void physics::Plane::fixedUpdate(glm::vec2 gravity, float timeStep)
+void physics::Plane::fixedUpdate(PhysicsScene* scene)
 {
 	// Do nothing
 }

@@ -18,7 +18,7 @@ TEST_CASE("Two billiard balls", "[simulation]") {
 	scene->addActor(cueBall);
 	scene->addActor(eightBall);
 	SECTION("Head on collision") {
-		float initialEnergy = cueBall->calculateEnergy({ 0,0 }) + eightBall->calculateEnergy({ 0,0 });
+		float initialEnergy = cueBall->calculateEnergy(scene) + eightBall->calculateEnergy(scene);
 		glm::vec2 initialMomentum = cueBall->calculateMomentum() + eightBall->calculateMomentum();
 
 		glm::vec2 cueFinalVelocity = { 0.336666f,0 };
@@ -27,7 +27,7 @@ TEST_CASE("Two billiard balls", "[simulation]") {
 		// After 2 seconds, spheres should have collided
 		scene->update(2);
 
-		float finalEnergy = cueBall->calculateEnergy({ 0,0 }) + eightBall->calculateEnergy({ 0,0 });
+		float finalEnergy = cueBall->calculateEnergy(scene) + eightBall->calculateEnergy(scene);
 		glm::vec2 finalMomentum = cueBall->calculateMomentum() + eightBall->calculateMomentum();
 
 		REQUIRE(finalEnergy == Approx(initialEnergy));

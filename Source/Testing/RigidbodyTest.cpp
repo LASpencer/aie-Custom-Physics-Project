@@ -2,6 +2,7 @@
 
 #include "Sphere.h"
 #include "Plane.h"
+#include "PhysicsScene.h"
 
 #include "Utility.h"
 
@@ -101,13 +102,14 @@ TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
 
 TEST_CASE("Sphere energy and momentum", "[rigidbody],[sphere],[energy],[momentum]") {
 	Sphere s(glm::vec2(0,0), glm::vec2(3, 4), 5, 4);
-	glm::vec2 gravity = { 0,-10 };
+	PhysicsScene* gravity = new PhysicsScene(0.1f, { 0,-10 });
+	PhysicsScene* noGravity = new PhysicsScene(0.1f, { 0,0 });
 	SECTION("Kinetic energy") {
-		REQUIRE(s.calculateEnergy({ 0,0 }) == Approx(50));
+		REQUIRE(s.calculateEnergy(noGravity) == Approx(50));
 		s.setMass(10);
-		REQUIRE(s.calculateEnergy({ 0,0 }) == Approx(125));
+		REQUIRE(s.calculateEnergy(noGravity) == Approx(125));
 		s.setVelocity({ -8,2 });
-		REQUIRE(s.calculateEnergy({ 0,0 }) == Approx(340));
+		REQUIRE(s.calculateEnergy(noGravity) == Approx(340));
 	}
 	SECTION("Potential energy") {
 		s.setVelocity({ 0,0 });
@@ -123,7 +125,7 @@ TEST_CASE("Sphere energy and momentum", "[rigidbody],[sphere],[energy],[momentum
 			REQUIRE(s.calculateEnergy(gravity) == Approx(-75));
 		}
 		SECTION("Other gravity direction") {
-			gravity = { -5,7 };
+			gravity->setGravity({ -5,7 });
 			s.setPosition({ 3,5 });
 			REQUIRE(s.calculateEnergy(gravity) == Approx(-80));
 			s.setPosition({ 5,-2 });
@@ -154,6 +156,8 @@ TEST_CASE("Sphere energy and momentum", "[rigidbody],[sphere],[energy],[momentum
 		REQUIRE(s.calculateEnergy(gravity) == 0);
 		REQUIRE(s.calculateMomentum() == glm::vec2(0, 0));
 	}
+	delete gravity;
+	delete noGravity;
 }
 
 
@@ -256,8 +260,10 @@ TEST_CASE("Plane setters", "[plane]") {
 
 TEST_CASE("Planes don't have energy or momentum", "[plane],[energy],[momentum]") {
 	Plane p({ 1,0 }, 0);
-	REQUIRE(p.calculateEnergy({ 0,-10 }) == 0);
+	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,-10 });
+	REQUIRE(p.calculateEnergy(scene) == 0);
 	REQUIRE(p.calculateMomentum() == glm::vec2(0));
+	delete scene;
 }
 
 TEST_CASE("Plane to point distance", "[plane], [collision]") {
@@ -338,22 +344,21 @@ TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
 	Sphere* t = new Sphere({ 0,0 }, { 0,0 }, 1, 2.5f);
-	float timestep = 0.1f;
-	glm::vec2 noGravity = { 0,0 };
-	glm::vec2 gravity = { 0,-10 };
+	PhysicsScene* gravity = new PhysicsScene(0.1f, { 0,-10 });
+	PhysicsScene* noGravity = new PhysicsScene(0.1f, { 0,0 });
 	SECTION("Sphere kinematic motion") {
 		SECTION("Sphere at rest stays at rest") {
-			s->fixedUpdate(noGravity, timestep);
+			s->fixedUpdate(noGravity);
 			REQUIRE(vectorApprox(s->getPosition(), { 0,0 }));
 			REQUIRE(vectorApprox(s->getVelocity(), { 0,0 }));
 		}
 		SECTION("Sphere moves") {
 			s->setVelocity({ 2,-1 });
-			s->fixedUpdate(noGravity, timestep);
+			s->fixedUpdate(noGravity);
 			REQUIRE(vectorApprox(s->getPosition(), { 0.2f,-0.1f }, k_margin));
 			REQUIRE(vectorApprox(s->getVelocity(), { 2,-1 }));
 			for (int i = 0; i < 5; ++i) {
-				s->fixedUpdate(noGravity, timestep);
+				s->fixedUpdate(noGravity);
 			}
 			REQUIRE(vectorApprox(s->getPosition(), { 1.2f,-0.6f }, k_margin));
 		}
@@ -364,11 +369,11 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 			t->setVelocity({ -3,6.5f });
 			glm::vec2 force = { 0.4f, 0.2f };
 			s->applyImpulse(force);
-			s->fixedUpdate(noGravity, timestep);
+			s->fixedUpdate(noGravity);
 			REQUIRE(vectorApprox(s->getVelocity(), { -2.6f,6.7f }, k_margin));
 			REQUIRE(vectorApprox(s->getPosition(), { -0.26f, 0.67f }, k_margin));
 			t->applyImpulse(force);
-			t->fixedUpdate(noGravity, timestep);
+			t->fixedUpdate(noGravity);
 			REQUIRE(vectorApprox(t->getVelocity(), { -2.84f,6.58f }, k_margin));
 			REQUIRE(vectorApprox(t->getPosition(), { -0.284f, 0.658f }, k_margin));
 		}
@@ -379,17 +384,17 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 			glm::vec2 force = { 3, -2 };
 			s->applyForce(force);
 			t->applyForce(force);
-			s->fixedUpdate(noGravity, timestep);
+			s->fixedUpdate(noGravity);
 			REQUIRE(vectorApprox(s->getVelocity(), { -2.7f,6.3f }, k_margin));
 			REQUIRE(vectorApprox(s->getPosition(), { -0.27f, 0.63f }, k_margin));
-			t->fixedUpdate(noGravity, timestep);
+			t->fixedUpdate(noGravity);
 			REQUIRE(vectorApprox(t->getVelocity(), { -2.88f,6.42f }, k_margin));
 			REQUIRE(vectorApprox(t->getPosition(), { -0.288f, 0.642f }, k_margin));
 		}
 		SECTION("Gravity") {
 			SECTION("Stationary") {
-				s->fixedUpdate(gravity, timestep);
-				t->fixedUpdate(gravity, timestep);
+				s->fixedUpdate(gravity);
+				t->fixedUpdate(gravity);
 				REQUIRE(vectorApprox(s->getVelocity(), { 0,-1 }, k_margin));
 				REQUIRE(vectorApprox(t->getVelocity(), { 0,-1 }, k_margin));
 			}
@@ -397,8 +402,8 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 				float startEnergyS = s->calculateEnergy(gravity);
 				float startEnergyT = t->calculateEnergy(gravity);
 				for (int i = 0; i < 50; ++i) {
-					s->fixedUpdate(gravity, timestep);
-					t->fixedUpdate(gravity, timestep);
+					s->fixedUpdate(gravity);
+					t->fixedUpdate(gravity);
 				}
 				glm::vec2 expectedPosition = { 0, -125 };	// 0.5 * a * t^2 = 0.5 * -10 * 5^2
 				float error = 2.5001f; // timestep * time * gravity /2
@@ -416,8 +421,8 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 				float startEnergyS = s->calculateEnergy(gravity);
 				float startEnergyT = t->calculateEnergy(gravity);
 				for (int i = 0; i < 50; ++i) {
-					s->fixedUpdate(gravity, timestep);
-					t->fixedUpdate(gravity, timestep);
+					s->fixedUpdate(gravity);
+					t->fixedUpdate(gravity);
 				}
 				glm::vec2 expectedPosition = { 40, -25 };
 				float error = 2.5001f; // timestep * time * gravity /2
@@ -443,8 +448,8 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 				}
 				SECTION("Force") {
 					s->applyForceFromOther(t, force);
-					s->fixedUpdate(noGravity, timestep);
-					t->fixedUpdate(noGravity, timestep);
+					s->fixedUpdate(noGravity);
+					t->fixedUpdate(noGravity);
 					REQUIRE(vectorApprox(s->getVelocity(), { 0.8f,-0.3f }, k_margin));
 					REQUIRE(vectorApprox(t->getVelocity(), { -0.32f,0.12f }, k_margin));
 					REQUIRE(vectorApprox(s->calculateMomentum() + t->calculateMomentum(), startMomentum, k_margin));
@@ -454,6 +459,8 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 	}
 	delete s;
 	delete t;
+	delete gravity;
+	delete noGravity;
 }
 
 //TODO set up and resolve collisions between dynamic and kinematic/static
@@ -479,11 +486,13 @@ TEST_CASE("Forces don't affect kinematic and static spheres", "[rigidbody],[sphe
 
 TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
 	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
+	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,0 });
 	s->setAngularVelocity(1);
-	s->fixedUpdate({ 0,0 }, 0.1f);
+	s->fixedUpdate(scene);
 	REQUIRE(s->getAngularVelocity() == 1.f);
 	REQUIRE(s->getOrientation() == Approx(0.1f));
 	delete s;
+	delete scene;
 }
 
 TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
@@ -514,6 +523,7 @@ TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
 TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
 	// TODO write tests for applying torque
 	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 4, 3);
+	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,0 });
 	REQUIRE(s->getMoment() == Approx(24));
 	SECTION("Applying impulse") {
 		s->applyImpulse({ 0,2 }, { 3,0 });
@@ -523,8 +533,9 @@ TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
 	}
 	SECTION("Applying force") {
 		s->applyForce({ 3,2 }, { 3,1 });
-		s->fixedUpdate({ 0,0 }, 0.1f);
+		s->fixedUpdate(scene);
 		REQUIRE(s->getAngularVelocity() == Approx(0.0125f));
 	}
 	delete s;
+	delete scene;
 }

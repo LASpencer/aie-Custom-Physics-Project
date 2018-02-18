@@ -1,6 +1,7 @@
 #include "RigidBody.h"
 #include "ExternalLibraries.h"
 
+#include "PhysicsScene.h"
 #include "Plane.h"
 
 physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, glm::vec4 colour)
@@ -30,11 +31,11 @@ physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orie
 	m_pastY = m_localY;
 }
 
-void physics::RigidBody::earlyUpdate(float timestep)
+void physics::RigidBody::earlyUpdate(PhysicsScene* scene)
 {
 }
 
-void physics::RigidBody::fixedUpdate(glm::vec2 gravity, float timestep)
+void physics::RigidBody::fixedUpdate(PhysicsScene* scene)
 {
 	// Update previous position
 	m_pastPosition = m_position; 
@@ -42,12 +43,12 @@ void physics::RigidBody::fixedUpdate(glm::vec2 gravity, float timestep)
 	m_pastY = m_localY;
 	if (!m_static) {
 		if (!isKinematic()) {
-			applyForce(gravity * m_mass);
-			applyImpulse(m_totalForce * timestep);
-			m_angularVelocity += m_totalTorque * m_invMoment * timestep;
+			applyForce(scene->getGravity() * m_mass);
+			applyImpulse(m_totalForce * scene->getTimeStep());
+			m_angularVelocity += m_totalTorque * m_invMoment * scene->getTimeStep();
 		}
-		m_position +=  m_velocity * timestep;
-		m_orientation += m_angularVelocity * timestep;
+		m_position +=  m_velocity * scene->getTimeStep();
+		m_orientation += m_angularVelocity * scene->getTimeStep();
 		// TODO modulus of 2pi?
 		// TODO threshold contraints on velocity/angular velocity
 		calculateAxes();
@@ -208,11 +209,11 @@ glm::vec2 physics::RigidBody::worldToLocalSpace(glm::vec2 worldPos)
 	return { glm::dot(displacement, m_localX), glm::dot(displacement, m_localY) };
 }
 
-float physics::RigidBody::calculateEnergy(glm::vec2 gravity)
+float physics::RigidBody::calculateEnergy(PhysicsScene* scene)
 {
 	// TODO change to work with static/kinematic
 	if (isDynamic()) {
-		float potential = -glm::dot(m_position, gravity) * m_mass;
+		float potential = -glm::dot(m_position, scene->getGravity()) * m_mass;
 		float kinetic = 0.5f * m_mass * glm::dot(m_velocity, m_velocity);
 		float rotational = 0.5f * m_moment * m_angularVelocity * m_angularVelocity;
 		return potential + kinetic + rotational;

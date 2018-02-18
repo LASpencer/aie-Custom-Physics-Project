@@ -72,10 +72,10 @@ void physics::PhysicsScene::update(float deltaTime)
 
 		// TODO inform other objects about fixed update
 		for (auto actor : m_actors) {
-			actor->earlyUpdate(m_timeStep);
+			actor->earlyUpdate(this);
 		}
 		for (auto actor : m_actors) {
-			actor->fixedUpdate(m_gravity, m_timeStep);
+			actor->fixedUpdate(this);
 		}
 		// TODO collision detection
 		for (auto firstActor = m_actors.begin(); firstActor != m_actors.end(); ++firstActor) {
@@ -137,7 +137,7 @@ float physics::PhysicsScene::calculateEnergy()
 {
 	float energy = 0;
 	for (auto actor : m_actors) {
-		energy += actor->calculateEnergy(m_gravity);
+		energy += actor->calculateEnergy(this);
 	}
 	return energy;
 }

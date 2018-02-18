@@ -3,6 +3,7 @@
 
 namespace physics {
 	class Spring;
+	class PhysicsScene;
 
 	typedef std::shared_ptr<Spring> SpringPtr;
 	typedef std::weak_ptr<Spring> SpringWeakPtr;
@@ -22,13 +23,13 @@ namespace physics {
 		float getDamping() { return m_damping; };
 		void setDamping(float damping);
 
-		virtual void earlyUpdate(float timestep);
+		virtual void earlyUpdate(PhysicsScene* scene);
 
 		virtual void makeGizmo(float timeRatio);
 
 		virtual ShapeType getShapeID() { return ShapeType::spring; };
 
-		virtual float calculateEnergy(glm::vec2 gravity);
+		virtual float calculateEnergy(PhysicsScene* scene);
 
 	protected:
 		float m_tightness;

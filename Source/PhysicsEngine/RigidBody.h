@@ -4,6 +4,7 @@
 
 namespace physics
 {
+	class PhysicsScene;
 	class RigidBody;
 
 	typedef std::shared_ptr<RigidBody> RigidBodyPtr;
@@ -15,9 +16,9 @@ namespace physics
 		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, glm::vec4 colour);
 
 
-		virtual void earlyUpdate(float timestep);
+		virtual void earlyUpdate(PhysicsScene* scene);
 
-		virtual void fixedUpdate(glm::vec2 gravity, float timestep);
+		virtual void fixedUpdate(PhysicsScene* scene);
 
 		void applyImpulse(glm::vec2 force);
 		void applyImpulse(glm::vec2 force, glm::vec2 contact);
@@ -72,7 +73,7 @@ namespace physics
 
 		glm::vec2 worldToLocalSpace(glm::vec2 worldPos);
 
-		virtual float calculateEnergy(glm::vec2 gravity);
+		virtual float calculateEnergy(PhysicsScene* scene);
 
 		virtual glm::vec2 calculateMomentum();
 

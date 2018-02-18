@@ -4,6 +4,7 @@
 
 namespace physics {
 	class Plane;
+	class PhysicsScene;
 
 	typedef std::shared_ptr<Plane> PlanePtr;
 	typedef std::weak_ptr<Plane> PlaneWeakPtr;
@@ -13,8 +14,8 @@ namespace physics {
 		Plane(glm::vec2 normal, float distance, float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1, });
 
 
-		virtual void earlyUpdate(float timeStep);
-		virtual void fixedUpdate(glm::vec2 gravity, float timeStep);
+		virtual void earlyUpdate(PhysicsScene* scene);
+		virtual void fixedUpdate(PhysicsScene* scene);
 		virtual void makeGizmo(float timeRatio);
 
 		virtual Collision checkCollision(PhysicsObject* other);
@@ -37,7 +38,7 @@ namespace physics {
 
 		virtual ShapeType getShapeID();
 
-		virtual float calculateEnergy(glm::vec2 gravity) { return 0; };
+		virtual float calculateEnergy(PhysicsScene* scene) { return 0; };
 		virtual glm::vec2 calculateMomentum() { return { 0,0 }; };
 
 		virtual bool isStatic() { return true; };

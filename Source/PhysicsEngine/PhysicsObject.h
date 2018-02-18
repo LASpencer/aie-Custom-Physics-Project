@@ -11,6 +11,7 @@ namespace physics {
 		obox
 	};
 
+	class PhysicsScene;
 	class PhysicsObject;
 	class RigidBody;
 	class Sphere;
@@ -55,8 +56,8 @@ namespace physics {
 		bool m_alive;
 
 	public:
-		virtual void earlyUpdate(float timestep) = 0;	//
-		virtual void fixedUpdate(glm::vec2 gravity, float timestep) = 0;
+		virtual void earlyUpdate(PhysicsScene* m_scene) = 0;	//
+		virtual void fixedUpdate(PhysicsScene* m_scene) = 0;
 		virtual void makeGizmo(float timeRatio) = 0;
 
 		glm::vec4 getColour() { return m_colour; }
@@ -77,7 +78,7 @@ namespace physics {
 
 		virtual ShapeType getShapeID() = 0;
 
-		virtual float calculateEnergy(glm::vec2 gravity) = 0;
+		virtual float calculateEnergy(PhysicsScene* m_scene) = 0;
 		virtual glm::vec2 calculateMomentum() = 0;
 
 		static float combineElasticity(PhysicsObject* e1, PhysicsObject* e2);

@@ -43,7 +43,7 @@ void physics::Spring::setDamping(float damping)
 	m_damping = damping;
 }
 
-void physics::Spring::earlyUpdate(float timestep)
+void physics::Spring::earlyUpdate(PhysicsScene* scene)
 {
 	if (m_end1 && m_end2 && m_end1->isAlive() && m_end2->isAlive()) {
 		// get distance between ends, calculate difference to length, multiply by tightness
@@ -90,7 +90,7 @@ void physics::Spring::makeGizmo(float timeRatio)
 	}
 }
 
-float physics::Spring::calculateEnergy(glm::vec2 gravity)
+float physics::Spring::calculateEnergy(PhysicsScene* scene)
 {
 	if (m_end1 && m_end2 && m_end1->isAlive() && m_end2->isAlive()) {
 		// get distance between ends, calculate difference to length, multiply by tightness
