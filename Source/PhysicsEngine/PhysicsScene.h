@@ -53,10 +53,13 @@ namespace physics {
 		float m_accumulatedTime;
 		std::vector<PhysicsObjectPtr> m_actors;
 		std::vector<FixedUpdaterPtr> m_updaters;
+		//std::vector<FixedUpdaterPtr> m_updaterToAdd;
+		std::vector<IFixedUpdater *> m_updaterToRemove;
 		// TODO some flag to check if in loop, and toAdd and toRemove lists
-
 		void updateGizmos();
 
 		void removeDeadActors();
+
+		void removePendingUpdaters();
 	};
 }

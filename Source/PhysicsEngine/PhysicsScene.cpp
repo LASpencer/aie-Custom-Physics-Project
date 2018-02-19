@@ -74,27 +74,55 @@ bool physics::PhysicsScene::inScene(FixedUpdaterPtr actor)
 
 bool physics::PhysicsScene::addUpdater(IFixedUpdater * updater)
 {
-	//TODO
-
-	return false;
+	if (std::any_of(m_updaterToRemove.begin(), m_updaterToRemove.end(), [updater](IFixedUpdater* a) { return a == updater; })) {
+			// If was going to be removed, don't
+			m_updaterToRemove.erase(std::remove(m_updaterToRemove.begin(), m_updaterToRemove.end(), updater), m_updaterToRemove.end());
+	}
+	else if (inScene(updater)) {
+		// If already in scene, and not to be removed, just return false
+		return false;
+	}
+	else {
+		// Add to toAdd
+		m_updaters.push_back(FixedUpdaterPtr(updater));
+	}
+	return true;
 }
 
 bool physics::PhysicsScene::addUpdater(FixedUpdaterPtr updater)
 {
-	//TODO
-	return false;
+	if (std::any_of(m_updaterToRemove.begin(), m_updaterToRemove.end(), [updater](IFixedUpdater* a) { return updater.get() == a; })) {
+		// If was going to be removed, don't
+		m_updaterToRemove.erase(std::remove_if(m_updaterToRemove.begin(), m_updaterToRemove.end(), [updater](IFixedUpdater* a) { return a == updater.get(); }), m_updaterToRemove.end());
+	}
+	else if (inScene(updater)){
+		// If already in scene, and not to be removed, just return false
+		return false;
+	}
+	else {
+		// Add to toAdd
+		m_updaters.push_back(FixedUpdaterPtr(updater));
+	}
+	return true;
 }
 
 bool physics::PhysicsScene::removeUpdater(IFixedUpdater * updater)
 {
-	//TODO
-	return false;
+	//TODO test removing updater
+	if (!std::any_of(m_updaterToRemove.begin(), m_updaterToRemove.end(), [updater](IFixedUpdater* a) { return a == updater; })) {
+			m_updaterToRemove.push_back(updater);
+	}
+	return true;
 }
 
 bool physics::PhysicsScene::removeUpdater(FixedUpdaterPtr updater)
 {
-	//TODO
-	return false;
+	//TODO test removing updater
+	if (!std::any_of(m_updaterToRemove.begin(), m_updaterToRemove.end(), [updater](IFixedUpdater* a) { return a == updater.get(); })) {
+		// Check if already going to be removed
+		m_updaterToRemove.push_back(updater.get());
+	}
+	return true;
 }
 
 void physics::PhysicsScene::update(float deltaTime)
@@ -103,7 +131,7 @@ void physics::PhysicsScene::update(float deltaTime)
 
 	while (m_accumulatedTime >= m_timeStep) {
 
-		// TODO inform other objects about fixed update
+		removePendingUpdaters();
 		for (auto updater : m_updaters) {
 			updater->fixedUpdate(this);
 		}
@@ -149,6 +177,20 @@ void physics::PhysicsScene::removeDeadActors()
 {
 	m_actors.erase(std::remove_if(m_actors.begin(), m_actors.end(), [](PhysicsObjectPtr a) {return !(a->isAlive()); }), m_actors.end());
 
+}
+
+void physics::PhysicsScene::removePendingUpdaters()
+{
+	auto toRemoveBegin = m_updaterToRemove.begin();
+	auto toRemoveEnd = m_updaterToRemove.end();
+	// Erase all updaters from toRemove list
+	m_updaters.erase(std::remove_if(m_updaters.begin(), m_updaters.end(), 
+		[toRemoveBegin, toRemoveEnd](FixedUpdaterPtr a) {
+			// Check each updater against list to be removed
+			return std::any_of(toRemoveBegin, toRemoveEnd, [a](IFixedUpdater* remove) {return a.get() == remove; });
+		})
+		, m_updaters.end());
+	m_updaterToRemove.clear();
 }
 
 void physics::PhysicsScene::setTimeStep(const float timeStep)
