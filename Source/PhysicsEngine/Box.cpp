@@ -16,6 +16,16 @@ physics::Box::Box(glm::vec2 position, float width, float height, float orientati
 	calculateMoment();
 }
 
+physics::Box::Box(const Box & other) :
+	RigidBody(other), m_xExtent(other.m_xExtent), m_yExtent(other.m_yExtent)
+{
+}
+
+physics::PhysicsObject * physics::Box::clone()
+{
+	return new Box(*this);
+}
+
 void physics::Box::makeGizmo(float timeRatio)
 {
 	glm::vec2 interpPos = glm::mix(m_pastPosition, m_position, timeRatio);

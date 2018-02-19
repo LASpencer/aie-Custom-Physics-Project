@@ -15,6 +15,7 @@ namespace physics
 	public:
 		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, glm::vec4 colour);
 
+		RigidBody(const RigidBody& other);
 
 		virtual void earlyUpdate(PhysicsScene* scene);
 

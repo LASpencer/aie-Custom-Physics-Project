@@ -19,6 +19,16 @@ physics::Spring::Spring(float tightness, float length, float damping,
 	}
 }
 
+physics::Spring::Spring(const Spring & other) :
+	Joint(other), m_tightness(other.m_tightness), m_length(other.m_length), m_damping(other.m_damping)
+{
+}
+
+PhysicsObject * physics::Spring::clone()
+{
+	return new Spring(*this);
+}
+
 void physics::Spring::setTightness(float tightness)
 {
 	if (tightness < 0 || isnan(tightness) || isinf(tightness)) {

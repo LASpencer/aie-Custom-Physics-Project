@@ -13,6 +13,16 @@ physics::Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float radius, fl
 	calculateMoment();
 }
 
+physics::Sphere::Sphere(const Sphere & other) :
+	RigidBody(other), m_radius(other.m_radius)
+{
+}
+
+physics::PhysicsObject * physics::Sphere::clone()
+{
+	return new Sphere(*this);
+}
+
 void physics::Sphere::makeGizmo(float timeRatio)
 {
 	glm::vec2 interpolated = glm::mix(m_pastPosition, m_position, timeRatio );

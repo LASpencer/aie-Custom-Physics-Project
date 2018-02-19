@@ -55,6 +55,8 @@ namespace physics {
 	protected:
 		PhysicsObject(float elasticity, glm::vec4 colour);
 
+		PhysicsObject(const PhysicsObject& other);
+
 		glm::vec4 m_colour;
 
 		float m_elasticity;
@@ -63,6 +65,8 @@ namespace physics {
 		std::vector<CollisionObserverWeakPtr> m_observers;
 
 	public:
+		virtual PhysicsObject* clone() = 0;
+
 		virtual void earlyUpdate(PhysicsScene* m_scene) = 0;	//
 		virtual void fixedUpdate(PhysicsScene* m_scene) = 0;
 		virtual void makeGizmo(float timeRatio) = 0;

@@ -28,6 +28,10 @@ namespace physics {
 			glm::vec2 velocity = { 0,0 }, float angularVelocity = 0, float mass = 1.f,
 			float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1 });
 
+		Box(const Box& other);
+
+		virtual PhysicsObject* clone();
+
 		virtual void makeGizmo(float timeRatio);
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);

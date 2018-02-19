@@ -7,6 +7,11 @@ physics::PhysicsObject::PhysicsObject(float elasticity, glm::vec4 colour) : m_el
 
 }
 
+physics::PhysicsObject::PhysicsObject(const PhysicsObject & other) 
+	: m_elasticity(other.m_elasticity), m_colour(other.m_colour), m_alive(true)
+{
+}
+
 void physics::PhysicsObject::broadcastCollision(const Collision & collision)
 {
 	auto current = m_observers.begin();

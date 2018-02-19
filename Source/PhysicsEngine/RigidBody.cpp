@@ -31,6 +31,15 @@ physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orie
 	m_pastY = m_localY;
 }
 
+physics::RigidBody::RigidBody(const RigidBody & other)
+	:PhysicsObject(other), m_position(other.m_position), m_pastPosition(other.m_pastPosition), m_velocity(other.m_velocity),
+	m_totalForce({ 0,0 }), m_orientation(other.m_orientation), m_angularVelocity(other.m_angularVelocity), m_totalTorque(0),
+	m_localX(other.m_localX),m_localY(other.m_localY),m_pastX(other.m_pastX), m_pastY(other.m_pastY), m_mass(other.m_mass),
+	m_invMass(other.m_invMass),m_moment(other.m_moment), m_invMoment(other.m_invMoment), m_static(other.m_static)
+{
+
+}
+
 void physics::RigidBody::earlyUpdate(PhysicsScene* scene)
 {
 }

@@ -12,6 +12,10 @@ namespace physics {
 	public:
 		Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass = 1.f, float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1 });
 
+		Sphere(const Sphere& other);
+
+		virtual PhysicsObject* clone();
+
 		virtual void makeGizmo(float timeRatio);
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);

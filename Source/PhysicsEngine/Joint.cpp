@@ -12,6 +12,12 @@ physics::Joint::Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec2 anchor1, g
 	}
 }
 
+physics::Joint::Joint(const Joint & other) :
+	PhysicsObject(other), m_anchor1(other.m_anchor1), m_anchor2(other.m_anchor2)
+{
+	// TODO figure out if deep or shallow or no copy of ends
+}
+
 void physics::Joint::fixedUpdate(PhysicsScene* scene)
 {
 }

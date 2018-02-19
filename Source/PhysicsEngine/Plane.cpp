@@ -14,6 +14,16 @@ physics::Plane::Plane(glm::vec2 normal, float distance, float elasticity, glm::v
 	}
 }
 
+physics::Plane::Plane(const Plane & other) : 
+	PhysicsObject(other), m_normal(other.m_normal), m_distance(other.m_distance)
+{
+}
+
+physics::PhysicsObject * physics::Plane::clone()
+{
+	return new Plane(*this);
+}
+
 void physics::Plane::earlyUpdate(PhysicsScene* scene)
 {
 }

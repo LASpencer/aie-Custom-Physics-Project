@@ -18,8 +18,9 @@ namespace physics {
 	class Joint : public PhysicsObject {
 	public:
 		Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec2 anchor1, glm::vec2 anchor2, glm::vec4 colour);
-		//TODO have ends connected at contact points (when rotational forces to be done)
-	
+		
+		Joint(const Joint& other);
+
 		void fixedUpdate(PhysicsScene* scene);
 
 		bool setEnd1(RigidBodyPtr end);

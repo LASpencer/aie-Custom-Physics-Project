@@ -13,6 +13,8 @@ namespace physics {
 	public:
 		Plane(glm::vec2 normal, float distance, float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1, });
 
+		Plane(const Plane& other);
+		virtual PhysicsObject* clone();
 
 		virtual void earlyUpdate(PhysicsScene* scene);
 		virtual void fixedUpdate(PhysicsScene* scene);

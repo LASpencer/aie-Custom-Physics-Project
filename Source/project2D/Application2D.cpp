@@ -100,6 +100,10 @@ void Application2D::update(float deltaTime) {
 
 	aie::Gizmos::clear();
 
+	glm::vec2 mousePos = { (float)input->getMouseX(), (float)input->getMouseY() };
+
+	aie::Gizmos::add2DCircle(screenToWorldSpace(mousePos), 1, 6, { 0.2f,.8f,.5f,1 });// Draw circle at mouse
+
 	m_scene->update(deltaTime);
 }
 
@@ -134,12 +138,12 @@ void Application2D::draw() {
 
 glm::vec2 Application2D::screenToWorldSpace(glm::vec2 pos)
 {
-	float scale = 0.5f * getWindowWidth() / m_sceneExtent;
-	return (pos - 0.5f * glm::vec2(getWindowWidth(), getWindowHeight())) * scale + m_cameraPos;
+	float scale =2.f * m_sceneExtent / (float)getWindowWidth();
+	return (pos - (0.5f * glm::vec2((float)getWindowWidth(), (float)getWindowHeight()))) * scale + m_cameraPos;
 }
 
 glm::vec2 Application2D::worldToSceenSpace(glm::vec2 pos)
 {
-	float scale = 2.f * m_sceneExtent / getWindowWidth();
-	return scale * (pos - m_cameraPos) + 0.5f * glm::vec2(getWindowWidth(), getWindowHeight());
+	float scale = 0.5f * (float)getWindowWidth() / m_sceneExtent;
+	return scale * (pos - m_cameraPos) + 0.5f * glm::vec2((float)getWindowWidth(), (float)getWindowHeight());
 }
