@@ -240,7 +240,8 @@ void physics::RigidBody::resolveCollision(PhysicsObject * other, const Collision
 
 void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Collision & col)
 {
-
+	broadcastCollision(col);
+	other->broadcastCollision(col);
 	if (isDynamic() || other->isDynamic()) {
 		//TODO implement friction between objects
 		float elasticity = combineElasticity(this, other);
@@ -269,13 +270,14 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 		normalRvel = glm::dot(relative, normal);
 		// TODO maybe check if moving apart fast enough before resolving penetration?
 		seperateObjects(other, normal * col.depth);
-		
 	}
 	
 }
 
 void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & col)
 {
+	broadcastCollision(col);
+	other->broadcastCollision(col);
 	if (isDynamic()) {
 		//TODO implement friction between objects
 		float elasticity = combineElasticity(this, other);
@@ -285,7 +287,6 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 		}
 		glm::vec2 perpendicular(-normal.y, normal.x);
 		float radius = glm::dot(col.contact - m_position, perpendicular);
-		// TODO URGENT relative velocity must include contact point's rotation
 		glm::vec2 relative = -getVelocity();
 		float normalRvel = glm::dot(relative, normal) + radius * m_angularVelocity;
 		if (normalRvel > 0) {

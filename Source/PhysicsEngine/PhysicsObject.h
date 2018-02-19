@@ -1,6 +1,7 @@
 #pragma once
 #include "ExternalLibraries.h"
 
+
 namespace physics {
 
 	enum ShapeType {
@@ -17,9 +18,13 @@ namespace physics {
 	class Sphere;
 	class Box;
 	class Plane;
+	class ICollisionObserver;
 
 	typedef std::shared_ptr<PhysicsObject> PhysicsObjectPtr;
 	typedef std::weak_ptr<PhysicsObject> PhysicsObjectWeakPtr;
+
+	typedef std::shared_ptr<ICollisionObserver> CollisionObserverPtr;
+	typedef std::weak_ptr<ICollisionObserver> CollisionObserverWeakPtr;
 
 	struct Collision {
 		Collision(bool a_success = false, PhysicsObject* a_first = nullptr, PhysicsObject* a_second = nullptr, glm::vec2 a_normal = glm::vec2(0), glm::vec2 a_contact = glm::vec2(0), float a_depth = 0)
@@ -55,6 +60,8 @@ namespace physics {
 		float m_elasticity;
 		bool m_alive;
 
+		std::vector<CollisionObserverWeakPtr> m_observers;
+
 	public:
 		virtual void earlyUpdate(PhysicsScene* m_scene) = 0;	//
 		virtual void fixedUpdate(PhysicsScene* m_scene) = 0;
@@ -81,6 +88,8 @@ namespace physics {
 		virtual float calculateEnergy(PhysicsScene* m_scene) = 0;
 		virtual glm::vec2 calculateMomentum() = 0;
 
+		void broadcastCollision(const Collision& collision);
+
 		static float combineElasticity(PhysicsObject* e1, PhysicsObject* e2);
 
 		virtual bool isStatic() = 0;
@@ -88,5 +97,10 @@ namespace physics {
 		bool isAlive() { return m_alive; };
 
 		void kill();
+
+		bool addObserver(const CollisionObserverPtr& observer);
+		bool removeObserver(const CollisionObserverPtr& observer);
+		bool isSubscribed(const CollisionObserverPtr& observer);
+
 	};
 }
