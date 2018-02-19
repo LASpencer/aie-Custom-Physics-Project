@@ -101,6 +101,7 @@ namespace physics {
 		bool addObserver(const CollisionObserverPtr& observer);
 		bool removeObserver(const CollisionObserverPtr& observer);
 		bool isSubscribed(const CollisionObserverPtr& observer);
+		const std::vector<CollisionObserverWeakPtr>& getObservers() { return m_observers; }
 
 	};
 }
