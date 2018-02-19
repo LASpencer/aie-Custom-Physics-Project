@@ -253,6 +253,7 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 	other->broadcastCollision(col);
 	if (isDynamic() || other->isDynamic()) {
 		//TODO implement friction between objects
+		float friction = 1;
 		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
 		if (col.first != this) {
@@ -262,10 +263,13 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 
 		//HACK maybe signs on perpendicular/v1 v2 are wrong, check when boxes implemented
 		float r1 = glm::dot(col.contact - m_position, perpendicular);
+		float t1 = glm::dot(col.contact - m_position, -normal);
 		float r2 = glm::dot(col.contact - other->m_position, -perpendicular);
+		float t2 = glm::dot(col.contact - other->m_position, normal);
 
 		glm::vec2 relative = other->getVelocity() - getVelocity();
 		float normalRvel = glm::dot(relative, normal) + r1 * m_angularVelocity + r2 * other->m_angularVelocity;
+		float tangentRvel = glm::dot(relative, perpendicular) + t1 * m_angularVelocity + t2 * other->m_angularVelocity;
 		if (normalRvel > 0) {
 			float invEffMass1 = m_invMass + r1 * r1 * m_invMoment;
 			float invEffMass2 = other->m_invMass + r2 * r2 * other->m_invMoment;
@@ -273,6 +277,9 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 			// Apply impulse
 			float impulse = normalRvel * (1 + elasticity) / (invEffMass1 + invEffMass2);
 			applyImpulseFromOther(other, impulse * normal, col.contact);
+		}
+		else {
+			// TODO still apply friction for perpendicular hit
 		}
 		// Get new relative velocity
 		relative = other->getVelocity() - getVelocity();

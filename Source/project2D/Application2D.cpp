@@ -41,7 +41,7 @@ bool Application2D::startup() {
 	m_scene->addActor(new physics::Plane({ -1,1 }, 40, 1));
 	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 0.5f));
 
-	m_scene->addActor(new physics::Box({ 0.1f,0 }, 5, 5, 0, {0,0 }, 0,1,0.5f));
+	m_scene->addActor(new physics::Box({ 0.f,0 }, 5, 5, 0, {0,0 }, 0,1,0.5f));
 	m_scene->addActor(new physics::Box({ 0,-5 }, 5, 5, 0, { 0,0 }, 0, 1, 0.5f));
 	m_scene->addActor(new physics::Box({ 0.f,-10}, 5, 5, 0, { 0,0 }, 0, 1, 0.5f));
 

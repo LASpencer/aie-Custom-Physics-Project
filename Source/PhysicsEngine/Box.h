@@ -10,6 +10,7 @@ namespace physics {
 	typedef std::shared_ptr<Box> BoxPtr;
 	typedef std::weak_ptr<Box> BoxWeakPtr;
 
+	// Edge of box used in calculating collision point
 	struct Edge {
 		glm::vec2 start;
 		glm::vec2 end;
@@ -17,11 +18,19 @@ namespace physics {
 		glm::vec2 getNormal() const { return {direction.y, -direction.x}; };
 		float getLength() const { return glm::dot(direction, end - start); }
 
+		// Moves endpoint to cut off part of edge behind plane
+		// normal = forward direction of plane
+		// offset = origin's distance from plane
 		void clip(glm::vec2 normal, float offset);
 
+		// Tests if two edges intersect
+		// other = edge to test this against
+		// intersection = will be set to point of intersection
+		// returns true if edges intersect
 		bool checkIntersection(const Edge& other, glm::vec2& intersection) const;
 	};
 
+	// Oriented box object
 	class Box : public RigidBody {
 	public:
 		Box(glm::vec2 position, float width, float height, float orientation,
@@ -49,8 +58,11 @@ namespace physics {
 		glm::vec2 getXExtent();
 		glm::vec2 getYExtent();
 
+		// Returns the box's four corners, in ccw order starting at bottom left
 		std::array<glm::vec2, 4> getCorners();
 
+		// Returns the edge whose normal (pointing out from box) is closest to that given
+		// normal = direction edge should be facing
 		Edge findBestEdge(glm::vec2 normal);
 
 	protected:

@@ -8,7 +8,6 @@ namespace physics {
 		spring,
 		plane,
 		sphere,
-		aabox,
 		obox
 	};
 
@@ -31,44 +30,51 @@ namespace physics {
 			: success(a_success), first(a_first), second(a_second), normal(a_normal), contact(a_contact), depth(a_depth)
 		{};
 
+		// Whether the collision occurred
 		bool success;
 
 		PhysicsObject* first;
 		PhysicsObject* second;
 
+		// Collision normal pointed at first object
 		glm::vec2 normal;
+
+		// Contact point of collision
 		glm::vec2 contact;
 
+		// Depth by which objects interpenetrate
 		float depth;
 
 		operator bool() const { return success; }
 
+		// Returns collision with first and second objects swapped
 		Collision reverse() {
 			return Collision(success, second, first, -normal, contact, depth);
 		}
 	};
 
+	// Abstract base 
 	class PhysicsObject {
-		// TODO abstract base class for physics objects
-		// TODO system for having different layers for collision detection (scene has map of layers to bitmask?), turn collisions on or off
-
+		
 	protected:
 		PhysicsObject(float elasticity, glm::vec4 colour);
 
 		PhysicsObject(const PhysicsObject& other);
 
-		glm::vec4 m_colour;
+		glm::vec4 m_colour;	// Colour to draw object
 
-		float m_elasticity;
-		bool m_alive;
+		float m_elasticity;	// Coefficient of friction
+		bool m_alive;		// True until object set as dead
 
 		std::vector<CollisionObserverWeakPtr> m_observers;
 
 	public:
 		virtual PhysicsObject* clone() = 0;
 
-		virtual void earlyUpdate(PhysicsScene* m_scene) = 0;	//
+		virtual void earlyUpdate(PhysicsScene* m_scene) = 0;
 		virtual void fixedUpdate(PhysicsScene* m_scene) = 0;
+
+		// Draw object with gizmos
 		virtual void makeGizmo(float timeRatio) = 0;
 
 		glm::vec4 getColour() { return m_colour; }
@@ -77,7 +83,8 @@ namespace physics {
 		float getElasticity() { return m_elasticity; };
 		void setElasticity(float elasticity);
 
-		//TODO maybe collision data should be passed by reference instead of the return value
+		// test collision against other object
+		// returns struct describing collision
 		virtual Collision checkCollision(PhysicsObject* other) = 0;
 		virtual Collision checkSphereCollision(Sphere* other) = 0;
 		virtual Collision checkBoxCollision(Box* other) = 0;
@@ -92,18 +99,31 @@ namespace physics {
 		virtual float calculateEnergy(PhysicsScene* m_scene) = 0;
 		virtual glm::vec2 calculateMomentum() = 0;
 
+		// Informs all observers that object was collided with
+		// collision = collision to send to observers
 		void broadcastCollision(const Collision& collision);
 
+		// Calculates the combined elasticity for a pair of objects
+		// e1,e2 = colliding objects
 		static float combineElasticity(PhysicsObject* e1, PhysicsObject* e2);
 
+		// Returns true if the object is set as static
 		virtual bool isStatic() = 0;
 		
+		// Returns true if the object has not been killed
 		bool isAlive() { return m_alive; };
 
+		// Call to set object as dead, so scene and other objects
+		// referring to it can remove it
 		void kill();
 
+		// Adds new observer to inform about collisions
+		// returns true if added, false if already observing
 		bool addObserver(const CollisionObserverPtr& observer);
+		// Removes observer from list
 		bool removeObserver(const CollisionObserverPtr& observer);
+
+		// Returns true if observer is in list of subscribers
 		bool isSubscribed(const CollisionObserverPtr& observer);
 		const std::vector<CollisionObserverWeakPtr>& getObservers() { return m_observers; }
 
