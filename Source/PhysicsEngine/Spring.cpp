@@ -24,7 +24,7 @@ physics::Spring::Spring(const Spring & other) :
 {
 }
 
-PhysicsObject * physics::Spring::clone()
+physics::PhysicsObject * physics::Spring::clone()
 {
 	return new Spring(*this);
 }
