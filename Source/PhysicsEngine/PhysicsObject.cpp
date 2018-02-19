@@ -52,11 +52,12 @@ bool physics::PhysicsObject::removeObserver(const CollisionObserverPtr & observe
 			}
 		}
 	);
+	return true;
 }
 
 bool physics::PhysicsObject::isSubscribed(const CollisionObserverPtr & observer)
 {
-	return std::any_of(m_observers.begin(), m_observers.end(), [observer](CollisionObserverWeakPtr c) {c.lock() == observer; });
+	return std::any_of(m_observers.begin(), m_observers.end(), [observer](CollisionObserverWeakPtr c) {return c.lock() == observer; });
 }
 
 void physics::PhysicsObject::setElasticity(float elasticity)
