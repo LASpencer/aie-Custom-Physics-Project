@@ -64,19 +64,18 @@ bool physics::PhysicsScene::removeActor(PhysicsObjectPtr actor)
 
 bool physics::PhysicsScene::inScene(IFixedUpdater * actor)
 {
-	// TODO
-	return false;
+	return std::any_of(m_updaters.begin(), m_updaters.end(), [actor](FixedUpdaterPtr a) { return a.get() == actor; });
 }
 
 bool physics::PhysicsScene::inScene(FixedUpdaterPtr actor)
 {
-	//TODO
-	return false;
+	return std::any_of(m_updaters.begin(), m_updaters.end(), [actor](FixedUpdaterPtr a) { return a == actor; });
 }
 
 bool physics::PhysicsScene::addUpdater(IFixedUpdater * updater)
 {
 	//TODO
+
 	return false;
 }
 

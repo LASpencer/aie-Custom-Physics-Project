@@ -242,7 +242,7 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 {
 
 	if (isDynamic() || other->isDynamic()) {
-		//TODO get elasticity (from collision? Calculate and get rule from somewhere? Where is rule determined)
+		//TODO implement friction between objects
 		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
 		if (col.first != this) {
@@ -277,6 +277,7 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & col)
 {
 	if (isDynamic()) {
+		//TODO implement friction between objects
 		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
 		if (col.first != this) {
