@@ -22,6 +22,7 @@ Application2D::~Application2D() {
 bool Application2D::startup() {
 	
 	m_2dRenderer = new aie::Renderer2D();
+	m_2dRenderer->setCameraPos(0,0);
 
 	aie::Gizmos::create(255u, 255u, 65535u, 65535u);
 
@@ -29,6 +30,7 @@ bool Application2D::startup() {
 	
 	m_cameraX = 0;
 	m_cameraY = 0;
+	m_sceneExtent = 100;
 	m_timer = 0;
 
 	m_scene = new physics::PhysicsScene(0.01f, { 0, -10 });
@@ -107,15 +109,13 @@ void Application2D::draw() {
 	// wipe the screen to the background colour
 	clearScreen();
 
-	// set the camera position before we begin rendering
-	m_2dRenderer->setCameraPos(m_cameraX, m_cameraY);
 
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
 	// TODO extract stuff out into variables, make screen to world conversion functions
-	static float aspectRatio = 16 / 9.f;
-	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100, -100 / aspectRatio, 100 / aspectRatio, -1.0f, 1.0f));
+	float sceneHeight = m_sceneExtent * getWindowHeight() / getWindowWidth();
+	aie::Gizmos::draw2D(glm::ortho<float>(m_cameraX - m_sceneExtent, m_cameraX + m_sceneExtent,  m_cameraY - sceneHeight, m_cameraY + sceneHeight, -1.0f, 1.0f));
 	
 	
 	// output some text in yellow

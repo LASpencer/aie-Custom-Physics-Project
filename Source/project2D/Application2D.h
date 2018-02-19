@@ -24,6 +24,6 @@ protected:
 
 	physics::PhysicsScene*	m_scene;
 
-	float m_cameraX, m_cameraY;
+	float m_cameraX, m_cameraY, m_sceneExtent;
 	float m_timer;
 };
