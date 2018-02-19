@@ -28,8 +28,7 @@ bool Application2D::startup() {
 
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 	
-	m_cameraX = 0;
-	m_cameraY = 0;
+	m_cameraPos = { 0,0 };
 	m_sceneExtent = 100;
 	m_timer = 0;
 
@@ -84,16 +83,16 @@ void Application2D::update(float deltaTime) {
 
 	// use arrow keys to move camera
 	if (input->isKeyDown(aie::INPUT_KEY_UP))
-		m_cameraY += 500.0f * deltaTime;
+		m_cameraPos.y += 100.0f * deltaTime;
 
 	if (input->isKeyDown(aie::INPUT_KEY_DOWN))
-		m_cameraY -= 500.0f * deltaTime;
+		m_cameraPos.y -= 100.0f * deltaTime;
 
 	if (input->isKeyDown(aie::INPUT_KEY_LEFT))
-		m_cameraX -= 500.0f * deltaTime;
+		m_cameraPos.x -= 100.0f * deltaTime;
 
 	if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
-		m_cameraX += 500.0f * deltaTime;
+		m_cameraPos.x += 100.0f * deltaTime;
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -115,7 +114,8 @@ void Application2D::draw() {
 
 	// TODO extract stuff out into variables, make screen to world conversion functions
 	float sceneHeight = m_sceneExtent * getWindowHeight() / getWindowWidth();
-	aie::Gizmos::draw2D(glm::ortho<float>(m_cameraX - m_sceneExtent, m_cameraX + m_sceneExtent,  m_cameraY - sceneHeight, m_cameraY + sceneHeight, -1.0f, 1.0f));
+	aie::Gizmos::draw2D(glm::ortho<float>(m_cameraPos.x - m_sceneExtent, m_cameraPos.x + m_sceneExtent,
+						m_cameraPos.y - sceneHeight, m_cameraPos.y + sceneHeight, -1.0f, 1.0f));
 	
 	
 	// output some text in yellow
@@ -130,4 +130,16 @@ void Application2D::draw() {
 
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+glm::vec2 Application2D::screenToWorldSpace(glm::vec2 pos)
+{
+	float scale = 0.5f * getWindowWidth() / m_sceneExtent;
+	return (pos - 0.5f * glm::vec2(getWindowWidth(), getWindowHeight())) * scale + m_cameraPos;
+}
+
+glm::vec2 Application2D::worldToSceenSpace(glm::vec2 pos)
+{
+	float scale = 2.f * m_sceneExtent / getWindowWidth();
+	return scale * (pos - m_cameraPos) + 0.5f * glm::vec2(getWindowWidth(), getWindowHeight());
 }

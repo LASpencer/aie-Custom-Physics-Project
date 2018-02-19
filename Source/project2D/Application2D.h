@@ -17,6 +17,10 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
+	glm::vec2 screenToWorldSpace(glm::vec2 pos);
+
+	glm::vec2 worldToSceenSpace(glm::vec2 pos);
+
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;
@@ -24,6 +28,8 @@ protected:
 
 	physics::PhysicsScene*	m_scene;
 
-	float m_cameraX, m_cameraY, m_sceneExtent;
+	glm::vec2 m_cameraPos;
+
+	float m_sceneExtent;
 	float m_timer;
 };
