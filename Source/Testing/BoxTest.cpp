@@ -131,7 +131,7 @@ TEST_CASE("Box-Box collision") {
 
 TEST_CASE("Box-Sphere collision") {
 	Box* b = new Box({ 0,0 }, 4, 3, 0);
-	Sphere* s = new Sphere({ 3,3 }, { 0,0 }, 1);
+	Sphere* s = new Sphere({ 3,3 },1, { 0,0 }, 0);
 	Collision col = b->checkSphereCollision(s);
 	REQUIRE_FALSE(col);
 	s->setPosition({ 2.5f,2 });

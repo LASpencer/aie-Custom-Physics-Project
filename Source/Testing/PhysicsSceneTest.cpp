@@ -12,7 +12,7 @@ using namespace physics;
 TEST_CASE("Adding actors to scene", "[physics scene]") {
 	PhysicsScene scene;
 	SECTION("Adding by pointer") {
-		Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
+		Sphere* s = new Sphere({ 0,0 },1, { 0,0 }, 0);
 		REQUIRE(scene.addActor(s));
 		REQUIRE(scene.inScene(s));
 		// Cannot add twice
@@ -20,7 +20,7 @@ TEST_CASE("Adding actors to scene", "[physics scene]") {
 	}
 	SECTION("Adding by shared pointer")
 	{
-		SpherePtr s(new Sphere({ 0,0 }, { 0,0 }, 1));
+		SpherePtr s(new Sphere({ 0,0 },1, { 0,0 }, 0));
 		REQUIRE(scene.addActor(s));
 		REQUIRE(scene.inScene(s));
 		REQUIRE(s.use_count() == 2);
@@ -32,7 +32,7 @@ TEST_CASE("Adding actors to scene", "[physics scene]") {
 TEST_CASE("Removing actors from scene", "[physics scene]") {
 	PhysicsScene scene;
 	SECTION("Removing by pointer") {
-		Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
+		Sphere* s = new Sphere({ 0,0 },1, { 0,0 }, 0);
 		scene.addActor(s);
 		REQUIRE(scene.inScene(s));
 		scene.removeActor(s);
@@ -40,7 +40,7 @@ TEST_CASE("Removing actors from scene", "[physics scene]") {
 	}
 	SECTION("Removing shared pointer")
 	{
-		SpherePtr s(new Sphere({ 0,0 }, { 0,0 }, 1));
+		SpherePtr s(new Sphere({ 0,0 },1, { 0,0 }, 0));
 		scene.addActor(s);
 		REQUIRE(scene.inScene(s));
 		REQUIRE(s.use_count() == 2);
@@ -56,7 +56,7 @@ TEST_CASE("Removing actors from scene", "[physics scene]") {
 		}
 	}
 	SECTION("Remove by killing") {
-		SpherePtr s(new Sphere({ 0,0 }, { 0,0 }, 1));
+		SpherePtr s(new Sphere({ 0,0 },1, { 0,0 }, 0));
 		scene.addActor(s);
 		scene.update(1);
 		REQUIRE(scene.inScene(s));

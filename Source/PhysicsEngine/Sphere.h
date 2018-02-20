@@ -10,7 +10,9 @@ namespace physics {
 
 	class Sphere : public RigidBody {
 	public:
-		Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass = 1.f, float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1 });
+		Sphere(glm::vec2 position, float radius, glm::vec2 velocity, float angularVelocity = 0.f,
+			float mass = 1.f, float elasticity = 1.f, float friction = 0.f, float drag = 0.f,
+			float angularDrag = 0.f, glm::vec4 colour = { 1,1,1,1 });
 
 		Sphere(const Sphere& other);
 

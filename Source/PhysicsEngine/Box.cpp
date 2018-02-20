@@ -4,8 +4,8 @@
 #include "Sphere.h"
 
 physics::Box::Box(glm::vec2 position, float width, float height, float orientation, glm::vec2 velocity,
-	float angularVelocity, float mass, float elasticity, glm::vec4 colour) :
-	RigidBody(position,velocity,orientation,mass,elasticity,angularVelocity,colour), m_xExtent(0.5f * width), m_yExtent(0.5f * height)
+	float angularVelocity, float mass, float elasticity, float friction, float drag, float angularDrag, glm::vec4 colour) :
+	RigidBody(position,velocity,orientation,mass,elasticity,angularVelocity,friction,drag,angularDrag,colour), m_xExtent(0.5f * width), m_yExtent(0.5f * height)
 {
 	if (m_xExtent <= 0 || isnan(m_xExtent) || isinf(m_xExtent)) {
 		throw std::invalid_argument("Width must be positive and finite");

@@ -35,7 +35,7 @@ namespace physics {
 	public:
 		Box(glm::vec2 position, float width, float height, float orientation,
 			glm::vec2 velocity = { 0,0 }, float angularVelocity = 0, float mass = 1.f,
-			float elasticity = 1.f, glm::vec4 colour = { 1,1,1,1 });
+			float elasticity = 1.f, float friction = 0.f, float drag = 0.f, float angularDrag = 0.f, glm::vec4 colour = { 1,1,1,1 });
 
 		Box(const Box& other);
 

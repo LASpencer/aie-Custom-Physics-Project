@@ -13,7 +13,7 @@ namespace physics
 	class RigidBody : public PhysicsObject
 	{
 	public:
-		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, glm::vec4 colour);
+		RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, float friction, float drag, float angularDrag, glm::vec4 colour);
 
 		RigidBody(const RigidBody& other);
 
@@ -52,6 +52,12 @@ namespace physics
 
 		float getMass();
 		void setMass(float mass);
+
+		float getDrag() { return m_drag; }
+		void setDrag(float drag);
+
+		float getAngularDrag() { return m_angularDrag; }
+		void setAngularDrag(float drag);
 
 		float getInvMass();
 
@@ -93,6 +99,9 @@ namespace physics
 
 		float m_moment;
 		float m_invMoment;
+
+		float m_drag;
+		float m_angularDrag;
 
 		float m_orientation;
 

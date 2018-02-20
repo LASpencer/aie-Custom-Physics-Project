@@ -57,13 +57,14 @@ namespace physics {
 	class PhysicsObject {
 		
 	protected:
-		PhysicsObject(float elasticity, glm::vec4 colour);
+		PhysicsObject(float elasticity, float friction, glm::vec4 colour);
 
 		PhysicsObject(const PhysicsObject& other);
 
 		glm::vec4 m_colour;	// Colour to draw object
 
-		float m_elasticity;	// Coefficient of friction
+		float m_elasticity;	// Coefficient of elasticity
+		float m_friction;	// Coefficient of friction
 		bool m_alive;		// True until object set as dead
 
 		std::vector<CollisionObserverWeakPtr> m_observers;
@@ -82,6 +83,9 @@ namespace physics {
 
 		float getElasticity() { return m_elasticity; };
 		void setElasticity(float elasticity);
+
+		float getFriction() { return m_friction; }
+		void setFriction(float friction);
 
 		// test collision against other object
 		// returns struct describing collision
@@ -106,6 +110,10 @@ namespace physics {
 		// Calculates the combined elasticity for a pair of objects
 		// e1,e2 = colliding objects
 		static float combineElasticity(PhysicsObject* e1, PhysicsObject* e2);
+
+		// Calculates the coefficient of friction for a pair of objects
+		// e1,e2 = colliding objects
+		static float combineFriction(PhysicsObject* e1, PhysicsObject* e2);
 
 		// Returns true if the object is set as static
 		virtual bool isStatic() = 0;

@@ -4,8 +4,8 @@
 #include "PhysicsScene.h"
 #include "Plane.h"
 
-physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, glm::vec4 colour)
-	: PhysicsObject(elasticity, colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_angularVelocity(angularVelocity)
+physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, float friction, float drag, float angularDrag, glm::vec4 colour)
+	: PhysicsObject(elasticity, friction, colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_angularVelocity(angularVelocity)
 	, m_totalForce({0,0}), m_totalTorque(0), m_static(false)
 {
 	if (mass < 0 || isnan(mass)) {
@@ -24,6 +24,10 @@ physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orie
 		}
 	}
 
+	setDrag(drag);
+
+	setAngularDrag(angularDrag);
+
 	m_pastPosition = m_position;
 	
 	calculateAxes();
@@ -35,7 +39,8 @@ physics::RigidBody::RigidBody(const RigidBody & other)
 	:PhysicsObject(other), m_position(other.m_position), m_pastPosition(other.m_pastPosition), m_velocity(other.m_velocity),
 	m_totalForce({ 0,0 }), m_orientation(other.m_orientation), m_angularVelocity(other.m_angularVelocity), m_totalTorque(0),
 	m_localX(other.m_localX),m_localY(other.m_localY),m_pastX(other.m_pastX), m_pastY(other.m_pastY), m_mass(other.m_mass),
-	m_invMass(other.m_invMass),m_moment(other.m_moment), m_invMoment(other.m_invMoment), m_static(other.m_static)
+	m_invMass(other.m_invMass),m_moment(other.m_moment), m_invMoment(other.m_invMoment), m_static(other.m_static), m_drag(other.m_drag),
+	m_angularDrag(other.m_angularDrag)
 {
 
 }
@@ -53,6 +58,14 @@ void physics::RigidBody::fixedUpdate(PhysicsScene* scene)
 	if (!m_static) {
 		if (!isKinematic()) {
 			applyForce(scene->getGravity() * m_mass);
+
+			// Apply drag
+			float dragImpulse = std::min(m_drag * scene->getTimeStep() * m_invMass, 1.f);
+			m_velocity -= dragImpulse * m_velocity;
+
+			float dragTorque = std::min(m_angularDrag * scene->getTimeStep() * m_invMoment, 1.f);
+			m_angularVelocity -= dragTorque * m_angularVelocity;
+
 			applyImpulse(m_totalForce * scene->getTimeStep());
 			m_angularVelocity += m_totalTorque * m_invMoment * scene->getTimeStep();
 		}
@@ -154,6 +167,16 @@ void physics::RigidBody::setMass(float mass)
 	}
 }
 
+void physics::RigidBody::setDrag(float drag)
+{
+	m_drag = abs(drag);
+}
+
+void physics::RigidBody::setAngularDrag(float drag)
+{
+	m_angularDrag = abs(drag);
+}
+
 float physics::RigidBody::getInvMass()
 {
 	return m_invMass;
@@ -253,7 +276,7 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 	other->broadcastCollision(col);
 	if (isDynamic() || other->isDynamic()) {
 		//TODO implement friction between objects
-		float friction = 1;
+		float friction = combineFriction(this, other);
 		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
 		if (col.first != this) {
@@ -267,8 +290,8 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 		float r2 = glm::dot(col.contact - other->m_position, -perpendicular);
 		float t2 = glm::dot(col.contact - other->m_position, normal);
 
-		float oldAngular1 = m_angularVelocity;
-		float oldAngular2 = other->m_angularVelocity;
+		/*float oldAngular1 = m_angularVelocity;
+		float oldAngular2 = other->m_angularVelocity;*/
 
 		glm::vec2 relative = other->getVelocity() - getVelocity();
 		float normalRvel = glm::dot(relative, normal) + r1 * m_angularVelocity + r2 * other->m_angularVelocity;
@@ -313,7 +336,7 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 	other->broadcastCollision(col);
 	if (isDynamic()) {
 		//TODO implement friction between objects
-		float friction = 1;
+		float friction = combineFriction(this, other);
 		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
 		if (col.first != this) {
@@ -324,7 +347,7 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 		float tangentRadius = glm::dot(col.contact - m_position, -normal);
 		glm::vec2 relative = -getVelocity();
 		float normalRvel = glm::dot(relative, normal) + radius * m_angularVelocity;
-		float oldAngular = m_angularVelocity;
+		//float oldAngular = m_angularVelocity;
 		if (normalRvel > 0) {
 			float invEffMass = m_invMass + radius * radius * m_invMoment;
 			float invEffTanMas = m_invMass + tangentRadius * tangentRadius * m_invMoment;

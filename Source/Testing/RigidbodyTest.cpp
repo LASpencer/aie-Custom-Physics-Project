@@ -10,14 +10,14 @@ using namespace physics;
 
 TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 	SECTION("Mass must be positive") {
-		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1, -1));
-		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 1, NAN));
+		REQUIRE_THROWS(Sphere(glm::vec2(0, 0),1, glm::vec2(0, 0), 0, -1));
+		REQUIRE_THROWS(Sphere(glm::vec2(0, 0),1, glm::vec2(0, 0), 0, NAN));
 	}
 	SECTION("Radius must be positive and finite") {
-		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 0,1));
-		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), -1, 1));
-		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), INFINITY, 1));
-		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), glm::vec2(0, 0), NAN, 1));
+		REQUIRE_THROWS(Sphere(glm::vec2(0, 0),0, glm::vec2(0, 0), 0,1));
+		REQUIRE_THROWS(Sphere(glm::vec2(0, 0),-1, glm::vec2(0, 0), 0, 1));
+		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), INFINITY, glm::vec2(0, 0), 0, 1));
+		REQUIRE_THROWS(Sphere(glm::vec2(0, 0), NAN, glm::vec2(0, 0), 0, 1));
 	}
 	// TODO check that setting mass to 0 or infinity works correctly
 }
@@ -475,7 +475,7 @@ TEST_CASE("Forces don't affect kinematic and static spheres", "[rigidbody],[sphe
 }
 
 TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
-	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
+	Sphere* s = new Sphere({ 0,0 },1, { 0,0 });
 	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,0 });
 	s->setAngularVelocity(1);
 	s->fixedUpdate(scene);
@@ -486,7 +486,7 @@ TEST_CASE("Rigidbody rotates", "[sphere],[rotation]") {
 }
 
 TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
-	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1, 1);
+	Sphere* s = new Sphere({ 0,0 },1, { 0,0 }, 0, 1);
 	REQUIRE(s->getMoment() == Approx(0.5f));
 	REQUIRE(s->getInvMoment() == Approx(2));
 	s->setMass(3);

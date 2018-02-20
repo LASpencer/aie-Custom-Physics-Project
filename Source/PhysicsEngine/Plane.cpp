@@ -3,8 +3,8 @@
 #include "Box.h"
 #include "PhysicsScene.h"
 
-physics::Plane::Plane(glm::vec2 normal, float distance, float elasticity, glm::vec4 colour)
-	: PhysicsObject(elasticity, colour), m_normal(glm::normalize(normal)), m_distance(distance)
+physics::Plane::Plane(glm::vec2 normal, float distance, float elasticity, float friction, glm::vec4 colour)
+	: PhysicsObject(elasticity, friction, colour), m_normal(glm::normalize(normal)), m_distance(distance)
 {
 	if (isinf(distance) || isnan(distance)) {
 		throw std::invalid_argument("Distance must be finite");

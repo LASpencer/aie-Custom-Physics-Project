@@ -3,8 +3,8 @@
 #include "Plane.h"
 #include "Box.h"
 
-physics::Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float radius, float mass, float elasticity, glm::vec4 colour)
-	: RigidBody(position,velocity, 0,mass,elasticity,0,colour), m_radius(radius)
+physics::Sphere::Sphere(glm::vec2 position, float radius, glm::vec2 velocity, float angularVelocity, float mass, float elasticity, float friction, float drag, float angularDrag, glm::vec4 colour)
+	: RigidBody(position,velocity, 0,mass,elasticity,angularVelocity,friction, drag, angularDrag,colour), m_radius(radius)
 {
 
 	if (radius <= 0 || isnan(radius) || isinf(radius)) {

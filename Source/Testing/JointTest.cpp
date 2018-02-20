@@ -11,8 +11,8 @@ using namespace physics;
 
 TEST_CASE("Adding ends to spring", "[joint],[spring]") {
 	SpringPtr spring(new Spring(3, 2, 0));
-	SpherePtr s1(new Sphere({ 3,-4 }, { 0,0 }, 1, 1));
-	SpherePtr s2(new Sphere({ -3,4 }, { 0,0 }, 1, 2.5f));
+	SpherePtr s1(new Sphere({ 3,-4 },1, { 0,0 }, 0, 1));
+	SpherePtr s2(new Sphere({ -3,4 },1, { 0,0 }, 0, 2.5f));
 	spring->setEnd1(s1);
 	REQUIRE(spring->getEnd1() == s1);
 	spring->setEnd2(s1);
@@ -26,8 +26,8 @@ TEST_CASE("Adding ends to spring", "[joint],[spring]") {
 }
 
 TEST_CASE("Removing ends from spring", "[joint],[spring]") {
-	SpherePtr s1(new Sphere({ 3,-4 }, { 0,0 }, 1, 1));
-	SpherePtr s2(new Sphere({ -3,4 }, { 0,0 }, 1, 2.5f));
+	SpherePtr s1(new Sphere({ 3,-4 },1, { 0,0 }, 0, 1));
+	SpherePtr s2(new Sphere({ -3,4 },1, { 0,0 }, 0, 2.5f));
 	SpringPtr spring(new Spring(5, 8, 0, s1, s2));
 	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,0 });
 	SECTION("Kill object to remove") {
@@ -43,8 +43,8 @@ TEST_CASE("Getters and Setters", "[joint],[spring]") {
 }
 
 TEST_CASE("Calculate energy", "[joint],[spring]") {
-	SpherePtr s1(new Sphere({ 3,0 }, { 0,0 }, 1, 1));
-	SpherePtr s2(new Sphere({ 0,4 }, { 0,0 }, 1, 2.5f));
+	SpherePtr s1(new Sphere({ 3,0 },1, { 0,0 }, 0, 1));
+	SpherePtr s2(new Sphere({ 0,4 },1, { 0,0 }, 0, 2.5f));
 	SpringPtr spring(new Spring(5, 7, 0, s1));
 	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,-10 });
 	SECTION("Spring with missing end has no energy") {
@@ -58,8 +58,8 @@ TEST_CASE("Calculate energy", "[joint],[spring]") {
 }
 
 TEST_CASE("Spring forces", "[joint],spring]") {
-	SpherePtr s1(new Sphere({ 3,-4 }, { 0,0 },1,1));
-	SpherePtr s2(new Sphere({ -3,4 }, { 0,0 }, 1,2.5f));
+	SpherePtr s1(new Sphere({ 3,-4 },1, { 0,0 },0,1));
+	SpherePtr s2(new Sphere({ -3,4 },1, { 0,0 }, 0,2.5f));
 	SpringPtr spring(new Spring(5, 8, 0, s1,s2));
 	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,0 });
 	SECTION("Spring restoring force") {

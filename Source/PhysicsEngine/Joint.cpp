@@ -5,7 +5,7 @@
 #include "Box.h"
 
 physics::Joint::Joint(RigidBodyPtr end1, RigidBodyPtr end2, glm::vec2 anchor1, glm::vec2 anchor2, glm::vec4 colour)
-	: PhysicsObject(0.f,colour), m_end1(end1), m_end2(end2), m_anchor1(anchor1), m_anchor2(anchor2)
+	: PhysicsObject(0.f,0.f,colour), m_end1(end1), m_end2(end2), m_anchor1(anchor1), m_anchor2(anchor2)
 {
 	if (m_end1 == m_end2) {
 		m_end2.reset();
