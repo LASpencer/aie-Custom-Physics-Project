@@ -8,6 +8,7 @@
 #include "Plane.h"
 #include "Spring.h"
 #include "Box.h"
+#include "SoftBody.h"
 
 using namespace physics;
 
@@ -32,13 +33,13 @@ bool Application2D::startup() {
 	m_sceneExtent = 100;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.01f, { 0, -1 });
+	m_scene = new physics::PhysicsScene(0.01f, { 0, -10 });
 
 	//TODO put objects in scene
-	m_scene->addActor(new physics::Plane({ -1,0 }, 40,1,1));
+	/*m_scene->addActor(new physics::Plane({ -1,0 }, 40,1,1));
 	m_scene->addActor(new physics::Plane({ -1,-1 }, 40,1,1));
 	m_scene->addActor(new physics::Plane({ 1,0 }, 40,1,1));
-	m_scene->addActor(new physics::Plane({ -1,1 }, 40, 1,1));
+	m_scene->addActor(new physics::Plane({ -1,1 }, 40, 1,1));*/
 	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 1,1));
 
 	/*m_scene->addActor(new physics::Box({ 0.f,0 }, 5, 5, 0, {0,0 }, 0,1,0.5f));
@@ -52,9 +53,9 @@ bool Application2D::startup() {
 	//	m_scene->addActor(new physics::Box({ 0,10 }, 8, 3, 0.5f, { 10,-3 }, 0,1,0.5f));
 	//	m_scene->addActor(new physics::Box({ 30,10 }, 5, 5, 0, { -2,-1 }, 5,1,0.5f));
 	//}
-	m_scene->addActor(new physics::Sphere({ -20,0 }, 3, { 10,0.5f }, 1, 0.17f, 1, 0.f, 0.3f, 0.1f, { 1,0,0,1 }));
+	/*m_scene->addActor(new physics::Sphere({ -20,0 }, 3, { 10,0.5f }, 1, 0.17f, 1, 0.f, 0.3f, 0.1f, { 1,0,0,1 }));
 	m_scene->addActor(new physics::Sphere({ -10,0 }, 3, { 10,0.5f }, 1, 0.17f, 1, 0.f, 0.0f, 0.1f, { 0,1,0,1 }));
-	m_scene->addActor(new physics::Sphere({ 0,0 }, 3, { 10,0.5f }, 1, 0.17f, 1, 0.f, 0.3f, 0.0f, { 0,0,1,1 }));
+	m_scene->addActor(new physics::Sphere({ 0,0 }, 3, { 10,0.5f }, 1, 0.17f, 1, 0.f, 0.3f, 0.0f, { 0,0,1,1 }));*/
 
 	//SpherePtr s1(new Sphere({ 10,0 }, { 0,0 }, 3, 1));
 	////s1->setAngularVelocity(1);
@@ -67,6 +68,12 @@ bool Application2D::startup() {
 	//	m_scene->addActor(s2);
 	//	m_scene->addActor(spring);
 	//}
+
+	Sphere particle({ 0,0 }, 1, { 0,0 }, 0, 1, 1, 0.3f, 0, 0, { 1,0,0,1 });
+
+	SoftBody body({ -20,0 }, &particle, 5, 5, 6.f, 20.f, 5.f, 5.f, 1.f, { 1,1,1,1 });
+
+	body.addToScene(m_scene);
 
 	return true;
 }

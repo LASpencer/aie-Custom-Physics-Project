@@ -2,6 +2,15 @@
 #include "PhysicsScene.h"
 
 namespace physics {
+	class RigidBody;
+	class Spring;
+
+	typedef std::shared_ptr<RigidBody> RigidBodyPtr;
+	typedef std::weak_ptr<RigidBody> RigidBodyWeakPtr;
+
+	typedef std::shared_ptr<Spring> SpringPtr;
+	typedef std::weak_ptr<Spring> SpringWeakPtr;
+
 	class SoftBody {
 	public:
 		SoftBody();

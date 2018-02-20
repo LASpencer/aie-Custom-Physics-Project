@@ -9,10 +9,11 @@ physics::SoftBody::SoftBody()
 
 physics::SoftBody::SoftBody(glm::vec2 position, RigidBody* particle, size_t cols, size_t rows,
 	float distance, float strength, float shearStrength, float bendStrength,
-	float damping, glm::vec4 springColour)
+	float damping, glm::vec4 springColour) 
+	: m_particles(cols, std::vector<RigidBodyPtr>(rows, RigidBodyPtr())), m_structureSprings(), m_shearSprings(), m_bendSprings()
 {
 	// Reserve memory for new objects
-	m_particles.reserve(cols);
+
 	m_structureSprings.reserve((cols + rows - 2) * (cols + rows - 2));
 	if (shearStrength > 0) {
 		m_shearSprings.reserve(2 * (cols + rows - 2) * (cols + rows - 2));
@@ -23,8 +24,9 @@ physics::SoftBody::SoftBody(glm::vec2 position, RigidBody* particle, size_t cols
 
 	float diagonalDistance = sqrtf(2 * distance * distance);
 
+	// TODO maybe should set springs at ends of particles to allow friction
+
 	for (size_t x = 0; x < cols; ++x) {
-		m_particles[x].reserve(rows);
 		for (size_t y = 0; y < rows; ++y) {
 			m_particles[x][y] = RigidBodyPtr((RigidBody*)particle->clone());
 			m_particles[x][y]->setPosition(position + glm::vec2((float)x * distance, (float)y * distance));
