@@ -13,6 +13,9 @@ namespace physics {
 		void kill();
 
 	protected:
-		std::vector<PhysicsObjectPtr> m_objects;
+		std::vector<std::vector<RigidBodyPtr>> m_particles;
+		std::vector<SpringPtr> m_structureSprings;
+		std::vector<SpringPtr> m_shearSprings;
+		std::vector<SpringPtr> m_bendSprings;
 	};
 }
