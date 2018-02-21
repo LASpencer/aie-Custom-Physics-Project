@@ -17,9 +17,25 @@ namespace physics {
 
 		SoftBody(glm::vec2 position, RigidBody* particle, size_t cols, size_t rows, float distance, float strength, float shearStrength, float bendStrength, float damping, glm::vec4 springColour = { 1,1,1,1 });
 
+		// Adds each object from body to scene
 		void addToScene(PhysicsScene* scene);
 
+		// Kills all objects making up soft body
 		void kill();
+
+		// Sets restoring strength of structure springs
+		void setStrength(float strength);
+
+		// Sets restoring strength of shear springs
+		void setShearStrength(float strength);
+
+		// sets restoring strength of bend strings
+		void setBendStrength(float strength);
+
+		// Sets damping on springs
+		void setDamping(float damping);
+
+		const std::vector<std::vector<RigidBodyPtr>>& getParticles() { return m_particles; }
 
 	protected:
 		std::vector<std::vector<RigidBodyPtr>> m_particles;

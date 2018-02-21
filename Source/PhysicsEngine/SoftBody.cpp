@@ -66,7 +66,7 @@ physics::SoftBody::SoftBody(glm::vec2 position, RigidBody* particle, size_t cols
 				m_structureSprings.push_back(std::make_shared<Spring>(strength, yEdgeDistance, damping, m_particles[x][y], m_particles[x][y - 1], bottom, top));
 				if (y >= 2) {
 					// Attach bend spring two rows back
-					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, 0, m_particles[x][y], m_particles[x][y-2]));	// TODO figure out if bend needs damping too
+					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, damping, m_particles[x][y], m_particles[x][y-2]));	// TODO figure out if bend needs damping too
 					// TODO figure out if bend springs should be at edge too
 				}
 			}
@@ -75,7 +75,7 @@ physics::SoftBody::SoftBody(glm::vec2 position, RigidBody* particle, size_t cols
 				m_structureSprings.push_back(std::make_shared<Spring>(strength, xEdgeDistance, damping, m_particles[x][y], m_particles[x-1][y], left, right));
 				if ( x >= 2) {
 					// Attach bend spring two columns back
-					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, 0, m_particles[x][y], m_particles[x-2][y]));	// TODO figure out if bend needs damping too
+					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, damping, m_particles[x][y], m_particles[x-2][y]));	// TODO figure out if bend needs damping too
 				}
 				if (y >= 1) {
 					// Attach shear spring to last column and row
@@ -136,5 +136,39 @@ void physics::SoftBody::kill()
 	}
 	for (auto spring : m_bendSprings) {
 		spring->kill();
+	}
+}
+
+void physics::SoftBody::setStrength(float strength)
+{
+	for (auto s : m_structureSprings) {
+		s->setTightness(strength);
+	}
+}
+
+void physics::SoftBody::setShearStrength(float strength)
+{
+	for (auto s : m_shearSprings) {
+		s->setTightness(strength);
+	}
+}
+
+void physics::SoftBody::setBendStrength(float strength)
+{
+	for (auto s : m_bendSprings) {
+		s->setTightness(strength);
+	}
+}
+
+void physics::SoftBody::setDamping(float damping)
+{
+	for (auto s : m_structureSprings) {
+		s->setDamping(damping);
+	}
+	for (auto s : m_shearSprings) {
+		s->setDamping(damping);
+	}
+	for (auto s : m_bendSprings) {
+		s->setDamping(damping);
 	}
 }
