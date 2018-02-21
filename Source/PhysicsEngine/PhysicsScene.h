@@ -12,6 +12,8 @@ namespace physics {
 
 	class PhysicsScene {
 	public:
+		static const float k_def_max_frame;
+
 		PhysicsScene(float timeStep = 0.01f, glm::vec2 gravity = glm::vec2(0,-10)); //TODO default gravity, timestep arguments
 		~PhysicsScene();
 
@@ -43,6 +45,9 @@ namespace physics {
 		void setTimeStep(const float timeStep);
 		float getTimeStep() const { return m_timeStep; }
 
+		void setMaxFrameLength(const float maxFrameLength);
+		float getMaxFrameLength() const { return m_maxFrameLength; }
+
 		void resolveCollision(Collision collision);
 
 		float calculateEnergy();
@@ -50,6 +55,7 @@ namespace physics {
 	protected:
 		glm::vec2 m_gravity;
 		float m_timeStep;
+		float m_maxFrameLength;
 		float m_accumulatedTime;
 		std::vector<PhysicsObjectPtr> m_actors;
 		std::vector<FixedUpdaterPtr> m_updaters;

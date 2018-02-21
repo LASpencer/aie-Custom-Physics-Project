@@ -30,6 +30,10 @@ namespace physics {
 		float getRadius() { return m_radius; }
 		void setRadius(float radius);
 
+		virtual float getWidth();
+		virtual float getHeight();
+		virtual float getDiagonalLength();
+
 	protected:
 		float m_radius;
 

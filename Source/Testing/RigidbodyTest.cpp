@@ -23,7 +23,7 @@ TEST_CASE("Sphere Constructor", "[rigidbody],[sphere]") {
 }
 
 TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
-	Sphere s(glm::vec2(1, 2), glm::vec2(3, 4), 5, 6);
+	Sphere s(glm::vec2(1, 2),5, glm::vec2(3, 4), 0, 6);
 	SECTION("Dynamic Sphere") {
 		SECTION("Getters") {
 			REQUIRE(s.getPosition() == glm::vec2(1, 2));
@@ -52,8 +52,8 @@ TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
 		}
 	}
 	SECTION("Kinematic Sphere") {
-		Sphere kinematic(glm::vec2(1, 2), glm::vec2(3, 4), 2, 0);
-		Sphere kin2(glm::vec2(1, 2), glm::vec2(3, 4), 2, INFINITY);
+		Sphere kinematic(glm::vec2(1, 2),2, glm::vec2(3, 4), 0, 0);
+		Sphere kin2(glm::vec2(1, 2),2, glm::vec2(3, 4), 0, INFINITY);
 		SECTION("Getters") {
 			REQUIRE(kinematic.isKinematic());
 			REQUIRE(kin2.isKinematic());
@@ -92,7 +92,7 @@ TEST_CASE("Sphere getters and setters", "[rigidbody],[sphere]") {
 }
 
 TEST_CASE("Sphere energy and momentum", "[rigidbody],[sphere],[energy],[momentum]") {
-	Sphere s(glm::vec2(0,0), glm::vec2(3, 4), 5, 4);
+	Sphere s(glm::vec2(0,0),5, glm::vec2(3, 4), 0, 4);
 	PhysicsScene* gravity = new PhysicsScene(0.1f, { 0,-10 });
 	PhysicsScene* noGravity = new PhysicsScene(0.1f, { 0,0 });
 	SECTION("Kinetic energy") {
@@ -153,8 +153,8 @@ TEST_CASE("Sphere energy and momentum", "[rigidbody],[sphere],[energy],[momentum
 
 
 TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
-	Sphere s1(glm::vec2(0, 0), glm::vec2(0, 0), 5);
-	Sphere s2(glm::vec2(10, 0), glm::vec2(0, 0), 5);
+	Sphere s1(glm::vec2(0, 0),5, glm::vec2(0, 0), 0);
+	Sphere s2(glm::vec2(10, 0),5, glm::vec2(0, 0), 0);
 	Collision collision;
 	SECTION("Collision miss") {
 		collision = s1.checkCollision(&s2);
@@ -201,8 +201,8 @@ TEST_CASE("Sphere-sphere collision", "[rigidbody],[sphere],[collision]") {
 }
 
 TEST_CASE("Collision struct reversal", "[collision]") {
-	Sphere s1(glm::vec2(0, 0), glm::vec2(0, 0), 5);
-	Sphere s2(glm::vec2(8, 0), glm::vec2(0, 0), 5);
+	Sphere s1(glm::vec2(0, 0),5, glm::vec2(0, 0));
+	Sphere s2(glm::vec2(8, 0),5, glm::vec2(0, 0));
 	Collision col;
 	Collision reverse;
 	col = s1.checkSphereCollision(&s2);
@@ -290,7 +290,7 @@ TEST_CASE("Planes don't collide", "[plane], [collision]") {
 
 TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 	Plane p({ 1,0 }, -4);
-	Sphere s(glm::vec2(0, 0), glm::vec2(0, 0), 5);
+	Sphere s(glm::vec2(0, 0),5, glm::vec2(0, 0));
 	Collision col;
 	SECTION("vertical plane") {
 		col = p.checkCollision(&s);
@@ -333,8 +333,8 @@ TEST_CASE("Plane-Sphere collision", "[plane], [collision]") {
 }
 
 TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
-	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
-	Sphere* t = new Sphere({ 0,0 }, { 0,0 }, 1, 2.5f);
+	Sphere* s = new Sphere({ 0,0 },1, { 0,0 }, 0);
+	Sphere* t = new Sphere({ 0,0 },1, { 0,0 }, 0, 2.5f);
 	PhysicsScene* gravity = new PhysicsScene(0.1f, { 0,-10 });
 	PhysicsScene* noGravity = new PhysicsScene(0.1f, { 0,0 });
 	SECTION("Sphere kinematic motion") {
@@ -455,9 +455,9 @@ TEST_CASE("Sphere motion", "[rigidbody],[sphere]") {
 
 //TODO set up and resolve collisions between dynamic and kinematic/static
 TEST_CASE("Forces don't affect kinematic and static spheres", "[rigidbody],[sphere]") {
-	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 1);
-	Sphere* t = new Sphere({ 0,0 }, { 0,0 }, 1, 0);
-	Sphere* u = new Sphere({ 0,0 }, { 0,0 }, 1, 0);
+	Sphere* s = new Sphere({ 0,0 },1, { 0,0 });
+	Sphere* t = new Sphere({ 0,0 },1, { 0,0 }, 0, 0);
+	Sphere* u = new Sphere({ 0,0 },1, { 0,0 }, 0, 0);
 	u->setStatic(true);
 
 	glm::vec2 force = { 8,-3 };
@@ -510,7 +510,7 @@ TEST_CASE("Sphere moment of inertia", "[sphere],[rotation]") {
 }
 
 TEST_CASE("Applying torque to sphere", "[sphere],[rotation]") {
-	Sphere* s = new Sphere({ 0,0 }, { 0,0 }, 4, 3);
+	Sphere* s = new Sphere({ 0,0 }, 4, { 0,0 }, 0, 3);
 	PhysicsScene* scene = new PhysicsScene(0.1f, { 0,0 });
 	REQUIRE(s->getMoment() == Approx(24));
 	SECTION("Applying impulse") {

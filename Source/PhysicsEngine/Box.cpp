@@ -292,6 +292,11 @@ void physics::Box::setHeight(float height)
 	calculateMoment();
 }
 
+float physics::Box::getDiagonalLength()
+{
+	return 2 * sqrtf(m_xExtent * m_xExtent + m_yExtent * m_yExtent);
+}
+
 glm::vec2 physics::Box::getXExtent()
 {
 	return m_localX * m_xExtent;
