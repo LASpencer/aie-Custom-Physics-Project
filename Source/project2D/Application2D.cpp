@@ -33,13 +33,13 @@ bool Application2D::startup() {
 	m_sceneExtent = 100;
 	m_timer = 0;
 
-	m_scene = new physics::PhysicsScene(0.01f, { 0, -10 });
+	m_scene = new physics::PhysicsScene(0.01f, { 0, -5 });
 
 	//TODO put objects in scene
-	/*m_scene->addActor(new physics::Plane({ -1,0 }, 40,1,1));
-	m_scene->addActor(new physics::Plane({ -1,-1 }, 40,1,1));
+	m_scene->addActor(new physics::Plane({ -1,0 }, 40,1,1));
+	//m_scene->addActor(new physics::Plane({ -1,-1 }, 40,1,1));
 	m_scene->addActor(new physics::Plane({ 1,0 }, 40,1,1));
-	m_scene->addActor(new physics::Plane({ -1,1 }, 40, 1,1));*/
+	m_scene->addActor(new physics::Plane({ -1,1 }, 40, 1,1));
 	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 1,1));
 
 	/*m_scene->addActor(new physics::Box({ 0.f,0 }, 5, 5, 0, {0,0 }, 0,1,0.5f));
@@ -57,8 +57,8 @@ bool Application2D::startup() {
 	m_scene->addActor(new physics::Sphere({ -10,0 }, 3, { 10,0.5f }, 1, 0.17f, 1, 0.f, 0.0f, 0.1f, { 0,1,0,1 }));
 	m_scene->addActor(new physics::Sphere({ 0,0 }, 3, { 10,0.5f }, 1, 0.17f, 1, 0.f, 0.3f, 0.0f, { 0,0,1,1 }));*/
 
-	//SpherePtr s1(new Sphere({ 10,0 }, { 0,0 }, 3, 1));
-	////s1->setAngularVelocity(1);
+	//SpherePtr s1(new Sphere({ 10,0 },3, { 0,0 }, 0, 1));
+	//s1->setAngularVelocity(1);
 	//m_scene->addActor(s1);
 
 	//for (size_t i = 0; i < 1; ++i) {
@@ -69,9 +69,10 @@ bool Application2D::startup() {
 	//	m_scene->addActor(spring);
 	//}
 
-	Sphere particle({ 0,0 }, 1, { 0,0 }, 0, 1, 1, 0.3f, 0, 0, { 1,0,0,1 });
+	Sphere particle({ 0,0 }, 2, { 0,0 }, 1, 1, 1, 0.3f, 0, 0, { 1,0,0,1 });
+	particle.setOrientation(1);
 
-	SoftBody body({ -20,0 }, &particle, 5, 5, 6.f, 20.f, 5.f, 5.f, 1.f, { 1,1,1,1 });
+	SoftBody body({ -20,10 }, &particle, 5, 5, 6.f, 30.f, 30.f, 20.f, 1.f, { 1,1,1,1 });
 
 	body.addToScene(m_scene);
 

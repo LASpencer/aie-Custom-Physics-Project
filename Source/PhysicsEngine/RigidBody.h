@@ -47,6 +47,9 @@ namespace physics
 		glm::vec2 getLocalX() { return m_localX; }
 		glm::vec2 getLocalY() { return m_localY; }
 
+		virtual float getWidth() = 0;
+		virtual float getHeight() = 0;
+
 		float getAngularVelocity();
 		void setAngularVelocity(float angularVelocity);
 

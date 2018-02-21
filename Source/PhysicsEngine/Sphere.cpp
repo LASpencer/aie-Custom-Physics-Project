@@ -88,6 +88,16 @@ void physics::Sphere::setRadius(float radius)
 	}
 }
 
+float physics::Sphere::getWidth()
+{
+	return 2 * m_radius;
+}
+
+float physics::Sphere::getHeight()
+{
+	return 2 * m_radius;
+}
+
 void physics::Sphere::calculateMoment()
 {
 	m_moment = 0.5f * m_mass * m_radius * m_radius;

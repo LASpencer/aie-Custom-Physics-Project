@@ -49,10 +49,10 @@ namespace physics {
 
 		virtual ShapeType getShapeID();
 
-		float getWidth();
+		virtual float getWidth();
 		void setWidth(float width);
 
-		float getHeight();
+		virtual float getHeight();
 		void setHeight(float height);
 
 		glm::vec2 getXExtent();
