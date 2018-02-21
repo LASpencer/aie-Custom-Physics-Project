@@ -4,8 +4,10 @@
 
 using namespace physics;
 
+const float PhysicsScene::k_def_max_frame = 0.05f;
+
 physics::PhysicsScene::PhysicsScene(float timeStep, glm::vec2 gravity) 
-	: m_timeStep(timeStep), m_gravity(gravity), m_accumulatedTime(0)
+	: m_timeStep(timeStep), m_gravity(gravity), m_accumulatedTime(0), m_maxFrameLength(k_def_max_frame)
 {
 	if (timeStep <= 0 || isnan(timeStep) || isinf(timeStep)) {
 		throw std::invalid_argument("Timestep must be positive and finite");
@@ -127,7 +129,7 @@ bool physics::PhysicsScene::removeUpdater(FixedUpdaterPtr updater)
 
 void physics::PhysicsScene::update(float deltaTime)
 {
-	m_accumulatedTime += deltaTime;
+	m_accumulatedTime = std::min( m_accumulatedTime +deltaTime, m_maxFrameLength);
 
 	while (m_accumulatedTime >= m_timeStep) {
 
@@ -199,6 +201,11 @@ void physics::PhysicsScene::setTimeStep(const float timeStep)
 		throw std::invalid_argument("Timestep must be positive and finite");
 	}
 	m_timeStep = timeStep;
+}
+
+void physics::PhysicsScene::setMaxFrameLength(const float maxFrameLength)
+{
+	m_maxFrameLength = maxFrameLength;
 }
 
 void physics::PhysicsScene::resolveCollision(Collision collision)

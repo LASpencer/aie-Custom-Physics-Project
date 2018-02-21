@@ -55,6 +55,8 @@ namespace physics {
 		virtual float getHeight();
 		void setHeight(float height);
 
+		virtual float getDiagonalLength();
+
 		glm::vec2 getXExtent();
 		glm::vec2 getYExtent();
 

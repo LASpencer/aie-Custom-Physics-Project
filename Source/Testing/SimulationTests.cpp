@@ -11,9 +11,10 @@ using namespace physics;
 
 
 TEST_CASE("Two billiard balls", "[simulation]") {
-	Sphere* cueBall = new Sphere({ -20, 0 }, { 11.11f,0 }, 1, 0.17f);
-	Sphere* eightBall = new Sphere({ 0, 0 }, { 0,0 }, 1, 0.16f);
+	Sphere* cueBall = new Sphere({ -20, 0 },1, { 11.11f,0 }, 0, 0.17f);
+	Sphere* eightBall = new Sphere({ 0, 0 },1, { 0,0 }, 0, 0.16f);
 	PhysicsScene* scene = new PhysicsScene(0.01f, { 0,0 });
+	scene->setMaxFrameLength(5);
 
 	scene->addActor(cueBall);
 	scene->addActor(eightBall);

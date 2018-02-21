@@ -32,6 +32,7 @@ namespace physics {
 
 		virtual float getWidth();
 		virtual float getHeight();
+		virtual float getDiagonalLength();
 
 	protected:
 		float m_radius;

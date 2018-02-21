@@ -69,10 +69,9 @@ bool Application2D::startup() {
 	//	m_scene->addActor(spring);
 	//}
 
-	Sphere particle({ 0,0 }, 2, { 0,0 }, 1, 1, 1, 0.3f, 0, 0, { 1,0,0,1 });
-	particle.setOrientation(1);
+	Box particle({ 0,0 }, 6,6, 0, { 0,0 }, 0, 1, 1, 0.1f, 0, 0, { 1,0,0,1 });
 
-	SoftBody body({ -20,10 }, &particle, 5, 5, 6.f, 30.f, 30.f, 20.f, 1.f, { 1,1,1,1 });
+	SoftBody body({ -20,10 }, &particle, 10, 3, 6.f, 30.f, 30.f, 20.f, 1.f, { 1,1,1,1 });
 
 	body.addToScene(m_scene);
 
