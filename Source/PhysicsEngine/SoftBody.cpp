@@ -139,6 +139,24 @@ void physics::SoftBody::kill()
 	}
 }
 
+void physics::SoftBody::setDraw(bool value)
+{
+	for (auto column : m_particles) {
+		for (auto particle : column) {
+			particle->setDraw(value);
+		}
+	}
+	for (auto spring : m_structureSprings) {
+		spring->setDraw(value);
+	}
+	for (auto spring : m_shearSprings) {
+		spring->setDraw(value);
+	}
+	for (auto spring : m_bendSprings) {
+		spring->setDraw(value);
+	}
+}
+
 void physics::SoftBody::setStrength(float strength)
 {
 	for (auto s : m_structureSprings) {

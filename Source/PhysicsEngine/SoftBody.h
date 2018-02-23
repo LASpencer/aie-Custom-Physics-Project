@@ -23,6 +23,9 @@ namespace physics {
 		// Kills all objects making up soft body
 		void kill();
 
+		// Sets whether to draw body
+		void setDraw(bool value);
+
 		// Sets restoring strength of structure springs
 		void setStrength(float strength);
 
