@@ -3,14 +3,15 @@
 #include "ICollisionObserver.h"
 
 physics::PhysicsObject::PhysicsObject(float elasticity, float friction, glm::vec4 colour) 
-	: m_colour(colour), m_alive(true)
+	: m_colour(colour), m_alive(true), m_trigger(false), m_draw(true)
 {
 	setElasticity(elasticity);
 	setFriction(friction);
 }
 
 physics::PhysicsObject::PhysicsObject(const PhysicsObject & other) 
-	: m_elasticity(other.m_elasticity), m_friction(other.m_friction), m_colour(other.m_colour), m_alive(true)
+	: m_elasticity(other.m_elasticity), m_friction(other.m_friction), m_colour(other.m_colour),
+	m_trigger(other.m_trigger), m_draw(other.m_draw), m_alive(true)
 {
 }
 

@@ -170,8 +170,11 @@ void physics::PhysicsScene::update(float deltaTime)
 void physics::PhysicsScene::updateGizmos()
 {
 	// TODO have actors create their gizmos
+	float timeRatio = m_accumulatedTime / m_timeStep;
 	for (auto actor : m_actors) {
-		actor->makeGizmo(m_accumulatedTime/m_timeStep);
+		if (actor->shouldDraw()) {
+			actor->makeGizmo(timeRatio);
+		}
 	}
 }
 
@@ -208,12 +211,16 @@ void physics::PhysicsScene::setMaxFrameLength(const float maxFrameLength)
 	m_maxFrameLength = maxFrameLength;
 }
 
-void physics::PhysicsScene::resolveCollision(Collision collision)
+void physics::PhysicsScene::resolveCollision(const Collision& collision)
 {
-	//TODO
+	// Involved objects inform their subscribers
+	collision.first->broadcastCollision(collision);
+	collision.second->broadcastCollision(collision);
 
-	//TODO check for static
-	collision.first->resolveCollision(collision.second, collision);
+	// If neither are triggers, resolve collision
+	if (!collision.first->isTrigger() && !collision.second->isTrigger()) {
+		collision.first->resolveCollision(collision.second, collision);
+	}
 
 
 }

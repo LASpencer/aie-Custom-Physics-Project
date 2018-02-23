@@ -66,6 +66,8 @@ namespace physics {
 		float m_elasticity;	// Coefficient of elasticity
 		float m_friction;	// Coefficient of friction
 		bool m_alive;		// True until object set as dead
+		bool m_trigger;		// If true, no physical effect from collision
+		bool m_draw;		// If true, gizmo will be created for rendering
 
 		std::vector<CollisionObserverWeakPtr> m_observers;
 
@@ -120,6 +122,12 @@ namespace physics {
 		
 		// Returns true if the object has not been killed
 		bool isAlive() { return m_alive; };
+
+		bool isTrigger() { return m_trigger; }
+		void setTrigger(bool value) { m_trigger = value; }
+
+		bool shouldDraw() { return m_draw; }
+		void setDraw(bool value) { m_draw = value; }
 
 		// Call to set object as dead, so scene and other objects
 		// referring to it can remove it

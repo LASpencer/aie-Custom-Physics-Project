@@ -272,8 +272,7 @@ void physics::RigidBody::resolveCollision(PhysicsObject * other, const Collision
 
 void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Collision & col)
 {
-	broadcastCollision(col);
-	other->broadcastCollision(col);
+	
 	if (isDynamic() || other->isDynamic()) {
 		//TODO implement friction between objects
 		float friction = combineFriction(this, other);
@@ -322,8 +321,8 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 			applyImpulseFromOther(other, frictionImpulse * perpendicular, col.contact);
 		}
 		// Get new relative velocity
-		relative = other->getVelocity() - getVelocity();
-		normalRvel = glm::dot(relative, normal);
+		/*relative = other->getVelocity() - getVelocity();
+		normalRvel = glm::dot(relative, normal);*/
 		// TODO maybe check if moving apart fast enough before resolving penetration?
 		seperateObjects(other, normal * col.depth);
 	}
@@ -332,8 +331,6 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 
 void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & col)
 {
-	broadcastCollision(col);
-	other->broadcastCollision(col);
 	if (isDynamic()) {
 		//TODO implement friction between objects
 		float friction = combineFriction(this, other);
@@ -356,9 +353,6 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 
 			// Apply impulse
 			float impulse = normalRvel * (1 + elasticity) / invEffMass;
-
-			
-
 			applyImpulse(impulse * normal, col.contact);
 
 			//float tangentRvel = glm::dot(relative, perpendicular) + tangentRadius * 0.5f * (oldAngular + m_angularVelocity);

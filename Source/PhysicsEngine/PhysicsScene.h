@@ -48,7 +48,7 @@ namespace physics {
 		void setMaxFrameLength(const float maxFrameLength);
 		float getMaxFrameLength() const { return m_maxFrameLength; }
 
-		void resolveCollision(Collision collision);
+		void resolveCollision(const Collision& collision);
 
 		float calculateEnergy();
 
