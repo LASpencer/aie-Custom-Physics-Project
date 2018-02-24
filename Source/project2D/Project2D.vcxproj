@@ -166,11 +166,13 @@
   <ItemGroup>
     <ClCompile Include="Application2D.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PoolBall.cpp" />
     <ClCompile Include="PoolGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h" />
     <ClInclude Include="Demo.h" />
+    <ClInclude Include="PoolBall.h" />
     <ClInclude Include="PoolGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

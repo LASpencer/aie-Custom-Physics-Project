@@ -21,7 +21,11 @@ public:
 
 	glm::vec2 screenToWorldSpace(glm::vec2 pos);
 
-	glm::vec2 worldToSceenSpace(glm::vec2 pos);
+	glm::vec2 worldToScreenSpace(glm::vec2 pos);
+
+	inline float screenToWorldScale();
+
+	inline float worldToScreenScale();
 
 	aie::Renderer2D* getRenderer() { return m_2dRenderer; }
 

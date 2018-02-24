@@ -30,6 +30,9 @@
     <ClCompile Include="PoolGame.cpp">
       <Filter>Source Files\Pool</Filter>
     </ClCompile>
+    <ClCompile Include="PoolBall.cpp">
+      <Filter>Source Files\Pool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PoolGame.h">
+      <Filter>Header Files\Pool</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolBall.h">
       <Filter>Header Files\Pool</Filter>
     </ClInclude>
   </ItemGroup>

@@ -110,12 +110,20 @@ void Application2D::draw() {
 
 glm::vec2 Application2D::screenToWorldSpace(glm::vec2 pos)
 {
-	float scale =2.f * m_sceneExtent / (float)getWindowWidth();
-	return (pos - (0.5f * glm::vec2((float)getWindowWidth(), (float)getWindowHeight()))) * scale + m_cameraPos;
+	return (pos - (0.5f * glm::vec2((float)getWindowWidth(), (float)getWindowHeight()))) * screenToWorldScale() + m_cameraPos;
 }
 
-glm::vec2 Application2D::worldToSceenSpace(glm::vec2 pos)
+glm::vec2 Application2D::worldToScreenSpace(glm::vec2 pos)
 {
-	float scale = 0.5f * (float)getWindowWidth() / m_sceneExtent;
-	return scale * (pos - m_cameraPos) + 0.5f * glm::vec2((float)getWindowWidth(), (float)getWindowHeight());
+	return worldToScreenScale() * (pos - m_cameraPos) + 0.5f * glm::vec2((float)getWindowWidth(), (float)getWindowHeight());
+}
+
+float Application2D::screenToWorldScale()
+{
+	return 2.f * m_sceneExtent / (float)getWindowWidth();
+}
+
+float Application2D::worldToScreenScale()
+{
+	return 0.5f * (float)getWindowWidth() / m_sceneExtent;
 }
