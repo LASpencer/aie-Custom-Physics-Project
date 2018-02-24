@@ -42,6 +42,12 @@ void physics::Box::makeGizmo(float timeRatio)
 	aie::Gizmos::add2DTri(p1, p3, p4, m_colour);
 }
 
+bool physics::Box::isPointInside(glm::vec2 point)
+{
+	glm::vec2 localPoint = worldToLocalSpace(point);
+	return (abs(point.x) < m_xExtent && abs(point.y) < m_yExtent);
+}
+
 physics::Collision physics::Box::checkCollision(PhysicsObject * other)
 {
 	return other->checkBoxCollision(this);

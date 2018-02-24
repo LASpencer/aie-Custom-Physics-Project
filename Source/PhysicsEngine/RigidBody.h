@@ -90,6 +90,8 @@ namespace physics
 
 		virtual glm::vec2 calculateMomentum();
 
+		virtual bool isPointInside(glm::vec2 point) = 0;
+
 		virtual void resolveCollision(PhysicsObject* other, const Collision & col) override;
 		virtual void resolveRigidbodyCollision(RigidBody * other, const Collision & col) override;
 		virtual void resolvePlaneCollision(Plane* other, const Collision & col) override;

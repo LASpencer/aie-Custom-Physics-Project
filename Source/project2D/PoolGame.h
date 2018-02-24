@@ -1,4 +1,6 @@
 #pragma once
+#include "Sphere.h"
+
 #include "Demo.h"
 
 enum EPoolTags : unsigned int {
@@ -20,6 +22,8 @@ public:
 	static const float k_table_height;
 	static const float k_rail_friction;
 	static const float k_rail_elasticity;
+	static const float k_stick_force_multiplier;
+	static const float k_stick_max_force;
 	static const glm::vec4 k_felt_colour;
 
 	PoolGame();
@@ -30,6 +34,11 @@ public:
 protected:
 	std::vector<PoolBallPtr> m_balls;
 
+	glm::vec2 m_cueContact;
+	bool m_cueActive;
+
 	virtual void setup();
 	virtual void rack();
+
+	void shootCue(physics::Sphere* cue, Application2D* app);
 };

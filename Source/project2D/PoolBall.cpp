@@ -16,10 +16,12 @@ const float PoolBall::k_mass = 1.6f;
 const float PoolBall::k_cue_mass = 1.7f;
 const float PoolBall::k_elasticity = 1.f;
 const float PoolBall::k_friction = 0.1f;
-const float PoolBall::k_drag = 0.1f;
-const float PoolBall::k_ang_drag = 0.01f;
+const float PoolBall::k_drag = 0.3f;
+const float PoolBall::k_ang_drag = 0.3f;
 const float PoolBall::k_cue_drag = k_drag * k_cue_mass / k_mass;
 const float PoolBall::k_cue_ang_drag = k_ang_drag * k_cue_mass / k_mass;
+const float PoolBall::k_min_speed = 0.1f;
+const float PoolBall::k_min_rotate = 0.1f;
 
 PoolBall::PoolBall(int number, PoolGame* game) : m_number(number), m_game(game)
 {
@@ -61,8 +63,8 @@ PoolBall::PoolBall(int number, PoolGame* game) : m_number(number), m_game(game)
 
 bool PoolBall::isStopped()
 {
-	//TODO
-	return false;
+	glm::vec2 velocity = m_sphere->getVelocity();
+	return glm::dot(velocity, velocity) < k_min_speed * k_min_speed;
 }
 
 bool PoolBall::isSunk()
@@ -86,6 +88,13 @@ void PoolBall::place(glm::vec2 position, physics::PhysicsScene * scene)
 void PoolBall::fixedUpdate(physics::PhysicsScene * scene)
 {
 	// TODO if under minimum speed/rotation bring to a stop
+	glm::vec2 velocity = m_sphere->getVelocity();
+	if (isStopped()) {
+		m_sphere->setVelocity({ 0,0 });
+	}
+	if (m_sphere->getAngularVelocity() < k_min_rotate) {
+		m_sphere->setAngularVelocity(0);
+	}
 }
 
 void PoolBall::OnCollision(physics::PhysicsObject * publisher, const physics::Collision & collision)

@@ -32,6 +32,12 @@ void physics::Sphere::makeGizmo(float timeRatio)
 	aie::Gizmos::add2DLine(interpolated, interpolatedLine + interpolated, { 0,0,0,1 });
 }
 
+bool physics::Sphere::isPointInside(glm::vec2 point)
+{
+	glm::vec2 displacement = point - m_position;
+	return glm::dot(displacement, displacement) < m_radius * m_radius;
+}
+
 physics::Collision physics::Sphere::checkCollision(PhysicsObject * other)
 {
 	return other->checkSphereCollision(this);

@@ -1,6 +1,9 @@
 #include "PoolGame.h"
 
+#include "Input.h"
+
 #include "Plane.h"
+#include "Sphere.h"
 #include "Box.h"
 
 #include "Application2d.h"
@@ -13,9 +16,11 @@ const float PoolGame::k_table_width = 160;
 const float PoolGame::k_table_height = 80;
 const float PoolGame::k_rail_friction = 0.1f;
 const float PoolGame::k_rail_elasticity = 1.f;
+const float PoolGame::k_stick_force_multiplier = 2.f;
+const float PoolGame::k_stick_max_force = 300.f;
 const glm::vec4 PoolGame::k_felt_colour = { 0.f,1.f,0.f,1.f };
 
-PoolGame::PoolGame() : m_balls(16,PoolBallPtr())
+PoolGame::PoolGame() : m_balls(16,PoolBallPtr()), m_cueActive(false)
 {
 	m_scene = new PhysicsScene(0.01f, { 0,0 });
 	setup();
@@ -25,18 +30,50 @@ void PoolGame::update(float deltaTime, Application2D* app)
 {
 	// TODO cuestick
 
+	// TODO only allow play when balls have stopped
+
+	aie::Input* input = aie::Input::getInstance();
+	
+	if (m_cueActive) {
+		if (input->wasMouseButtonReleased(aie::INPUT_MOUSE_BUTTON_LEFT)) {
+			m_cueActive = false;
+			Sphere* cueball = m_balls[0]->getSphere();
+			shootCue(cueball, app);
+		}
+		// Spacebar to cancel shot
+		if (input->wasKeyPressed(aie::INPUT_KEY_SPACE)) {
+			m_cueActive = false;
+		}
+	}
+	else {
+		if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_LEFT)) {
+			m_cueActive = true;
+			m_cueContact = { input->getMouseX(), input->getMouseY() };
+		}
+	}
+	
+
+
 	m_scene->update(deltaTime);
 }
 
 void PoolGame::draw(Application2D * app)
 {
 	// TODO draw
+	aie::Renderer2D* renderer = app->getRenderer();
 	glm::vec2 centre = app->worldToScreenSpace({ 0,0 });
 	float scale = app->worldToScreenScale();
-	app->getRenderer()->setRenderColour(k_felt_colour.r, k_felt_colour.g, k_felt_colour.b, k_felt_colour.a);
-	//app->getRenderer()->drawBox(centre.x, centre.y, scale * k_table_width, scale * k_table_height,0,2);
+	renderer->setRenderColour(k_felt_colour.r, k_felt_colour.g, k_felt_colour.b, k_felt_colour.a);
+	//renderer->drawBox(centre.x, centre.y, scale * k_table_width, scale * k_table_height,0,2);
 
 	// TODO URGENT figure out how to get felt to render behind gizmos
+
+	// TODO extract colour, width out as constants
+	if (m_cueActive) {
+		renderer->setRenderColour(0.8f,0.8f,0.3f);
+		aie::Input* input = aie::Input::getInstance();
+		renderer->drawLine(m_cueContact.x, m_cueContact.y, input->getMouseX(), input->getMouseY(), 2);
+	}
 }
 
 void PoolGame::setup()
@@ -53,6 +90,7 @@ void PoolGame::setup()
 	// TODO pocket colour?
 	Box pocket({ 0,0 }, 4, 4, 0);
 	pocket.setStatic(true);
+	pocket.setTrigger(true);
 	pocket.setTags(EPoolTags::pocket);
 	
 	// Add each pocket
@@ -112,4 +150,21 @@ void PoolGame::rack()
 	m_balls[13]->place(triangleSpot(4, 1), m_scene);
 	m_balls[14]->place(triangleSpot(4, 2), m_scene);
 	m_balls[15]->place(triangleSpot(4, 4), m_scene);
+}
+
+void PoolGame::shootCue(physics::Sphere* cue, Application2D* app)
+{
+	aie::Input* input = aie::Input::getInstance();
+	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY() };
+
+	glm::vec2 worldCueContact = app->screenToWorldSpace(m_cueContact);
+	if (cue->isPointInside(worldCueContact)) {
+		glm::vec2 worldCueEnd = app->screenToWorldSpace(mousePos);
+		glm::vec2 displacement = worldCueContact - worldCueEnd;
+		glm::vec2 direction = glm::normalize(displacement);
+		float length = glm::length(displacement);
+		float cueForce = std::max(length * k_stick_force_multiplier, k_stick_max_force);
+		// TODO maybe raycast and move contact to edge of sphere?
+		cue->applyImpulse(direction * cueForce, worldCueContact);
+	}
 }

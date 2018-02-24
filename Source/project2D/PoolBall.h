@@ -26,6 +26,8 @@ public:
 	static const float k_ang_drag;
 	static const float k_cue_drag;
 	static const float k_cue_ang_drag;
+	static const float k_min_speed;
+	static const float k_min_rotate;
 
 	PoolBall(int number, PoolGame* game);
 
