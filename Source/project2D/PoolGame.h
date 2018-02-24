@@ -1,6 +1,5 @@
 #pragma once
 #include "Demo.h"
-#include "Plane.h"
 
 enum EPoolTags : unsigned int {
 	pocket = 1,
@@ -11,10 +10,16 @@ enum EPoolTags : unsigned int {
 	striped_ball = 32
 };
 
+class PoolBall;
+typedef std::shared_ptr<PoolBall> PoolBallPtr;
+typedef std::weak_ptr<PoolBall> PoolBallWeakPtr;
+
 class PoolGame : public Demo {
 public:
 	static const float k_table_width;
 	static const float k_table_height;
+	static const float k_rail_friction;
+	static const float k_rail_elasticity;
 	static const glm::vec4 k_felt_colour;
 
 	PoolGame();
@@ -22,7 +27,9 @@ public:
 	virtual void update(float deltaTime, Application2D* app);
 
 	virtual void draw(Application2D* app);
+protected:
+	std::vector<PoolBallPtr> m_balls;
 
 	virtual void setup();
-protected:
+	virtual void rack();
 };

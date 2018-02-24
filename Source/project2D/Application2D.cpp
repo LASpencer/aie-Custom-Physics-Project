@@ -90,6 +90,7 @@ void Application2D::draw() {
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
+	m_2dRenderer->setRenderColour(1,1,1,1);
 	// TODO extract stuff out into variables, make screen to world conversion functions
 	float sceneHeight = m_sceneExtent * getWindowHeight() / getWindowWidth();
 	aie::Gizmos::draw2D(glm::ortho<float>(m_cameraPos.x - m_sceneExtent, m_cameraPos.x + m_sceneExtent,

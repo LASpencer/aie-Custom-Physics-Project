@@ -1,4 +1,7 @@
 #include "PoolBall.h"
+
+#include "PhysicsObject.h"
+
 #include "PoolGame.h"
 
 using namespace physics;
@@ -8,7 +11,7 @@ const glm::vec4 PoolBall::k_eight_colour = { 0.2f,0.2f,0.2f,1 };	// TODO make bl
 const glm::vec4 PoolBall::k_striped_colour = { 1,1,0,1 };
 const glm::vec4 PoolBall::k_solid_colour = {1,0,0,1};
 
-const float PoolBall::k_radius = 2;
+const float PoolBall::k_radius = 2;		//TODO figure out 
 const float PoolBall::k_mass = 1.6f;
 const float PoolBall::k_cue_mass = 1.7f;
 const float PoolBall::k_elasticity = 1.f;
