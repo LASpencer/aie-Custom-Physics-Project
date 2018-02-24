@@ -44,6 +44,11 @@ void physics::PhysicsObject::kill()
 	m_alive = false;
 }
 
+void physics::PhysicsObject::resetAlive()
+{
+	m_alive = true;
+}
+
 bool physics::PhysicsObject::addObserver(const CollisionObserverPtr & observer)
 {
 	// TODO test add observer

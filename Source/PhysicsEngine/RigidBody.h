@@ -78,6 +78,8 @@ namespace physics
 
 		inline bool isDynamic() { return !(isKinematic() || isStatic()); };
 
+		virtual void resetAlive();
+
 		glm::vec2 localToWorldSpace(glm::vec2 localPos);
 
 		glm::vec2 pastLocalToWorldSpace(glm::vec2 localPos);

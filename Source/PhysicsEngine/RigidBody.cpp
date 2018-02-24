@@ -225,6 +225,14 @@ void physics::RigidBody::setAngularVelocity(float angularVelocity)
 	m_angularVelocity = angularVelocity;
 }
 
+void physics::RigidBody::resetAlive()
+{
+	m_alive = true;
+	// Reset force and torque to 0
+	m_totalForce = { 0,0 };
+	m_totalTorque = 0;
+}
+
 glm::vec2 physics::RigidBody::localToWorldSpace(glm::vec2 localPos)
 {
 	return m_position + localPos.x * m_localX + localPos.y * m_localY;

@@ -134,6 +134,9 @@ namespace physics {
 		// referring to it can remove it
 		void kill();
 
+		// Call to set object as alive again, allowing it to be added back to the scene
+		virtual void resetAlive();
+
 		// Adds new observer to inform about collisions
 		// returns true if added, false if already observing
 		bool addObserver(const CollisionObserverPtr& observer);

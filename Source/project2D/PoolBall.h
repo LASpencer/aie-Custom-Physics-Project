@@ -10,8 +10,18 @@ class PoolBall : public physics::ICollisionObserver, public physics::IFixedUpdat
 public:
 	static const glm::vec4 k_cue_colour;
 	static const glm::vec4 k_eight_colour;
-	static const glm::vec4 k_stripe_colour;
+	static const glm::vec4 k_striped_colour;
 	static const glm::vec4 k_solid_colour;
+
+	static const float k_radius;
+	static const float k_mass;
+	static const float k_cue_mass;
+	static const float k_elasticity;
+	static const float k_friction;
+	static const float k_drag;
+	static const float k_ang_drag;
+	static const float k_cue_drag;
+	static const float k_cue_ang_drag;
 
 	PoolBall(int number, PoolGame* game);
 
