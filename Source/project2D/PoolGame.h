@@ -24,6 +24,7 @@ public:
 	static const float k_rail_elasticity;
 	static const float k_stick_force_multiplier;
 	static const float k_stick_max_force;
+	static const float k_pocket_width;
 	static const glm::vec4 k_felt_colour;
 
 	PoolGame();

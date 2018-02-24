@@ -73,10 +73,10 @@ void Application2D::update(float deltaTime) {
 
 	aie::Gizmos::clear();
 
-	glm::vec2 mousePos = screenToWorldSpace({(float)input->getMouseX(), (float)input->getMouseY()});
+	//glm::vec2 mousePos = screenToWorldSpace({(float)input->getMouseX(), (float)input->getMouseY()});
 
 
-	aie::Gizmos::add2DCircle(mousePos, 1, 6, { 0.2f,.8f,.5f,1 });// Draw circle at mouse
+	//aie::Gizmos::add2DCircle(mousePos, 1, 6, { 0.2f,.8f,.5f,1 });// Draw circle at mouse
 
 	m_currentDemo->update(deltaTime, this);
 }
@@ -91,7 +91,7 @@ void Application2D::draw() {
 	m_2dRenderer->begin();
 
 	m_2dRenderer->setRenderColour(1,1,1,1);
-	// TODO extract stuff out into variables, make screen to world conversion functions
+
 	float sceneHeight = m_sceneExtent * getWindowHeight() / getWindowWidth();
 	aie::Gizmos::draw2D(glm::ortho<float>(m_cameraPos.x - m_sceneExtent, m_cameraPos.x + m_sceneExtent,
 						m_cameraPos.y - sceneHeight, m_cameraPos.y + sceneHeight, -1.0f, 1.0f));

@@ -64,7 +64,7 @@ PoolBall::PoolBall(int number, PoolGame* game) : m_number(number), m_game(game)
 bool PoolBall::isStopped()
 {
 	glm::vec2 velocity = m_sphere->getVelocity();
-	return glm::dot(velocity, velocity) < k_min_speed * k_min_speed;
+	return !m_sphere->isAlive() || glm::dot(velocity, velocity) < k_min_speed * k_min_speed;
 }
 
 bool PoolBall::isSunk()
@@ -99,6 +99,26 @@ void PoolBall::fixedUpdate(physics::PhysicsScene * scene)
 
 void PoolBall::OnCollision(physics::PhysicsObject * publisher, const physics::Collision & collision)
 {
-	// TODO if cueball hits a ball, inform game (for miss/off colour/eight ball foul)
-	// TODO if hit pocket, sink ball
+	PhysicsObject* other = collision.second;
+	
+	if (other->hasTags(EPoolTags::ball)) {
+		if (m_number == 0) {
+			// when cueball hits a ball, inform game 
+			if (other->hasTags(EPoolTags::eightball)) {
+				// TODO inform game of eightball hit (might be foul)
+			}
+			else if (other->hasTags(EPoolTags::striped_ball)) {
+				// TODO inform game of striped ball hit (might be foul)
+			}
+			else if (other->hasTags(EPoolTags::solid_ball)) {
+				// TODO inform game of solid ball hit (might be foul)
+			}
+		}
+		// TODO play cracking sound?
+	}
+	else if (other->hasTags(EPoolTags::pocket)) {
+		// if hit pocket, sink ball
+		// TODO inform game of ball sunk
+		m_sphere->kill();
+	}
 }
