@@ -3,7 +3,7 @@
 #include "ICollisionObserver.h"
 
 physics::PhysicsObject::PhysicsObject(float elasticity, float friction, glm::vec4 colour) 
-	: m_colour(colour), m_alive(true), m_trigger(false), m_draw(true)
+	: m_colour(colour), m_alive(true), m_trigger(false), m_draw(true), m_tags(0)
 {
 	setElasticity(elasticity);
 	setFriction(friction);
@@ -71,6 +71,26 @@ bool physics::PhysicsObject::removeObserver(const CollisionObserverPtr & observe
 bool physics::PhysicsObject::isSubscribed(const CollisionObserverPtr & observer)
 {
 	return std::any_of(m_observers.begin(), m_observers.end(), [observer](CollisionObserverWeakPtr c) {return c.lock() == observer; });
+}
+
+void physics::PhysicsObject::setTags(unsigned int tags)
+{
+	m_tags = tags;
+}
+
+void physics::PhysicsObject::addTags(unsigned int tags)
+{
+	m_tags |= tags;
+}
+
+void physics::PhysicsObject::removeTags(unsigned int tags)
+{
+	m_tags &= ~tags;
+}
+
+bool physics::PhysicsObject::hasTags(unsigned int tags)
+{
+	return m_tags & tags;
 }
 
 void physics::PhysicsObject::setElasticity(float elasticity)

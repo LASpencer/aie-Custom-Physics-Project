@@ -69,6 +69,8 @@ namespace physics {
 		bool m_trigger;		// If true, no physical effect from collision
 		bool m_draw;		// If true, gizmo will be created for rendering
 
+		unsigned int m_tags;	// Bitmask for use by observers
+
 		std::vector<CollisionObserverWeakPtr> m_observers;
 
 	public:
@@ -143,5 +145,17 @@ namespace physics {
 		bool isSubscribed(const CollisionObserverPtr& observer);
 		const std::vector<CollisionObserverWeakPtr>& getObservers() { return m_observers; }
 
+		unsigned int getTags() { return m_tags; }
+
+		void setTags(unsigned int tags);
+
+		// Sets passed bits to true in object's tags
+		void addTags(unsigned int tags);
+
+		// Sets passed bits to false in object's tags
+		void removeTags(unsigned int tags);
+
+		// Returns true if all bits passed are set to true in object's tags
+		bool hasTags(unsigned int tags);
 	};
 }
