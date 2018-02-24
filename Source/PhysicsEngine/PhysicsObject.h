@@ -48,7 +48,7 @@ namespace physics {
 		operator bool() const { return success; }
 
 		// Returns collision with first and second objects swapped
-		Collision reverse() {
+		Collision reverse() const {
 			return Collision(success, second, first, -normal, contact, depth);
 		}
 	};
@@ -65,11 +65,10 @@ namespace physics {
 
 		float m_elasticity;	// Coefficient of elasticity
 		float m_friction;	// Coefficient of friction
+		unsigned int m_tags;	// Bitmask for use by observers
 		bool m_alive;		// True until object set as dead
 		bool m_trigger;		// If true, no physical effect from collision
 		bool m_draw;		// If true, gizmo will be created for rendering
-
-		unsigned int m_tags;	// Bitmask for use by observers
 
 		std::vector<CollisionObserverWeakPtr> m_observers;
 

@@ -215,7 +215,8 @@ void physics::PhysicsScene::resolveCollision(const Collision& collision)
 {
 	// Involved objects inform their subscribers
 	collision.first->broadcastCollision(collision);
-	collision.second->broadcastCollision(collision);
+	Collision reversed = collision.reverse();
+	collision.second->broadcastCollision(reversed);
 
 	// If neither are triggers, resolve collision
 	if (!collision.first->isTrigger() && !collision.second->isTrigger()) {

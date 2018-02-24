@@ -5,8 +5,8 @@
 #include "Plane.h"
 
 physics::RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float angularVelocity, float friction, float drag, float angularDrag, glm::vec4 colour)
-	: PhysicsObject(elasticity, friction, colour), m_position(position),m_velocity(velocity), m_orientation(orientation), m_angularVelocity(angularVelocity)
-	, m_totalForce({0,0}), m_totalTorque(0), m_static(false)
+	: PhysicsObject(elasticity, friction, colour), m_position(position),m_velocity(velocity), m_orientation(remainderf(orientation, glm::two_pi<float>())),
+	m_angularVelocity(angularVelocity), m_totalForce({0,0}), m_totalTorque(0), m_static(false)
 {
 	if (mass < 0 || isnan(mass)) {
 		throw std::invalid_argument("Mass must be positive");
@@ -72,7 +72,7 @@ void physics::RigidBody::fixedUpdate(PhysicsScene* scene)
 		m_position +=  m_velocity * scene->getTimeStep();
 		m_orientation += m_angularVelocity * scene->getTimeStep();
 		// TODO modulus of 2pi?
-		// TODO threshold contraints on velocity/angular velocity
+		m_orientation = remainderf(m_orientation, glm::two_pi<float>());
 		calculateAxes();
 	}
 	m_totalForce = { 0,0 };
@@ -211,7 +211,7 @@ float physics::RigidBody::getOrientation()
 
 void physics::RigidBody::setOrientation(float orientation)
 {
-	m_orientation = orientation;	// TODO maybe limit to +- 2pi?
+	m_orientation = remainderf(orientation, glm::two_pi<float>());	// limit to +- 2pi
 	calculateAxes();
 }
 
