@@ -11,8 +11,10 @@ public:
 	void resetScore() { m_score = 0; }
 
 	bool hasPenalty() { return m_penalty; }
-	void addPenalty() { m_penalty = true; }
-	void resetPenalty() { m_penalty = false; }
+	bool onFirstPenaltyShot() { return m_firstPenaltyShot; }
+	void givePenalty();
+	void useFirstShot();
+	void resetPenalty();
 
 	EBallSuits getSuit() { return m_suit; }
 	void setSuit(EBallSuits suit) { m_suit = suit; }
@@ -22,5 +24,6 @@ public:
 private:
 	int m_score;
 	bool m_penalty;
+	bool m_firstPenaltyShot;
 	EBallSuits m_suit;
 };

@@ -1,5 +1,7 @@
 #include "PoolGame.h"
 
+#include <iostream>
+
 #include "Input.h"
 
 #include "Plane.h"
@@ -67,33 +69,244 @@ void PoolGame::update(float deltaTime, Application2D* app)
 		break;
 	case moving:
 		// TODO check for end of state
-		// If break, and black sunk, restart game
-		// If break, and cue hit nothing, reset cue and next player goes
-		// If break, and cue sunk but did hit, next player goes and places but no penalty, break over
-		// If break and cue did hit, break over and next turn
-		// If black sunk, and player has no suit or any of their suit remains, they lose
-		// If cue sunk, reset cue, next player goes and gets penalty
-		// If no ball hit, or player has suit and any off suit hit, next player goes and gets penalty
-		// If black hit and player has no suit or any of their suit remains, next player goes and gets penalty
-		// If ball sunk, and no foul committed:
-		//			If player has no suit, suit becomes first sunk (TODO maybe let them choose if both sunk?) and plays again
-		//			If player has suit, and only own suit sunk, player goes again
-		//			If off suit sunk, other player goes and gets penalty
-		// If no foul, but no balls sunk, if player has penalty remove it and play again, else other player goes
-
-		// After doing all this, cleanup by resetting firstHit and sunkThisRound
 
 		if (std::all_of(m_balls.begin(), m_balls.end(), [](PoolBallPtr b) { return b->isStopped(); })) {
-			bool legalSink = true;		// Will a sunk ball be treated as a legal move?
-			// HACK just replacing cueball at default spot for now
-			/*if (m_balls[0]->isSunk()) {
-				m_balls[0]->place({ 0.25f * k_table_width, 0 }, m_scene);
-			}*/
+			bool legalSink = true;					// Will a sunk ball be treated as legal?
+			bool cueHit = m_firstHit != none;		// If firstHit set, cue must have hit something
+			bool endTurn = true;					// Should the turn pass to next player?
+			bool penalize = false;					// Should next player get a penalty shot?
+			bool win = false;						// Did player just win?
+			EPoolGameStates nextState = shot;
+			EBallSuits playerSuit = currentPlayer().getSuit();
+			if (m_break) {
+				if (m_balls[8]->isSunk()) {
+					// Sinking black off break restarts game with new first player
+					rack();
+					legalSink = false;
+					// HACK show on screen instead
+					std::cout << "Sunk eightball, restarting game\n";
+				}
+				else if (!cueHit) {
+					// Failure to break is a penalty
+					m_balls[0]->place({ 0.25f * k_table_width, 0 }, m_scene);
+					penalize = true;
+					legalSink = false;
+					// HACK show on screen instead
+					std::cout << "Foul break, penalty\n";
+				}
+				else if (m_balls[0]->isSunk()) {
+					// Sinking cue off fair break is a foul, but not penalized
+					// HACK just replacing cueball at default spot until placement implemented
+					m_balls[0]->place({ 0.25f * k_table_width, 0 }, m_scene);
+					currentPlayer().resetPenalty();		// Lose any penalty shot from the foul
+					legalSink = false;
+					m_break = false;
+					// HACK show on screen instead
+					std::cout << "Cue sunk off break\n";
+				}
+				else {
+					// Fair break
+					m_break = false;
+					// HACK show on screen instead
+					std::cout << "Fair break\n";
+				}
+			}
+			else {
+				if (m_balls[8]->isSunk()) {
+					// Black sunk, so either win or lose
+					if (playerSuit == none || AreAnySuitLeft(playerSuit)) {
+						// If player hasn't cleared suit, they lose
+						// HACK show on screen instead
+						legalSink = false;
+						std::cout << "Black sunk, player loses\n";
+						nextState = game_over;
+					}
+					else {
+						// If only black sunk, or has penalty and only off-suit and black sunk, win, else lose
+						bool blackReached = false;
+						bool onSuitHit = false;				// Black sunk in combination with on-suit
+						bool penaltyRuleApplies = false;	// Off-suit sunk, but penalty means legal unless on-suit sunk
+						if (m_balls[0]->isSunk()) {
+							// Lose if cue sunk
+							legalSink = false;
+							std::cout << "Black and cue sunk, player loses\n";
+							nextState = game_over;
+						}
+						else {
+							while (!m_sunkThisRound.empty()) {
+								PoolBall* sunkBall = m_sunkThisRound.front();
+								m_sunkThisRound.pop();
+								if(sunkBall->getSuit() == eight){
+									// Black sunk, so no on-suit can be sunk after
+									blackReached = true;
+								}
+								else if (sunkBall->getSuit() == playerSuit) {
+									if (blackReached) {
+										// On suit ball sunk after black
+										legalSink = false;
+										std::cout << "Black sunk out of order, player loses\n";
+										nextState = game_over;
+										break;
+									}
+									else if (penaltyRuleApplies) {
+										// On suit and off suit both sunk with black
+										legalSink = false;
+										std::cout << "Off suit illegally sunk with black, player loses\n";
+										nextState = game_over;
+										break;
+									}
+									else {
+										onSuitHit = true;
+									}
+								}
+								else {
+									if (currentPlayer().onFirstPenaltyShot() && !onSuitHit) {
+										// Can sink off-suit on penalty shot if none of own on table
+										penaltyRuleApplies = true;
+									}
+									else {
+										// If any on suit were on table, or no penalty, illegal to sink off suit and black
+										legalSink = false;
+										std::cout << "Off suit illegally sunk with black, player loses\n";
+										nextState = game_over;
+										break;
+									}
+								}
+							}
+							if (legalSink) {
+								// All sunk balls resolved without losing, so must win
+								win = true;
+								std::cout << "Black sunk, player wins\n";
+								nextState = game_over;
+							}
+						}
+					}
+				}
+				else if (m_balls[0]->isSunk()) {
+					// If cue sunk, reset cue, next player goes and gets penalty
+					legalSink = false;
+					penalize = true;
+					// HACK just replacing cueball at default spot until placement implemented
+					m_balls[0]->place({ 0.25f * k_table_width, 0 }, m_scene);
+					// HACK display on screen
+					std::cout << "Cue sunk, penalty\n";
+				}
+				else if (!cueHit) {
+					// If cue misses, foul unless first penalty shot
+					if (!currentPlayer().onFirstPenaltyShot()) {
+						legalSink = false;
+						penalize = true;
+						// HACK display on screen
+						std::cout << "Failure to hit ball, penalty\n";
+					}
+				}
+				else if (m_firstHit == eight) {
+					// If hit black while own on table, foul unless first penalty shot
+					if (!currentPlayer().onFirstPenaltyShot() && 
+						(playerSuit == none ||					// Not sunk any
+							AreAnySuitLeft(playerSuit) ||		// Any on-suit remain on table
+							!m_sunkThisRound.empty())) {		// Either sunk own after eight (foul) or sunk other (also foul)
+						legalSink = false;
+						penalize = true;
+						// HACK display on screen
+						std::cout << "Black hit first, penalty\n";
+					}
+				}
+				else if (playerSuit != none && playerSuit != m_firstHit) {
+					// If hit off-suit, foul unless first penalty shot
+					if (!currentPlayer().onFirstPenaltyShot()) {
+						legalSink = false;
+						penalize = true;
+						// HACK display on screen
+						std::cout << "Off-suit hit first, penalty\n";
+					}
+				}
+			}
+			if (legalSink && !m_sunkThisRound.empty()) {
+				// No foul committed, and balls sunk
+				// If eightball was sunk, queue already emptied or illegal sinking
+				if (playerSuit == none) {
+					// Player without suit has suit set
+					// TODO maybe let player pick if both groups?
+					currentPlayer().setSuit(m_sunkThisRound.front()->getSuit());
+				}
+				else {
+					// Check if off-suit pocketed while not on first penalty
+					if (!currentPlayer().onFirstPenaltyShot()) {
+						while (!m_sunkThisRound.empty()) {
+							if (m_sunkThisRound.front()->getSuit() != playerSuit) {
+								// HACK display on screen
+								legalSink = false;
+								penalize = true;
+								std::cout << "Off suit sunk, penalty\n";
+								break;
+							}
+						}
+					}
+				}
+				if (legalSink) {
+					// If no foul, player gets to keep playing
+					endTurn = false;
+					// HACK display on screen
+					std::cout << "Ball sunk!\n";
+				}
+			}
+			currentPlayer().useFirstShot();		// Use up first penalty shot if any
+			if (penalize) {
+				currentPlayer().resetPenalty();	// Lose penalty when penalized
+			}
+			if (endTurn && currentPlayer().hasPenalty()) {
+				// Instead of ending turn, use up penalty
+				endTurn = false;
+				currentPlayer().resetPenalty();
+			}
+			switch (nextState) {
+			case shot:
+				if (endTurn) {
+					// HACK display current player on screen instead
+					std::cout << "Next player's turn\n";
+					nextPlayer();
+					if (penalize) {
+						currentPlayer().givePenalty();
+					}
+				}
+				else {
+					// HACK display current player on screen instead
+					std::cout << "Continue play\n";
+				}
+				break;
+			case place_cue:
+				//TODO
+				nextPlayer();
+				// HACK display current player on screen instead
+				std::cout << "Next player's turn\n";
+				if (penalize) {
+					currentPlayer().givePenalty();
+				}
+				break;
+			case game_over:
+				if (!win) {
+					nextPlayer();
+				}
+				currentPlayer().addWin();
+				// HACK show score on screen instead
+				std::cout << std::printf("Score: %i - %i \n", m_player[0].getScore(), m_player[1].getScore());
+				break;
+			default:
+				break;
+			}
+			// Reset firstHit and sunkThisRound
+			m_firstHit = none;
+			m_sunkThisRound = std::queue<PoolBall*>();
+			m_state = nextState;
 		}
-
 		break;
 	case game_over:
 		// TODO say who won, on input start a new game and rack
+
+		if (input->wasKeyPressed(aie::INPUT_KEY_SPACE)) {
+			rack();
+		}
 		break;
 	default:
 		break;
@@ -156,9 +369,14 @@ bool PoolGame::AreAnySuitLeft(EBallSuits suit)
 	}
 }
 
-PoolPlayer PoolGame::currentPlayer()
+PoolPlayer& PoolGame::currentPlayer()
 {
 	return m_player[m_playerIndex];
+}
+
+PoolPlayer& PoolGame::otherPlayer()
+{
+	return m_player[1 - m_playerIndex];
 }
 
 int PoolGame::playerNumber()
@@ -166,7 +384,7 @@ int PoolGame::playerNumber()
 	return m_playerIndex + 1;
 }
 
-void PoolGame::swapPlayers()
+void PoolGame::nextPlayer()
 {
 	m_playerIndex = 1 - m_playerIndex;
 }

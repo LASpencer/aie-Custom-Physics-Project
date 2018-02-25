@@ -10,7 +10,7 @@ class PoolBall;
 typedef std::shared_ptr<PoolBall> PoolBallPtr;
 typedef std::weak_ptr<PoolBall> PoolBallWeakPtr;
 
-enum EBallSuits
+enum EBallSuits;
 
 class PoolBall : public physics::ICollisionObserver, public physics::IFixedUpdater {
 public:
@@ -42,6 +42,9 @@ public:
 
 	physics::Sphere* getSphere() { return m_sphere.get(); }
 
+	EBallSuits getSuit() { return m_suit; }
+
+	// Adds sphere to given scene, at set position
 	void place(glm::vec2 position, physics::PhysicsScene* scene);
 
 	virtual void fixedUpdate(physics::PhysicsScene* scene);

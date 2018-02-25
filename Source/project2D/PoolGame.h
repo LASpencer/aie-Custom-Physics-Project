@@ -62,10 +62,11 @@ public:
 	// Returns whether any balls of given suit are on the table
 	bool AreAnySuitLeft(EBallSuits suit);
 
-	PoolPlayer currentPlayer();
+	PoolPlayer& currentPlayer();
+	PoolPlayer& otherPlayer();
 
 	int playerNumber();
-	void swapPlayers();
+	void nextPlayer();
 
 protected:
 	std::vector<PoolBallPtr> m_balls;
