@@ -29,6 +29,8 @@ public:
 
 	aie::Renderer2D* getRenderer() { return m_2dRenderer; }
 
+	aie::Font* getFont() { return m_font; }
+
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;

@@ -228,7 +228,16 @@ void PoolGame::update(float deltaTime, Application2D* app)
 				if (playerSuit == none) {
 					// Player without suit has suit set
 					// TODO maybe let player pick if both groups?
-					currentPlayer().setSuit(m_sunkThisRound.front()->getSuit());
+					EBallSuits sunkSuit = m_sunkThisRound.front()->getSuit();
+					EBallSuits otherSuit;
+					if (sunkSuit == solid) {
+						otherSuit = striped;
+					}
+					else {
+						otherSuit = solid;
+					}
+					currentPlayer().setSuit(sunkSuit);
+					otherPlayer().setSuit(otherSuit);
 				}
 				else {
 					// Check if off-suit pocketed while not on first penalty
