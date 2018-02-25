@@ -37,16 +37,24 @@ typedef std::weak_ptr<PoolBall> PoolBallWeakPtr;
 
 class PoolGame : public Demo {
 public:
+	// TODO describe with comments
 	static const float k_table_width;
 	static const float k_table_height;
-	static const float k_rail_friction;
-	static const float k_rail_elasticity;
-	static const float k_rail_width;
-	static const float k_stick_force_multiplier;
-	static const float k_stick_max_force;
+	static const float k_rail_friction;				// friction for sides of table
+	static const float k_rail_elasticity;			// elasticity for sides of table
+	static const float k_rail_width;				// thickness of sides of table
+	static const float k_stick_force_multiplier;	// force per unit cue pulled back 
+	static const float k_stick_max_force;			// Maximum force from cue stick
 	static const float k_pocket_width;
+	static const float k_cue_width;					// Pixels wide to render cue stick
+	static const float k_score_margin;				// Score distance from right side of screen
+	static const float k_turn_text_margin;			// Turn text distance from left of screen
+	static const float k_message_margin;			// Message distance from left of screen
 	static const glm::vec4 k_felt_colour;
 	static const glm::vec4 k_rail_colour;
+	static const glm::vec4 k_pocket_colour;
+	static const glm::vec4 k_score_colour;
+	static const glm::vec4 k_message_colour;
 
 	PoolGame();
 
@@ -67,6 +75,8 @@ public:
 	PoolPlayer& otherPlayer();
 
 	int playerNumber();
+
+	// Swaps current player
 	void nextPlayer();
 
 protected:
@@ -76,20 +86,25 @@ protected:
 	PoolPlayer m_player[2];
 	size_t m_playerIndex;
 
-	glm::vec2 m_cueContact;
-	bool m_cueActive;
-	bool m_break;		// Is this the break shot?
-	EBallSuits m_firstHit;	// Suit of first ball hit by shot
-	std::queue<PoolBall*> m_sunkThisRound;
+	glm::vec2 m_cueContact;		// Point where cue will strike
+	bool m_cueActive;			// Is the cue being pulled back?
+	bool m_break;				// Is this the break shot?
+	EBallSuits m_firstHit;		// Suit of first ball hit by shot
+	std::queue<PoolBall*> m_sunkThisRound; // All balls sunk this round
 
-	EPoolGameStates m_state;
+	EPoolGameStates m_state;	// Current game state
 
-	std::string m_message;
+	std::string m_message;		// Message displayed at bottom of screen
 
+	// Setup all objects in the game
 	virtual void setup();
-	virtual void rack();
 
+	// Place balls and start a new game of pool
+	virtual void rack();		
+
+	// If contact point is on cue ball, apply force to it from the cue stick
 	void shootCue(physics::Sphere* cue, Application2D* app);
 
+	// Returns true if cue ball could be placed at position
 	bool isLegalCuePosition(glm::vec2 pos);
 };

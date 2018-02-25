@@ -24,11 +24,11 @@ public:
 	static const float k_cue_mass;
 	static const float k_elasticity;
 	static const float k_friction;
-	static const float k_drag;
-	static const float k_ang_drag;
-	static const float k_cue_drag;
+	static const float k_drag;				// Drag applied to ball from table
+	static const float k_ang_drag;			// Angular drag
+	static const float k_cue_drag;		
 	static const float k_cue_ang_drag;
-	static const float k_min_speed;
+	static const float k_min_speed;			// Below this speed, ball comes to a stop
 	static const float k_min_rotate;
 
 	PoolBall(int number, PoolGame* game);
@@ -36,8 +36,10 @@ public:
 	int getNumber() { return m_number; }
 	bool isCue() { return m_number == 0; }
 
+	// Returns true if speed less than min_speed
 	bool isStopped();
 
+	// Returns true if ball was sunk
 	bool isSunk();
 
 	physics::Sphere* getSphere() { return m_sphere.get(); }
@@ -52,7 +54,7 @@ public:
 	virtual void OnCollision(physics::PhysicsObject* publisher, const physics::Collision& collision);
 
 private:
-	int m_number;	// Number of ball, zero being cue
+	int m_number;					// Number of ball, zero being cue
 	EBallSuits m_suit;
 	physics::SpherePtr m_sphere;
 	PoolGame* m_game;

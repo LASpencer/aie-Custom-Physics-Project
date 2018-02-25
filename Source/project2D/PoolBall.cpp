@@ -11,16 +11,16 @@ const glm::vec4 PoolBall::k_eight_colour = { 0.2f,0.2f,0.2f,1 };	// TODO make bl
 const glm::vec4 PoolBall::k_striped_colour = { 1,1,0,1 };
 const glm::vec4 PoolBall::k_solid_colour = {1,0,0,1};
 
-const float PoolBall::k_radius = 2;		//TODO figure out 
+const float PoolBall::k_radius = 2;	
 const float PoolBall::k_mass = 1.6f;
-const float PoolBall::k_cue_mass = 1.7f;
+const float PoolBall::k_cue_mass = 1.7f;		
 const float PoolBall::k_elasticity = 1.f;
-const float PoolBall::k_friction = 0.1f;
-const float PoolBall::k_drag = 0.3f;
-const float PoolBall::k_ang_drag = 0.3f;
-const float PoolBall::k_cue_drag = k_drag * k_cue_mass / k_mass;
+const float PoolBall::k_friction = 0.2f;
+const float PoolBall::k_drag = 1.f;				
+const float PoolBall::k_ang_drag = 0.5f;		
+const float PoolBall::k_cue_drag = k_drag * k_cue_mass / k_mass;	// Scaled by mass, since drag is really friction
 const float PoolBall::k_cue_ang_drag = k_ang_drag * k_cue_mass / k_mass;
-const float PoolBall::k_min_speed = 0.1f;
+const float PoolBall::k_min_speed = 0.1f;		
 const float PoolBall::k_min_rotate = 0.1f;
 
 PoolBall::PoolBall(int number, PoolGame* game) : m_number(number), m_game(game)
@@ -67,6 +67,7 @@ PoolBall::PoolBall(int number, PoolGame* game) : m_number(number), m_game(game)
 
 bool PoolBall::isStopped()
 {
+	// If velocity less than min speed, ball is stopped
 	glm::vec2 velocity = m_sphere->getVelocity();
 	return !m_sphere->isAlive() || glm::dot(velocity, velocity) < k_min_speed * k_min_speed;
 }
@@ -91,7 +92,7 @@ void PoolBall::place(glm::vec2 position, physics::PhysicsScene * scene)
 
 void PoolBall::fixedUpdate(physics::PhysicsScene * scene)
 {
-	// TODO if under minimum speed/rotation bring to a stop
+	// if under minimum speed/rotation bring to a stop
 	glm::vec2 velocity = m_sphere->getVelocity();
 	if (isStopped()) {
 		m_sphere->setVelocity({ 0,0 });
