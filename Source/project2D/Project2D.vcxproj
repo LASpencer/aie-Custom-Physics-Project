@@ -168,12 +168,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PoolBall.cpp" />
     <ClCompile Include="PoolGame.cpp" />
+    <ClCompile Include="PoolPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h" />
     <ClInclude Include="Demo.h" />
     <ClInclude Include="PoolBall.h" />
     <ClInclude Include="PoolGame.h" />
+    <ClInclude Include="PoolPlayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

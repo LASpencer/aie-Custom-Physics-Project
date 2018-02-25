@@ -10,6 +10,8 @@ class PoolBall;
 typedef std::shared_ptr<PoolBall> PoolBallPtr;
 typedef std::weak_ptr<PoolBall> PoolBallWeakPtr;
 
+enum EBallSuits
+
 class PoolBall : public physics::ICollisionObserver, public physics::IFixedUpdater {
 public:
 	static const glm::vec4 k_cue_colour;
@@ -48,6 +50,7 @@ public:
 
 private:
 	int m_number;	// Number of ball, zero being cue
+	EBallSuits m_suit;
 	physics::SpherePtr m_sphere;
 	PoolGame* m_game;
 };

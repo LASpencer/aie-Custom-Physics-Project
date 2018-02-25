@@ -33,6 +33,9 @@
     <ClCompile Include="PoolBall.cpp">
       <Filter>Source Files\Pool</Filter>
     </ClCompile>
+    <ClCompile Include="PoolPlayer.cpp">
+      <Filter>Source Files\Pool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files\Pool</Filter>
     </ClInclude>
     <ClInclude Include="PoolBall.h">
+      <Filter>Header Files\Pool</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolPlayer.h">
       <Filter>Header Files\Pool</Filter>
     </ClInclude>
   </ItemGroup>

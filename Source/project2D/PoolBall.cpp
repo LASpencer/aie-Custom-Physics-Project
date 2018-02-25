@@ -39,21 +39,25 @@ PoolBall::PoolBall(int number, PoolGame* game) : m_number(number), m_game(game)
 		ang_drag = k_cue_ang_drag;
 		colour = k_cue_colour;
 		tags |= EPoolTags::cueball;
+		m_suit = EBallSuits::none;
 	}
 	else if (number <= 7) {
 		// Solid colour
 		colour = k_solid_colour;
 		tags |= EPoolTags::solid_ball;
+		m_suit = solid;
 	}
 	else if (number == 8) {
 		// Eight ball
 		colour = k_eight_colour;
 		tags |= EPoolTags::eightball;
+		m_suit = eight;
 	}
 	else {
 		// Striped ball
 		colour = k_striped_colour;
 		tags |= EPoolTags::striped_ball;
+		m_suit = striped;
 	}
 	// create sphere object
 	m_sphere = SpherePtr(new Sphere({ 0,0 }, k_radius, { 0,0 }, 0,mass,k_elasticity,
@@ -91,6 +95,7 @@ void PoolBall::fixedUpdate(physics::PhysicsScene * scene)
 	glm::vec2 velocity = m_sphere->getVelocity();
 	if (isStopped()) {
 		m_sphere->setVelocity({ 0,0 });
+		m_sphere->setAngularVelocity(0);	// Also stop spin when at rest
 	}
 	if (m_sphere->getAngularVelocity() < k_min_rotate) {
 		m_sphere->setAngularVelocity(0);
@@ -105,20 +110,24 @@ void PoolBall::OnCollision(physics::PhysicsObject * publisher, const physics::Co
 		if (m_number == 0) {
 			// when cueball hits a ball, inform game 
 			if (other->hasTags(EPoolTags::eightball)) {
-				// TODO inform game of eightball hit (might be foul)
+				// inform game of eightball hit (might be foul)
+				m_game->OnCueHitBall(eight);
 			}
 			else if (other->hasTags(EPoolTags::striped_ball)) {
-				// TODO inform game of striped ball hit (might be foul)
+				// inform game of striped ball hit (might be foul)
+				m_game->OnCueHitBall(striped);
 			}
 			else if (other->hasTags(EPoolTags::solid_ball)) {
-				// TODO inform game of solid ball hit (might be foul)
+				// inform game of solid ball hit (might be foul)
+				m_game->OnCueHitBall(solid);
 			}
 		}
 		// TODO play cracking sound?
 	}
 	else if (other->hasTags(EPoolTags::pocket)) {
 		// if hit pocket, sink ball
-		// TODO inform game of ball sunk
 		m_sphere->kill();
+		// inform game of ball sunk
+		m_game->OnBallSunk(this);
 	}
 }
