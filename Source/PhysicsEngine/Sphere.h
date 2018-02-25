@@ -10,7 +10,7 @@ namespace physics {
 
 	class Sphere : public RigidBody {
 	public:
-		static const unsigned int k_circle_segments = 16;	// Segments to render for a circle
+		static const unsigned int k_segments = 16;	// Segments to render for a circle
 
 		Sphere(glm::vec2 position, float radius, glm::vec2 velocity, float angularVelocity = 0.f,
 			float mass = 1.f, float elasticity = 1.f, float friction = 0.f, float drag = 0.f,

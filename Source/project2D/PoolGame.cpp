@@ -78,7 +78,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 
 		// draw cueball at mouse position
 		glm::vec2 mouseWorldPos = app->screenToWorldSpace({ input->getMouseX(), input->getMouseY() });
-		aie::Gizmos::add2DCircle(mouseWorldPos, PoolBall::k_radius, 20, PoolBall::k_cue_colour);
+		aie::Gizmos::add2DCircle(mouseWorldPos, PoolBall::k_radius, Sphere::k_segments, PoolBall::k_cue_colour);
 		// on click, check if legal location and if so place cue
 		if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_LEFT)) {
 			if (isLegalCuePosition(mouseWorldPos)) {

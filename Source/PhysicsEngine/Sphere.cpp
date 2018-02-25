@@ -26,7 +26,7 @@ physics::PhysicsObject * physics::Sphere::clone()
 void physics::Sphere::makeGizmo(float timeRatio)
 {
 	glm::vec2 interpolated = glm::mix(m_pastPosition, m_position, timeRatio );
-	aie::Gizmos::add2DCircle(interpolated, m_radius, k_circle_segments, m_colour);	
+	aie::Gizmos::add2DCircle(interpolated, m_radius, k_segments, m_colour);	
 	// draw a line to show orientation
 	glm::vec2 interpolatedLine = glm::mix(m_pastY * m_radius, m_localY * m_radius, timeRatio);
 	aie::Gizmos::add2DLine(interpolated, interpolatedLine + interpolated, { 0,0,0,1 });
