@@ -341,6 +341,40 @@ void PoolGame::draw(Application2D * app)
 		aie::Input* input = aie::Input::getInstance();
 		renderer->drawLine(m_cueContact.x, m_cueContact.y, input->getMouseX(), input->getMouseY(), 2);
 	}
+
+	// TODO print scores
+	// TODO make colours constants
+	renderer->setRenderColour(1, 1, 0, 1);
+	char score[32];
+	sprintf_s(score, 32, "Score: %i - %i", m_player[0].getScore(), m_player[1].getScore());
+	renderer->drawText(app->getFont(), score, app->getWindowWidth() - 250, app->getWindowHeight() - 32);
+	// TODO at bottom of screen, print extra text about ie fouls, win or loss, etc
+
+	// TODO print which player is currently playing, colour of their suit
+	char turn[32];
+	glm::vec4 playerColour;
+	switch (currentPlayer().getSuit()) {
+	case none:
+		playerColour = { 1,1,1,1 };
+		break;
+	case solid:
+		playerColour = PoolBall::k_solid_colour;
+		break;
+	case striped:
+		playerColour = PoolBall::k_striped_colour;
+		break;
+	default:
+		playerColour = { 1,1,1,1 };
+		break;
+	}
+	renderer->setRenderColour(playerColour.r, playerColour.g, playerColour.b);
+	if (m_state == game_over) {
+		sprintf_s(turn, 32, "Player %i wins!", playerNumber());
+	}
+	else {
+		sprintf_s(turn, 32, "Player %i's turn", playerNumber());
+	}
+	renderer->drawText(app->getFont(), turn, 300, app->getWindowHeight() - 32);
 }
 
 void PoolGame::OnCueHitBall(EBallSuits suit)
