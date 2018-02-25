@@ -2,6 +2,7 @@
 #include <queue>
 
 #include "Sphere.h"
+#include "Box.h"
 
 #include "Demo.h"
 #include "PoolPlayer.h"
@@ -70,6 +71,7 @@ public:
 
 protected:
 	std::vector<PoolBallPtr> m_balls;
+	std::vector<physics::BoxPtr> m_pockets;
 
 	PoolPlayer m_player[2];
 	size_t m_playerIndex;
@@ -82,8 +84,12 @@ protected:
 
 	EPoolGameStates m_state;
 
+	std::string m_message;
+
 	virtual void setup();
 	virtual void rack();
 
 	void shootCue(physics::Sphere* cue, Application2D* app);
+
+	bool isLegalCuePosition(glm::vec2 pos);
 };

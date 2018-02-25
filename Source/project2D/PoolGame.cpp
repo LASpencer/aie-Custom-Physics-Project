@@ -26,7 +26,7 @@ const float PoolGame::k_pocket_width = 8.f;
 const glm::vec4 PoolGame::k_felt_colour = { 0.f,1.f,0.f,1.f };
 const glm::vec4 PoolGame::k_rail_colour = { 0.f,1.f,0.f,1.f };
 
-PoolGame::PoolGame() : m_balls(16, PoolBallPtr()), m_cueActive(false), m_playerIndex(0), m_sunkThisRound()
+PoolGame::PoolGame() : m_balls(16, PoolBallPtr()), m_pockets(), m_cueActive(false), m_playerIndex(0), m_sunkThisRound(), m_message()
 {
 	m_player[0] = PoolPlayer();
 	m_player[1] = PoolPlayer();
@@ -65,7 +65,15 @@ void PoolGame::update(float deltaTime, Application2D* app)
 		break;
 	case place_cue:
 		// TODO draw cueball at mouse position
+		glm::vec2 mouseWorldPos = app->screenToWorldSpace({ input->getMouseX(), input->getMouseY() });
+		aie::Gizmos::add2DCircle(mouseWorldPos, PoolBall::k_radius, 20, PoolBall::k_cue_colour);
 		// TODO on click, check if legal location and if so place cue
+		if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_LEFT)) {
+			if (isLegalCuePosition(mouseWorldPos)) {
+				m_balls[0]->place(mouseWorldPos, m_scene);
+				m_state = shot;
+			}
+		}
 		break;
 	case moving:
 		// TODO check for end of state
@@ -78,37 +86,32 @@ void PoolGame::update(float deltaTime, Application2D* app)
 			bool win = false;						// Did player just win?
 			EPoolGameStates nextState = shot;
 			EBallSuits playerSuit = currentPlayer().getSuit();
+			m_message = "";
 			if (m_break) {
 				if (m_balls[8]->isSunk()) {
 					// Sinking black off break restarts game with new first player
 					rack();
 					legalSink = false;
-					// HACK show on screen instead
-					std::cout << "Sunk eightball, restarting game\n";
+					m_message = "Eight-ball sunk, restarting game.";
 				}
 				else if (!cueHit) {
 					// Failure to break is a penalty
 					m_balls[0]->place({ 0.25f * k_table_width, 0 }, m_scene);
 					penalize = true;
 					legalSink = false;
-					// HACK show on screen instead
-					std::cout << "Foul break, penalty\n";
+					m_message = "Foul break.";
 				}
 				else if (m_balls[0]->isSunk()) {
 					// Sinking cue off fair break is a foul, but not penalized
-					// HACK just replacing cueball at default spot until placement implemented
-					m_balls[0]->place({ 0.25f * k_table_width, 0 }, m_scene);
+					nextState = place_cue;
 					currentPlayer().resetPenalty();		// Lose any penalty shot from the foul
 					legalSink = false;
 					m_break = false;
-					// HACK show on screen instead
-					std::cout << "Cue sunk off break\n";
+					m_message = "Cue sunk off break.";
 				}
 				else {
 					// Fair break
 					m_break = false;
-					// HACK show on screen instead
-					std::cout << "Fair break\n";
 				}
 			}
 			else {
@@ -118,7 +121,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 						// If player hasn't cleared suit, they lose
 						// HACK show on screen instead
 						legalSink = false;
-						std::cout << "Black sunk, player loses\n";
+						m_message = "Eight-ball illegally sunk.";
 						nextState = game_over;
 					}
 					else {
@@ -129,7 +132,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 						if (m_balls[0]->isSunk()) {
 							// Lose if cue sunk
 							legalSink = false;
-							std::cout << "Black and cue sunk, player loses\n";
+							m_message = "Cue sunk with eight-ball.";
 							nextState = game_over;
 						}
 						else {
@@ -144,14 +147,14 @@ void PoolGame::update(float deltaTime, Application2D* app)
 									if (blackReached) {
 										// On suit ball sunk after black
 										legalSink = false;
-										std::cout << "Black sunk out of order, player loses\n";
+										m_message = "Eight-ball illegally sunk before others.";
 										nextState = game_over;
 										break;
 									}
 									else if (penaltyRuleApplies) {
 										// On suit and off suit both sunk with black
 										legalSink = false;
-										std::cout << "Off suit illegally sunk with black, player loses\n";
+										m_message = "Eight-ball illegally sunk with off-colour balls.";
 										nextState = game_over;
 										break;
 									}
@@ -167,7 +170,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 									else {
 										// If any on suit were on table, or no penalty, illegal to sink off suit and black
 										legalSink = false;
-										std::cout << "Off suit illegally sunk with black, player loses\n";
+										m_message = "Eight-ball illegally sunk with off-colour balls.";
 										nextState = game_over;
 										break;
 									}
@@ -176,7 +179,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 							if (legalSink) {
 								// All sunk balls resolved without losing, so must win
 								win = true;
-								std::cout << "Black sunk, player wins\n";
+								m_message = "Eight-ball sunk!";
 								nextState = game_over;
 							}
 						}
@@ -186,10 +189,9 @@ void PoolGame::update(float deltaTime, Application2D* app)
 					// If cue sunk, reset cue, next player goes and gets penalty
 					legalSink = false;
 					penalize = true;
-					// HACK just replacing cueball at default spot until placement implemented
-					m_balls[0]->place({ 0.25f * k_table_width, 0 }, m_scene);
+					nextState = place_cue;
 					// HACK display on screen
-					std::cout << "Cue sunk, penalty\n";
+					m_message = "Cue sunk.";
 				}
 				else if (!cueHit) {
 					// If cue misses, foul unless first penalty shot
@@ -197,7 +199,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 						legalSink = false;
 						penalize = true;
 						// HACK display on screen
-						std::cout << "Failure to hit ball, penalty\n";
+						m_message = "Failed to hit any balls.";
 					}
 				}
 				else if (m_firstHit == eight) {
@@ -209,7 +211,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 						legalSink = false;
 						penalize = true;
 						// HACK display on screen
-						std::cout << "Black hit first, penalty\n";
+						m_message = "Foul hit on eight-ball.";
 					}
 				}
 				else if (playerSuit != none && playerSuit != m_firstHit) {
@@ -218,7 +220,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 						legalSink = false;
 						penalize = true;
 						// HACK display on screen
-						std::cout << "Off-suit hit first, penalty\n";
+						m_message = "Foul hit on off-colour ball.";
 					}
 				}
 			}
@@ -247,9 +249,10 @@ void PoolGame::update(float deltaTime, Application2D* app)
 								// HACK display on screen
 								legalSink = false;
 								penalize = true;
-								std::cout << "Off suit sunk, penalty\n";
+								m_message = "Off-colour sunk.";
 								break;
 							}
+							m_sunkThisRound.pop();
 						}
 					}
 				}
@@ -257,7 +260,7 @@ void PoolGame::update(float deltaTime, Application2D* app)
 					// If no foul, player gets to keep playing
 					endTurn = false;
 					// HACK display on screen
-					std::cout << "Ball sunk!\n";
+					m_message = "Ball sunk!";
 				}
 			}
 			currentPlayer().useFirstShot();		// Use up first penalty shot if any
@@ -272,34 +275,31 @@ void PoolGame::update(float deltaTime, Application2D* app)
 			switch (nextState) {
 			case shot:
 				if (endTurn) {
-					// HACK display current player on screen instead
-					std::cout << "Next player's turn\n";
 					nextPlayer();
 					if (penalize) {
+						m_message += " Penalty shot.";
 						currentPlayer().givePenalty();
 					}
 				}
 				else {
 					// HACK display current player on screen instead
-					std::cout << "Continue play\n";
+					m_message += " Shoot again.";
 				}
 				break;
 			case place_cue:
-				//TODO
 				nextPlayer();
 				// HACK display current player on screen instead
-				std::cout << "Next player's turn\n";
 				if (penalize) {
+					m_message += " Penalty shot.";
 					currentPlayer().givePenalty();
 				}
 				break;
 			case game_over:
+				m_message += " Game over.";
 				if (!win) {
 					nextPlayer();
 				}
 				currentPlayer().addWin();
-				// HACK show score on screen instead
-				std::cout << std::printf("Score: %i - %i \n", m_player[0].getScore(), m_player[1].getScore());
 				break;
 			default:
 				break;
@@ -311,8 +311,6 @@ void PoolGame::update(float deltaTime, Application2D* app)
 		}
 		break;
 	case game_over:
-		// TODO say who won, on input start a new game and rack
-
 		if (input->wasKeyPressed(aie::INPUT_KEY_SPACE)) {
 			rack();
 		}
@@ -349,7 +347,7 @@ void PoolGame::draw(Application2D * app)
 	sprintf_s(score, 32, "Score: %i - %i", m_player[0].getScore(), m_player[1].getScore());
 	renderer->drawText(app->getFont(), score, app->getWindowWidth() - 250, app->getWindowHeight() - 32);
 	// TODO at bottom of screen, print extra text about ie fouls, win or loss, etc
-
+	renderer->drawText(app->getFont(), m_message.c_str(), 100, 16);
 	// TODO print which player is currently playing, colour of their suit
 	char turn[32];
 	glm::vec4 playerColour;
@@ -397,11 +395,11 @@ bool PoolGame::AreAnySuitLeft(EBallSuits suit)
 	switch (suit) {
 	case solid:
 		// Start at m_balls[1] and stop on m_balls[8]
-		return std::all_of(m_balls.begin() + 1, m_balls.begin() + 8, ballNotSunk);
+		return std::any_of(m_balls.begin() + 1, m_balls.begin() + 8, ballNotSunk);
 		break;
 	case striped:
 		// Start at m_balls[9] and stop at end
-		return std::all_of(m_balls.begin() + 9, m_balls.end(), ballNotSunk);
+		return std::any_of(m_balls.begin() + 9, m_balls.end(), ballNotSunk);
 		break;
 	case eight:
 		return ballNotSunk(m_balls[8]);
@@ -480,19 +478,23 @@ void PoolGame::setup()
 	
 	// Add each pocket
 	pocket.setPosition({ 0, 0.5f * (k_table_height + k_pocket_width) });
-	m_scene->addActor(pocket.clone());
+	m_pockets.push_back(BoxPtr((Box*)pocket.clone()));
 	pocket.setPosition({ 0,-0.5f * (k_table_height + k_pocket_width) });
-	m_scene->addActor(pocket.clone());
+	m_pockets.push_back(BoxPtr((Box*)pocket.clone()));
 	pocket.setOrientation(glm::quarter_pi<float>());
 	pocket.setPosition({ -0.5f * k_table_width, 0.5f * k_table_height });
-	m_scene->addActor(pocket.clone());
+	m_pockets.push_back(BoxPtr((Box*)pocket.clone()));
 	pocket.setPosition({ 0.5f * k_table_width, -0.5f * k_table_height });
-	m_scene->addActor(pocket.clone());
+	m_pockets.push_back(BoxPtr((Box*)pocket.clone()));
 	pocket.setOrientation(-glm::quarter_pi<float>());
 	pocket.setPosition({ 0.5f * k_table_width, 0.5f * k_table_height });
-	m_scene->addActor(pocket.clone());
+	m_pockets.push_back(BoxPtr((Box*)pocket.clone()));
 	pocket.setPosition({ -0.5f * k_table_width, -0.5f * k_table_height });
-	m_scene->addActor(pocket.clone());
+	m_pockets.push_back(BoxPtr((Box*)pocket.clone()));
+
+	for (BoxPtr b : m_pockets) {
+		m_scene->addActor(std::static_pointer_cast<PhysicsObject>(b));
+	}
 
 	// create balls
 	for (size_t i = 0; i < 16; ++i) {
@@ -544,6 +546,7 @@ void PoolGame::rack()
 	m_state = shot;
 	m_firstHit = none;
 	m_sunkThisRound = std::queue<PoolBall*>();
+	m_message = "Break";
 }
 
 void PoolGame::shootCue(physics::Sphere* cue, Application2D* app)
@@ -563,4 +566,38 @@ void PoolGame::shootCue(physics::Sphere* cue, Application2D* app)
 		// Change state to moving
 		m_state = moving;
 	}
+}
+
+bool PoolGame::isLegalCuePosition(glm::vec2 pos)
+{
+	// Is position within legal bounds?
+	// Not worrying about break or not, just let it be placed anywhere
+	const float legalExtentX = 0.5f * k_table_width - PoolBall::k_radius;
+	const float legalExtentY = 0.5f * k_table_height - PoolBall::k_radius;
+	if (abs(pos.x) > legalExtentX || abs(pos.y) > legalExtentY) {
+		return false;
+	}
+	else {
+		// Would it collide with other balls or the pockets?
+		Sphere testSphere(pos, PoolBall::k_radius, { 0,0 });
+		if (std::any_of(m_balls.begin() + 1, m_balls.end(),		// Ignore cue ball at start
+			[&](PoolBallPtr ball)
+		{
+			// If ball's not sunk, and would collide, they will collide
+			return !ball->isSunk() && (bool)(testSphere.checkSphereCollision(ball->getSphere()));
+		})) {
+			// If any ball would collide, illegal position
+			return false;
+		}
+		if (std::any_of(m_pockets.begin(), m_pockets.end(),
+			[&](BoxPtr box)
+		{
+			//  Return whether box would collide
+			return (bool)(testSphere.checkBoxCollision(box.get()));
+		})) {
+			// If any pocket would collide, illegal position
+			return false;
+		}
+	}
+	return true;
 }
