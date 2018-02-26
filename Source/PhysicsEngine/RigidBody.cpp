@@ -201,6 +201,7 @@ void physics::RigidBody::setStatic(bool value)
 		m_moment = INFINITY;
 		m_invMoment = 0;
 		m_velocity = { 0,0 };
+		m_angularVelocity = 0;
 	}
 }
 
@@ -222,7 +223,9 @@ float physics::RigidBody::getAngularVelocity()
 
 void physics::RigidBody::setAngularVelocity(float angularVelocity)
 {
-	m_angularVelocity = angularVelocity;
+	if (!m_static) {
+		m_angularVelocity = angularVelocity;
+	}
 }
 
 void physics::RigidBody::resetAlive()

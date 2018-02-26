@@ -21,9 +21,9 @@ const float Slug::k_elasticity = 0.8f;
 const float Slug::k_friction = 0.1f;
 const float Slug::k_head_drag = 0.5f;
 const float Slug::k_body_drag = 0.2f;
-const float Slug::k_up_force = 40.f;
-const float Slug::k_down_force = 10.f;
-const float Slug::k_side_force = 30.f;
+const float Slug::k_up_force = 50.f;
+const float Slug::k_down_force = 20.f;
+const float Slug::k_side_force = 40.f;
 
 const glm::vec4 Slug::k_body_colour = {0,0.3f,0.8f,1};
 const glm::vec4 Slug::k_head_colour = {0.8f,0,0.8f,1};

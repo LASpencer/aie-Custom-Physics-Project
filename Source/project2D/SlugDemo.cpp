@@ -9,7 +9,7 @@
 const float SlugDemo::k_box_elasticity = 0.5f;
 const float SlugDemo::k_box_friction = 0.2f;
 
-const glm::vec2 SlugDemo::k_slug_start = {-40,-20};
+const glm::vec2 SlugDemo::k_slug_start = { -40,52 };//{-40,-20};
 
 using namespace physics;
 
@@ -55,14 +55,73 @@ void SlugDemo::setup()
 	wall.setPosition({ 30, -21.5f });
 	m_scene->addActor(wall.clone());
 
-	wall.setHeight(5);
+	wall.setHeight(4);
 	wall.setWidth(20);
-	wall.setPosition({ 70, -22.5f });
+	wall.setPosition({ 70, -23.f });
 	m_scene->addActor(wall.clone());
 
-	wall.setHeight(39);
-	wall.setPosition({ 70, 7.5f });
+	wall.setHeight(40);
+	wall.setPosition({ 80, 8.f });
 	m_scene->addActor(wall.clone());
 
+	wall.setHeight(2);
+	wall.setPosition({ 100,-25 });
+	wall.setStatic(false);
+	wall.setAngularVelocity(-0.8f);
+	m_scene->addActor(wall.clone());
+
+	wall.setPosition({ 120,-15 });
+	m_scene->addActor(wall.clone());
+
+	wall.setPosition({ 120, 5 });
+	m_scene->addActor(wall.clone());
+	wall.setPosition({ 120, 25 });
+	m_scene->addActor(wall.clone());
+
+	wall.setPosition({ 100,-5 });
+	wall.setAngularVelocity(0.8f);
+	m_scene->addActor(wall.clone());
+
+	wall.setPosition({ 100,15 });
+	m_scene->addActor(wall.clone());
+	wall.setPosition({ 100,35 });
+	m_scene->addActor(wall.clone());
+
+	wall.setStatic(true);
+	wall.setWidth(45);
+	wall.setOrientation(-0.5f);
+	wall.setPosition({ 50,40 });
+	m_scene->addActor(wall.clone());
+	wall.setPosition({ 50,53 });
+	m_scene->addActor(wall.clone());
+
+	wall.setWidth(80);
+	wall.setOrientation(0);
+	wall.setPosition({ -10,50 });
+	m_scene->addActor(wall.clone());
+
+	wall.setWidth(67.5f);
+	wall.setOrientation(0);
+	wall.setPosition({ -3.75f,63 });
+	m_scene->addActor(wall.clone());
+
+	// Chimney
+	// TODO figure out if doable, 
+	wall.setWidth(4);
+	wall.setHeight(180);
+	wall.setPosition({ -50,73.5f });
+	m_scene->addActor(wall.clone());
+
+	wall.setHeight(100);
+	wall.setPosition({ -30,110.f });
+	m_scene->addActor(wall.clone());
+
+	wall.setWidth(9);
+	wall.setHeight(2);
+	wall.setPosition({ -45, 75 });
+	m_scene->addActor(wall.clone());
+
+	wall.setPosition({ -45, 53 });
+	m_scene->addActor(wall.clone());
 	// TODO ramp and steps to reach higher level
 }
