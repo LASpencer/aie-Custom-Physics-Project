@@ -36,6 +36,9 @@
     <ClCompile Include="PoolPlayer.cpp">
       <Filter>Source Files\Pool</Filter>
     </ClCompile>
+    <ClCompile Include="TitleScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h">

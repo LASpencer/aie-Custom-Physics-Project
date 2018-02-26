@@ -6,6 +6,8 @@
 #include "PhysicsScene.h"
 
 class Demo;
+class TitleScreen;
+class PoolGame;
 
 class Application2D : public aie::Application {
 public:
@@ -37,6 +39,9 @@ protected:
 	aie::Font*			m_font;
 
 	Demo* m_currentDemo;
+
+	TitleScreen* m_titleScreen;
+	PoolGame* m_pool;
 
 	glm::vec2 m_cameraPos;
 

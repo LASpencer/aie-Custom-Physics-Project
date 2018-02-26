@@ -169,6 +169,7 @@
     <ClCompile Include="PoolBall.cpp" />
     <ClCompile Include="PoolGame.cpp" />
     <ClCompile Include="PoolPlayer.cpp" />
+    <ClCompile Include="TitleScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h" />

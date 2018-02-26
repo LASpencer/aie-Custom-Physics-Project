@@ -81,6 +81,8 @@ public:
 	void nextPlayer();
 
 protected:
+	physics::PhysicsScene* m_scene;
+
 	std::vector<PoolBallPtr> m_balls;
 	std::vector<physics::BoxPtr> m_pockets;
 

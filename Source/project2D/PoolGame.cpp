@@ -34,11 +34,10 @@ const glm::vec4 PoolGame::k_cornercap_colour = {1.f, 0.8f,0.f,1.f};
 const glm::vec4 PoolGame::k_score_colour = { 1,1,1,1 };
 const glm::vec4 PoolGame::k_message_colour = { 1,1,1,1 };
 
-PoolGame::PoolGame() : m_balls(16, PoolBallPtr()), m_pockets(), m_cueActive(false), m_playerIndex(0), m_sunkThisRound(), m_message()
+PoolGame::PoolGame() : m_scene(new PhysicsScene(0.01f, { 0,0 })), m_balls(16, PoolBallPtr()), m_pockets(), m_cueActive(false), m_playerIndex(0), m_sunkThisRound(), m_message()
 {
 	m_player[0] = PoolPlayer();
 	m_player[1] = PoolPlayer();
-	m_scene = new PhysicsScene(0.01f, { 0,0 });
 	setup();
 }
 

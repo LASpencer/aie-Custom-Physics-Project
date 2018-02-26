@@ -11,6 +11,7 @@
 #include "SoftBody.h"
 #include "Rope.h"
 
+#include "TitleScreen.h"
 #include "PoolGame.h"
 
 using namespace physics;
@@ -36,7 +37,10 @@ bool Application2D::startup() {
 	m_sceneExtent = 100;
 	m_timer = 0;
 
-	m_currentDemo = new PoolGame();
+	m_titleScreen = new TitleScreen();
+	m_pool = new PoolGame();
+
+	m_currentDemo = m_titleScreen;
 
 	return true;
 }
@@ -55,21 +59,31 @@ void Application2D::update(float deltaTime) {
 	aie::Input* input = aie::Input::getInstance();
 
 	// use arrow keys to move camera
-	if (input->isKeyDown(aie::INPUT_KEY_UP))
-		m_cameraPos.y += 100.0f * deltaTime;
+	//if (input->isKeyDown(aie::INPUT_KEY_UP))
+	//	m_cameraPos.y += 100.0f * deltaTime;
 
-	if (input->isKeyDown(aie::INPUT_KEY_DOWN))
-		m_cameraPos.y -= 100.0f * deltaTime;
+	//if (input->isKeyDown(aie::INPUT_KEY_DOWN))
+	//	m_cameraPos.y -= 100.0f * deltaTime;
 
-	if (input->isKeyDown(aie::INPUT_KEY_LEFT))
-		m_cameraPos.x -= 100.0f * deltaTime;
+	//if (input->isKeyDown(aie::INPUT_KEY_LEFT))
+	//	m_cameraPos.x -= 100.0f * deltaTime;
 
-	if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
-		m_cameraPos.x += 100.0f * deltaTime;
+	//if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
+	//	m_cameraPos.x += 100.0f * deltaTime;
 
 	// exit the application
-	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
-		quit();
+	if (input->wasKeyPressed(aie::INPUT_KEY_ESCAPE))
+	{
+		if (m_currentDemo == m_titleScreen) {
+			quit();
+		}
+		else {
+			m_currentDemo = m_titleScreen;
+		}
+	}
+	else if (input->wasKeyPressed(aie::INPUT_KEY_1)) {
+		m_currentDemo = m_pool;
+	}
 
 	aie::Gizmos::clear();
 
