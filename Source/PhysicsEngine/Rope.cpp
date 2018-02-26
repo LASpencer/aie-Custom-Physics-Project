@@ -2,7 +2,11 @@
 #include "RigidBody.h"
 #include "Spring.h"
 
-physics::Rope::Rope(glm::vec2 position, RigidBody * particle, size_t segments, 
+physics::Rope::Rope()
+{
+}
+
+physics::Rope::Rope(glm::vec2 position, RigidBody * particle, size_t segments,
 	float distance, float strength, float damping)
 	: SoftBody()
 {

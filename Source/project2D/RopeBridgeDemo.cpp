@@ -6,17 +6,16 @@
 #include "Box.h"
 #include "Plane.h"
 #include "Spring.h"
-#include "Rope.h"
 
 #include "Application2d.h"
 
 using namespace physics;
 
-const float RopeBridgeDemo::k_stick_force_multiplier = 2.f;
-const float RopeBridgeDemo::k_stick_max_force = 100.f;
+const float RopeBridgeDemo::k_pull_force_multiplier = 2.f;
+const float RopeBridgeDemo::k_max_pull_force = 200.f;
 
 
-RopeBridgeDemo::RopeBridgeDemo() : m_scene(new PhysicsScene()), m_cueActive(false)
+RopeBridgeDemo::RopeBridgeDemo() : m_scene(new PhysicsScene()), m_selectedObject()
 {
 	setup();
 }
@@ -31,42 +30,79 @@ void RopeBridgeDemo::update(float deltaTime, Application2D * app)
 	// TODO R to reset
 	if (input->wasKeyPressed(aie::INPUT_KEY_R))
 	{
-		m_cueActive = false;
+		m_selectedObject.reset();
 		// Reset
 		m_scene->clear();
 		setup();
 	}
 
-	if (m_cueActive) {
-		// If cue being dragged back
-		if (input->wasMouseButtonReleased(aie::INPUT_MOUSE_BUTTON_LEFT)) {
-			// On releasing mouse, shoot cue
-			m_cueActive = false;	// cue just released
-			shootCue(app);
+	// TODO drag object with mouse
+	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_LEFT)) {
+		m_selectedObject.reset();
+
+		// Try selecting object
+		glm::vec2 mousePos = { input->getMouseX(), input->getMouseY() };
+
+		glm::vec2 worldMousePos = app->screenToWorldSpace(mousePos);
+
+		for (auto object : m_scene->getActors()) {
+			if (object->isPointInside(worldMousePos)) {
+				RigidBodyPtr body = std::dynamic_pointer_cast<RigidBody>(object);
+				if (body && body->isDynamic()) {
+					// Select clicked body
+					m_selectedObject = body;
+				}
+				break;
+			}
 		}
-		else if (input->wasKeyPressed(aie::INPUT_KEY_SPACE)) {
-			// Spacebar to cancel shot
-			m_cueActive = false;
+
+	}
+	if (input->wasMouseButtonReleased(aie::INPUT_MOUSE_BUTTON_LEFT)) {
+		m_selectedObject.reset();
+	}
+	if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_LEFT)) {
+		// Drag selected object
+		if (m_selectedObject) {
+			glm::vec2 mousePos = { input->getMouseX(), input->getMouseY() };
+
+			glm::vec2 worldMousePos = app->screenToWorldSpace(mousePos);
+
+			glm::vec2 displacement = worldMousePos - m_selectedObject->getPosition();
+			glm::vec2 direction = glm::normalize(displacement);
+			float length = glm::length(displacement);
+			float forceMagnitude = std::min(length * k_pull_force_multiplier, k_max_pull_force);
+			m_selectedObject->applyForce(direction * forceMagnitude);
 		}
 	}
-	else {
-		if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_LEFT)) {
-			// On clicking mouse, activate cue and remember position
-			m_cueActive = true;
-			m_cueContact = { input->getMouseX(), input->getMouseY() };
-		}
+
+	if (input->isKeyDown(aie::INPUT_KEY_W)) {
+		// TODO extract out max/min tightness as constant
+		// TODO damping also relative to tightness
+		m_ropeTightness = std::min(200.f, m_ropeTightness + deltaTime * 10.f);
+		m_suspensionRope.setStrength(m_ropeTightness);
+		m_anchorSpring1->setTightness(m_ropeTightness);
+		m_anchorSpring2->setTightness(m_ropeTightness);
 	}
+	else if (input->isKeyDown(aie::INPUT_KEY_S)) {
+		m_ropeTightness = std::max(1.f, m_ropeTightness - deltaTime * 10.f);
+		m_suspensionRope.setStrength(m_ropeTightness);
+		m_anchorSpring1->setTightness(m_ropeTightness);
+		m_anchorSpring2->setTightness(m_ropeTightness);
+	}
+
+	// TODO increase/decrease tightness of rope
 
 	m_scene->update(deltaTime);
 }
 
 void RopeBridgeDemo::draw(Application2D * app)
 {
+	aie::Input* input = aie::Input::getInstance();
 	aie::Renderer2D* renderer = app->getRenderer();
-	if (m_cueActive) {
-		renderer->setRenderColour(0.6f, 0.6f, 0.6f);
-		aie::Input* input = aie::Input::getInstance();
-		renderer->drawLine(m_cueContact.x, m_cueContact.y, input->getMouseX(), input->getMouseY(), 2);
+	if (m_selectedObject) {
+		glm::vec2 selectedPos = app->worldToScreenSpace(m_selectedObject->getPosition());
+		renderer->setRenderColour(0.8f, 0.8f, 0.8f);
+		renderer->drawLine(selectedPos.x, selectedPos.y, input->getMouseX(), input->getMouseY(), 1);
 	}
 }
 
@@ -79,50 +115,27 @@ void RopeBridgeDemo::setup()
 	SpherePtr anchor2((Sphere*)anchor1->clone());
 	anchor2->setPosition({ 80,20 });
 
-	Sphere particle({ 0,0 }, 2, { 0,0 }, 0, 0.4f, 1, 0, 1.f, 0.1f, {1,1,1,1});
+	Sphere particle({ 0,0 }, 2, { 0,0 }, 0, 0.1f, 1, 0, 0.f, 0.1f, {1,1,1,1});
 
-	Rope suspensionRope({ -60,20 }, &particle, 20, 6.f, 40.f, 5.f);
+	m_ropeTightness = 10;
+
+	// TODO keep suspension rope as variable, so tighness can be changed
+	m_suspensionRope = Rope({ -74,20 }, &particle, 20, 6.f, m_ropeTightness, 1.f);
 
 	// Attach rope ends to anchor
-	SpringPtr anchorSpring1(new Spring(40.f, 4.f, 5.f));
-	SpringPtr anchorSpring2(new Spring(40.f, 4.f, 5.f));
-	anchorSpring1->setEnd1(anchor1);
-	anchorSpring1->setEnd2(suspensionRope.getSegments()[0]);
-	anchorSpring1->setAnchor2({ -2,0 });
+	m_anchorSpring1 = SpringPtr(new Spring(m_ropeTightness, 4.f, 1.f));
+	m_anchorSpring2 = SpringPtr(new Spring(m_ropeTightness, 4.f, 1.f));
+	m_anchorSpring1->setEnd1(anchor1);
+	m_anchorSpring1->setEnd2(m_suspensionRope.getSegments()[0]);
+	m_anchorSpring1->setAnchor2({ -2,0 });
 
-	anchorSpring2->setEnd1(anchor2);
-	anchorSpring2->setEnd2(suspensionRope.getSegments()[19]);
-	anchorSpring2->setAnchor2({ 2,0 });
+	m_anchorSpring2->setEnd1(anchor2);
+	m_anchorSpring2->setEnd2(m_suspensionRope.getSegments()[19]);
+	m_anchorSpring2->setAnchor2({ 2,0 });
 
 	m_scene->addActor(anchor1);
 	m_scene->addActor(anchor2);
-	m_scene->addActor(anchorSpring1);
-	m_scene->addActor(anchorSpring2);
-	suspensionRope.addToScene(m_scene);
-}
-
-void RopeBridgeDemo::shootCue(Application2D * app)
-{
-	aie::Input* input = aie::Input::getInstance();
-	glm::vec2 mousePos = { input->getMouseX(), input->getMouseY() };
-
-	glm::vec2 worldCueContact = app->screenToWorldSpace(m_cueContact);
-
-	// Check cue contact against actors
-	for (auto object : m_scene->getActors()) {
-		if (object->isPointInside(worldCueContact)) {
-			RigidBody* body = dynamic_cast<RigidBody*>(object.get());
-			if (body != nullptr) {
-				// Apply force to object
-				glm::vec2 worldCueEnd = app->screenToWorldSpace(mousePos);
-				glm::vec2 displacement = worldCueContact - worldCueEnd;
-				glm::vec2 direction = glm::normalize(displacement);
-				float length = glm::length(displacement);
-				// Determine force to apply from cue
-				float cueForce = std::min(length * k_stick_force_multiplier, k_stick_max_force);
-				body->applyImpulse(direction * cueForce, worldCueContact);
-			}
-			break;
-		}
-	}
+	m_scene->addActor(m_anchorSpring1);
+	m_scene->addActor(m_anchorSpring2);
+	m_suspensionRope.addToScene(m_scene);
 }

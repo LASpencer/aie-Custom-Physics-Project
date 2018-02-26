@@ -1,13 +1,16 @@
 #pragma once
 #include "Demo.h"
+
 #include "ExternalLibraries.h"
+#include "RigidBody.h"
+#include "Rope.h"
 
 class Application2D;
 
 class RopeBridgeDemo : public Demo {
 public:
-	static const float k_stick_force_multiplier;
-	static const float k_stick_max_force;
+	static const float k_pull_force_multiplier;
+	static const float k_max_pull_force;
 
 	RopeBridgeDemo();
 
@@ -22,8 +25,11 @@ public:
 protected:
 	physics::PhysicsScene* m_scene;
 
-	glm::vec2 m_cueContact;		// Point where cue will strike
-	bool m_cueActive;
+	physics::RigidBodyPtr m_selectedObject;
 
-	void shootCue(Application2D* app);
+	physics::Rope m_suspensionRope;
+	physics::SpringPtr m_anchorSpring1;
+	physics::SpringPtr m_anchorSpring2;
+
+	float m_ropeTightness;
 };
