@@ -33,7 +33,7 @@ namespace physics {
 		bool addUpdater(IFixedUpdater* updater);
 		bool addUpdater(FixedUpdaterPtr updater);
 
-		bool removeUpdater(IFixedUpdater* updater);	
+		bool removeUpdater(IFixedUpdater* updater);
 		bool removeUpdater(FixedUpdaterPtr updater);
 
 		void update(float deltaTime);

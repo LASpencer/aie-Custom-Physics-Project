@@ -23,13 +23,14 @@ const float PoolGame::k_rail_width = 8.f;
 const float PoolGame::k_stick_force_multiplier = 10.f;
 const float PoolGame::k_stick_max_force = 300.f;
 const float PoolGame::k_pocket_width = 8.f;
-const float PoolGame::k_cue_width = 2.f;
+const float PoolGame::k_cue_width = 4.f;
 const float PoolGame::k_score_margin = 300;
 const float PoolGame::k_turn_text_margin = 300;
 const float PoolGame::k_message_margin = 100;
-const glm::vec4 PoolGame::k_felt_colour = { 0.f,1.f,0.f,1.f };
-const glm::vec4 PoolGame::k_rail_colour = { 0.f,1.f,0.f,1.f };
-const glm::vec4 PoolGame::k_pocket_colour = { 0.5f,0.5f,0.2f,0.7f };
+const glm::vec4 PoolGame::k_felt_colour = { 0.f,0.8f,0.f,1.f };
+const glm::vec4 PoolGame::k_rail_colour = { 0.5f,0.25f,0.f,1.f };
+const glm::vec4 PoolGame::k_pocket_colour = { 0.5f,0.5f,0.4f,1.f };
+const glm::vec4 PoolGame::k_cornercap_colour = {1.f, 0.8f,0.f,1.f};
 const glm::vec4 PoolGame::k_score_colour = { 1,1,1,1 };
 const glm::vec4 PoolGame::k_message_colour = { 1,1,1,1 };
 
@@ -46,6 +47,16 @@ void PoolGame::update(float deltaTime, Application2D* app)
 
 	aie::Input* input = aie::Input::getInstance();
 
+	// Make corner cap gizmos
+	glm::vec2 capExtents = { k_rail_width, k_rail_width };
+	aie::Gizmos::add2DAABBFilled({ 0.5f * k_table_width, 0.5f * k_table_height }, capExtents, k_cornercap_colour);
+	aie::Gizmos::add2DAABBFilled({ 0.5f * k_table_width, -0.5f * k_table_height }, capExtents, k_cornercap_colour);
+	aie::Gizmos::add2DAABBFilled({ -0.5f * k_table_width, 0.5f * k_table_height }, capExtents, k_cornercap_colour);
+	aie::Gizmos::add2DAABBFilled({ -0.5f * k_table_width, -0.5f * k_table_height }, capExtents, k_cornercap_colour);
+
+	// Make table felt gizmo
+	glm::vec2 extents = { 0.5f * k_table_width, 0.5f* k_table_height };
+	aie::Gizmos::add2DAABBFilled({ 0,0 }, extents, k_felt_colour);
 
 	switch (m_state) {
 	case shot:
@@ -447,10 +458,10 @@ void PoolGame::nextPlayer()
 
 void PoolGame::setup()
 {
-	m_scene->addActor(new Plane({ 1,0 }, 0.5f * k_table_width + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,1,0,1 }));
-	m_scene->addActor(new Plane({ -1,0 }, 0.5f * k_table_width + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,1,0,1 }));
-	m_scene->addActor(new Plane({ 0,1 }, 0.5f * k_table_height + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,1,0,1 }));
-	m_scene->addActor(new Plane({ 0,-1 }, 0.5f * k_table_height + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,1,0,1 }));
+	m_scene->addActor(new Plane({ 1,0 }, 0.5f * k_table_width + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,0,0,0 }));
+	m_scene->addActor(new Plane({ -1,0 }, 0.5f * k_table_width + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,0,0,0 }));
+	m_scene->addActor(new Plane({ 0,1 }, 0.5f * k_table_height + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,0,0,0 }));
+	m_scene->addActor(new Plane({ 0,-1 }, 0.5f * k_table_height + k_rail_width, k_rail_elasticity, k_rail_friction, { 0,0,0,0 }));
 	
 
 	// top/bottom rails have width 0.5 * table_width - 0.5 * (pocket_width + sqrt(2) * pocket_width )  

@@ -53,6 +53,7 @@ public:
 	static const glm::vec4 k_felt_colour;
 	static const glm::vec4 k_rail_colour;
 	static const glm::vec4 k_pocket_colour;
+	static const glm::vec4 k_cornercap_colour;
 	static const glm::vec4 k_score_colour;
 	static const glm::vec4 k_message_colour;
 
@@ -107,4 +108,5 @@ protected:
 
 	// Returns true if cue ball could be placed at position
 	bool isLegalCuePosition(glm::vec2 pos);
+
 };
