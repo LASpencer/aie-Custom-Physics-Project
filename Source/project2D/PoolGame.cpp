@@ -58,6 +58,16 @@ void PoolGame::update(float deltaTime, Application2D* app)
 	glm::vec2 extents = { 0.5f * k_table_width, 0.5f* k_table_height };
 	aie::Gizmos::add2DAABBFilled({ 0,0 }, extents, k_felt_colour);
 
+	// Press R to restart
+	if (input->wasKeyPressed(aie::INPUT_KEY_R)) {
+		if (m_state != game_over && !m_break) {
+			// If in game and after break, count as a forfeit by current player
+			nextPlayer();
+			currentPlayer().addWin();
+		}
+		rack();
+	}
+
 	switch (m_state) {
 	case shot:
 		// State for player taking a shot
