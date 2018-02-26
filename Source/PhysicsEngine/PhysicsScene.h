@@ -36,9 +36,13 @@ namespace physics {
 		bool removeUpdater(IFixedUpdater* updater);
 		bool removeUpdater(FixedUpdaterPtr updater);
 
-		void update(float deltaTime);
-	
+		// clears updaters and actors
+		void clear();
 
+		void update(float deltaTime);
+
+		std::vector<PhysicsObjectPtr> const& getActors() { return m_actors; }
+	
 		glm::vec2 getGravity() { return m_gravity; }
 		void setGravity(glm::vec2 gravity) { m_gravity = gravity; }
 

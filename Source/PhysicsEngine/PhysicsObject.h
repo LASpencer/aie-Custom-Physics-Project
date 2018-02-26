@@ -90,6 +90,8 @@ namespace physics {
 		float getFriction() { return m_friction; }
 		void setFriction(float friction);
 
+		virtual bool isPointInside(glm::vec2 point) = 0;
+
 		// test collision against other object
 		// returns struct describing collision
 		virtual Collision checkCollision(PhysicsObject* other) = 0;

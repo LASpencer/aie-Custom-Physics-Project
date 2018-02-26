@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Pool">
       <UniqueIdentifier>{b7f1abf5-728c-40ae-946a-928a605c5fd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Slug">
+      <UniqueIdentifier>{101e745d-5560-4d86-a121-b99ed0156db4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application2D.cpp">
@@ -37,6 +40,12 @@
       <Filter>Source Files\Pool</Filter>
     </ClCompile>
     <ClCompile Include="TitleScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BouncingBallsDemo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RopeBridgeDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -58,6 +67,15 @@
     </ClInclude>
     <ClInclude Include="TitleScreen.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BouncingBallsDemo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RopeBridgeDemo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlugDemo.h">
+      <Filter>Header Files\Slug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

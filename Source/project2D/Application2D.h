@@ -8,6 +8,8 @@
 class Demo;
 class TitleScreen;
 class PoolGame;
+class BouncingBallsDemo;
+class RopeBridgeDemo;
 
 class Application2D : public aie::Application {
 public:
@@ -20,6 +22,9 @@ public:
 
 	virtual void update(float deltaTime);
 	virtual void draw();
+
+	glm::vec2 getCameraPos() { return m_cameraPos; }
+	void setCameraPos(glm::vec2 pos) { m_cameraPos = pos; }
 
 	glm::vec2 screenToWorldSpace(glm::vec2 pos);
 
@@ -42,6 +47,8 @@ protected:
 
 	TitleScreen* m_titleScreen;
 	PoolGame* m_pool;
+	BouncingBallsDemo* m_ballDemo;
+	RopeBridgeDemo* m_ropeDemo;
 
 	glm::vec2 m_cameraPos;
 

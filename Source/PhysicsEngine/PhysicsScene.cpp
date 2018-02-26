@@ -127,6 +127,15 @@ bool physics::PhysicsScene::removeUpdater(FixedUpdaterPtr updater)
 	return true;
 }
 
+void physics::PhysicsScene::clear()
+{
+	m_updaters.clear();
+	for ( auto actor : m_actors) {
+		actor->kill();
+	}
+	m_actors.clear();
+}
+
 void physics::PhysicsScene::update(float deltaTime)
 {
 	m_accumulatedTime = std::min( m_accumulatedTime +deltaTime, m_maxFrameLength);

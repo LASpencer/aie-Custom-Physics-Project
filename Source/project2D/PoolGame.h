@@ -59,6 +59,8 @@ public:
 
 	PoolGame();
 
+	~PoolGame();
+
 	virtual void update(float deltaTime, Application2D* app);
 
 	virtual void draw(Application2D* app);

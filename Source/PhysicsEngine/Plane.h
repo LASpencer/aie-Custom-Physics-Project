@@ -20,6 +20,8 @@ namespace physics {
 		virtual void fixedUpdate(PhysicsScene* scene);
 		virtual void makeGizmo(float timeRatio);
 
+		virtual bool isPointInside(glm::vec2 point) { return false; }
+
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);
 		virtual Collision checkBoxCollision(Box* other);

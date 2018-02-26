@@ -35,6 +35,8 @@ namespace physics {
 		glm::vec2 getAnchor1() { return m_anchor1; }
 		glm::vec2 getAnchor2() { return m_anchor2; }
 
+		virtual bool isPointInside(glm::vec2 point) { return false; }
+
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);
 		virtual Collision checkBoxCollision(Box* other);

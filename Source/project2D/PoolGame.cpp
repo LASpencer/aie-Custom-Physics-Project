@@ -41,6 +41,11 @@ PoolGame::PoolGame() : m_scene(new PhysicsScene(0.01f, { 0,0 })), m_balls(16, Po
 	setup();
 }
 
+PoolGame::~PoolGame()
+{
+	delete m_scene;
+}
+
 void PoolGame::update(float deltaTime, Application2D* app)
 {
 

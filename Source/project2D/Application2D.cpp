@@ -13,6 +13,8 @@
 
 #include "TitleScreen.h"
 #include "PoolGame.h"
+#include "BouncingBallsDemo.h"
+#include "RopeBridgeDemo.h"
 
 using namespace physics;
 
@@ -39,6 +41,8 @@ bool Application2D::startup() {
 
 	m_titleScreen = new TitleScreen();
 	m_pool = new PoolGame();
+	m_ballDemo = new BouncingBallsDemo();
+	m_ropeDemo = new RopeBridgeDemo();
 
 	m_currentDemo = m_titleScreen;
 
@@ -47,6 +51,10 @@ bool Application2D::startup() {
 
 void Application2D::shutdown() {
 	
+	delete m_ropeDemo;
+	delete m_ballDemo;
+	delete m_pool;
+	delete m_titleScreen;
 	delete m_font;
 	delete m_2dRenderer;
 }
@@ -83,6 +91,12 @@ void Application2D::update(float deltaTime) {
 	}
 	else if (input->wasKeyPressed(aie::INPUT_KEY_1)) {
 		m_currentDemo = m_pool;
+	}
+	else if (input->wasKeyPressed(aie::INPUT_KEY_2)) {
+		m_currentDemo = m_ballDemo;
+	}
+	else if (input->wasKeyPressed(aie::INPUT_KEY_3)) {
+		m_currentDemo = m_ropeDemo;
 	}
 
 	aie::Gizmos::clear();

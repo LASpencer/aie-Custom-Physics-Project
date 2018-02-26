@@ -165,18 +165,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application2D.cpp" />
+    <ClCompile Include="BouncingBallsDemo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PoolBall.cpp" />
     <ClCompile Include="PoolGame.cpp" />
     <ClCompile Include="PoolPlayer.cpp" />
+    <ClCompile Include="RopeBridgeDemo.cpp" />
     <ClCompile Include="TitleScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h" />
+    <ClInclude Include="BouncingBallsDemo.h" />
     <ClInclude Include="Demo.h" />
     <ClInclude Include="PoolBall.h" />
     <ClInclude Include="PoolGame.h" />
     <ClInclude Include="PoolPlayer.h" />
+    <ClInclude Include="RopeBridgeDemo.h" />
+    <ClInclude Include="SlugDemo.h" />
     <ClInclude Include="TitleScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
