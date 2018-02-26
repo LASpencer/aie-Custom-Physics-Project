@@ -13,7 +13,9 @@ using namespace physics;
 
 const float RopeBridgeDemo::k_pull_force_multiplier = 2.f;
 const float RopeBridgeDemo::k_max_pull_force = 200.f;
-
+const float RopeBridgeDemo::k_def_tightness = 10.f;
+const float RopeBridgeDemo::k_min_tightness = 1.f;
+const float RopeBridgeDemo::k_max_tightness = 200.f;
 
 RopeBridgeDemo::RopeBridgeDemo() : m_scene(new PhysicsScene()), m_selectedObject()
 {
@@ -27,6 +29,12 @@ RopeBridgeDemo::~RopeBridgeDemo()
 void RopeBridgeDemo::update(float deltaTime, Application2D * app)
 {
 	aie::Input* input = aie::Input::getInstance();
+
+	//middle mouse to center camera
+	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_MIDDLE)) {
+		app->setCameraPos({ 0,0 });
+	}
+
 	// TODO R to reset
 	if (input->wasKeyPressed(aie::INPUT_KEY_R))
 	{
@@ -75,6 +83,7 @@ void RopeBridgeDemo::update(float deltaTime, Application2D * app)
 		}
 	}
 
+	// Increase/decrease tightness of rope
 	if (input->isKeyDown(aie::INPUT_KEY_W)) {
 		// TODO extract out max/min tightness as constant
 		// TODO damping also relative to tightness
@@ -89,8 +98,6 @@ void RopeBridgeDemo::update(float deltaTime, Application2D * app)
 		m_anchorSpring1->setTightness(m_ropeTightness);
 		m_anchorSpring2->setTightness(m_ropeTightness);
 	}
-
-	// TODO increase/decrease tightness of rope
 
 	m_scene->update(deltaTime);
 }
@@ -117,14 +124,13 @@ void RopeBridgeDemo::setup()
 
 	Sphere particle({ 0,0 }, 2, { 0,0 }, 0, 0.1f, 1, 0, 0.f, 0.1f, {1,1,1,1});
 
-	m_ropeTightness = 10;
+	m_ropeTightness = k_def_tightness;
 
-	// TODO keep suspension rope as variable, so tighness can be changed
 	m_suspensionRope = Rope({ -74,20 }, &particle, 20, 6.f, m_ropeTightness, 1.f);
 
 	// Attach rope ends to anchor
-	m_anchorSpring1 = SpringPtr(new Spring(m_ropeTightness, 4.f, 1.f));
-	m_anchorSpring2 = SpringPtr(new Spring(m_ropeTightness, 4.f, 1.f));
+	m_anchorSpring1 = SpringPtr(new Spring(m_ropeTightness, 4.f,1.f));
+	m_anchorSpring2 = SpringPtr(new Spring(m_ropeTightness, 4.f,1.f));
 	m_anchorSpring1->setEnd1(anchor1);
 	m_anchorSpring1->setEnd2(m_suspensionRope.getSegments()[0]);
 	m_anchorSpring1->setAnchor2({ -2,0 });

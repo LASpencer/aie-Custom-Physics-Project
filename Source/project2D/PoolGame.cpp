@@ -48,7 +48,7 @@ PoolGame::~PoolGame()
 
 void PoolGame::update(float deltaTime, Application2D* app)
 {
-
+	
 	aie::Input* input = aie::Input::getInstance();
 
 	// Make corner cap gizmos
@@ -61,6 +61,11 @@ void PoolGame::update(float deltaTime, Application2D* app)
 	// Make table felt gizmo
 	glm::vec2 extents = { 0.5f * k_table_width, 0.5f* k_table_height };
 	aie::Gizmos::add2DAABBFilled({ 0,0 }, extents, k_felt_colour);
+
+	//middle mouse to center camera
+	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_MIDDLE)) {
+		app->setCameraPos({ 0,0 });
+	}
 
 	// Press R to restart
 	if (input->wasKeyPressed(aie::INPUT_KEY_R)) {

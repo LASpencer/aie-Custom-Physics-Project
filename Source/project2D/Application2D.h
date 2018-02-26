@@ -8,6 +8,7 @@
 class Demo;
 class TitleScreen;
 class PoolGame;
+class SlugDemo;
 class BouncingBallsDemo;
 class RopeBridgeDemo;
 
@@ -47,6 +48,7 @@ protected:
 
 	TitleScreen* m_titleScreen;
 	PoolGame* m_pool;
+	SlugDemo* m_slugDemo;
 	BouncingBallsDemo* m_ballDemo;
 	RopeBridgeDemo* m_ropeDemo;
 

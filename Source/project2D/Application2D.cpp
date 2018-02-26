@@ -13,6 +13,7 @@
 
 #include "TitleScreen.h"
 #include "PoolGame.h"
+#include "SlugDemo.h"
 #include "BouncingBallsDemo.h"
 #include "RopeBridgeDemo.h"
 
@@ -41,6 +42,7 @@ bool Application2D::startup() {
 
 	m_titleScreen = new TitleScreen();
 	m_pool = new PoolGame();
+	m_slugDemo = new SlugDemo();
 	m_ballDemo = new BouncingBallsDemo();
 	m_ropeDemo = new RopeBridgeDemo();
 
@@ -53,6 +55,7 @@ void Application2D::shutdown() {
 	
 	delete m_ropeDemo;
 	delete m_ballDemo;
+	delete m_slugDemo;
 	delete m_pool;
 	delete m_titleScreen;
 	delete m_font;
@@ -67,17 +70,17 @@ void Application2D::update(float deltaTime) {
 	aie::Input* input = aie::Input::getInstance();
 
 	// use arrow keys to move camera
-	//if (input->isKeyDown(aie::INPUT_KEY_UP))
-	//	m_cameraPos.y += 100.0f * deltaTime;
+	if (input->isKeyDown(aie::INPUT_KEY_UP))
+		m_cameraPos.y += 100.0f * deltaTime;
 
-	//if (input->isKeyDown(aie::INPUT_KEY_DOWN))
-	//	m_cameraPos.y -= 100.0f * deltaTime;
+	if (input->isKeyDown(aie::INPUT_KEY_DOWN))
+		m_cameraPos.y -= 100.0f * deltaTime;
 
-	//if (input->isKeyDown(aie::INPUT_KEY_LEFT))
-	//	m_cameraPos.x -= 100.0f * deltaTime;
+	if (input->isKeyDown(aie::INPUT_KEY_LEFT))
+		m_cameraPos.x -= 100.0f * deltaTime;
 
-	//if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
-	//	m_cameraPos.x += 100.0f * deltaTime;
+	if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
+		m_cameraPos.x += 100.0f * deltaTime;
 
 	// exit the application
 	if (input->wasKeyPressed(aie::INPUT_KEY_ESCAPE))
@@ -93,9 +96,12 @@ void Application2D::update(float deltaTime) {
 		m_currentDemo = m_pool;
 	}
 	else if (input->wasKeyPressed(aie::INPUT_KEY_2)) {
-		m_currentDemo = m_ballDemo;
+		m_currentDemo = m_slugDemo;
 	}
 	else if (input->wasKeyPressed(aie::INPUT_KEY_3)) {
+		m_currentDemo = m_ballDemo;
+	}
+	else if (input->wasKeyPressed(aie::INPUT_KEY_4)) {
 		m_currentDemo = m_ropeDemo;
 	}
 

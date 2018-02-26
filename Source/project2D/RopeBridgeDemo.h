@@ -11,6 +11,9 @@ class RopeBridgeDemo : public Demo {
 public:
 	static const float k_pull_force_multiplier;
 	static const float k_max_pull_force;
+	static const float k_def_tightness;
+	static const float k_max_tightness;
+	static const float k_min_tightness;
 
 	RopeBridgeDemo();
 

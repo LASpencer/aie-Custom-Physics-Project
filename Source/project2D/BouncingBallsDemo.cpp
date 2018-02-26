@@ -28,6 +28,12 @@ BouncingBallsDemo::~BouncingBallsDemo()
 void BouncingBallsDemo::update(float deltaTime, Application2D * app)
 {
 	aie::Input* input = aie::Input::getInstance();
+
+	//middle mouse to center camera
+	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_MIDDLE)) {
+		app->setCameraPos({ 0,0 });
+	}
+
 	// TODO R to reset
 	if (input->wasKeyPressed(aie::INPUT_KEY_R))
 	{

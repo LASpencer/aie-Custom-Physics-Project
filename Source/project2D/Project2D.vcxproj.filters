@@ -22,6 +22,9 @@
     <Filter Include="Header Files\Slug">
       <UniqueIdentifier>{101e745d-5560-4d86-a121-b99ed0156db4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Slug">
+      <UniqueIdentifier>{5842bd0a-8937-4feb-8e7f-b11bd10b2abf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application2D.cpp">
@@ -47,6 +50,12 @@
     </ClCompile>
     <ClCompile Include="RopeBridgeDemo.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Slug.cpp">
+      <Filter>Source Files\Slug</Filter>
+    </ClCompile>
+    <ClCompile Include="SlugDemo.cpp">
+      <Filter>Source Files\Slug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SlugDemo.h">
+      <Filter>Header Files\Slug</Filter>
+    </ClInclude>
+    <ClInclude Include="Slug.h">
       <Filter>Header Files\Slug</Filter>
     </ClInclude>
   </ItemGroup>

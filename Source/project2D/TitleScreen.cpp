@@ -22,9 +22,10 @@ void TitleScreen::draw(Application2D * app)
 	renderer->setRenderColour(1, 1, 1, 1);
 
 	renderer->drawText(app->getFont(), "1: Pool Game", 500, 400);
-	renderer->drawText(app->getFont(), "2: Bouncing Balls", 500, 336);
-	renderer->drawText(app->getFont(), "3: Rope Bridge", 500, 272);
-	renderer->drawText(app->getFont(), "Press Esc to quit", 500, 208);
+	renderer->drawText(app->getFont(), "2: Slug Game", 500, 360);
+	renderer->drawText(app->getFont(), "3: Bouncing Balls", 500, 320);
+	renderer->drawText(app->getFont(), "4: Rope Bridge", 500, 280);
+	renderer->drawText(app->getFont(), "Press Esc to quit", 500, 216);
 }
 
 void TitleScreen::setup()

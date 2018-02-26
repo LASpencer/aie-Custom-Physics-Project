@@ -171,6 +171,8 @@
     <ClCompile Include="PoolGame.cpp" />
     <ClCompile Include="PoolPlayer.cpp" />
     <ClCompile Include="RopeBridgeDemo.cpp" />
+    <ClCompile Include="Slug.cpp" />
+    <ClCompile Include="SlugDemo.cpp" />
     <ClCompile Include="TitleScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +183,7 @@
     <ClInclude Include="PoolGame.h" />
     <ClInclude Include="PoolPlayer.h" />
     <ClInclude Include="RopeBridgeDemo.h" />
+    <ClInclude Include="Slug.h" />
     <ClInclude Include="SlugDemo.h" />
     <ClInclude Include="TitleScreen.h" />
   </ItemGroup>
