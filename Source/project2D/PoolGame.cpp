@@ -69,6 +69,8 @@ void PoolGame::update(float deltaTime, Application2D* app)
 
 	// Press R to restart
 	if (input->wasKeyPressed(aie::INPUT_KEY_R)) {
+		// Reset camera
+		app->setCameraPos({ 0,0 });
 		if (m_state != game_over && !m_break) {
 			// If in game and after break, count as a forfeit by current player
 			nextPlayer();

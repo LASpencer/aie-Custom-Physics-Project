@@ -34,9 +34,10 @@ void BouncingBallsDemo::update(float deltaTime, Application2D * app)
 		app->setCameraPos({ 0,0 });
 	}
 
-	// TODO R to reset
+	//  R to reset
 	if (input->wasKeyPressed(aie::INPUT_KEY_R))
 	{
+		app->setCameraPos({ 0,0 });
 		m_cueActive = false;
 		m_gravityOn = true;
 		m_scene->setGravity({ 0,-10 });

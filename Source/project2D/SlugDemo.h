@@ -16,6 +16,8 @@ public:
 
 	static const glm::vec2 k_slug_start;
 
+	static const unsigned int k_goal_tag = 1;
+
 	SlugDemo();
 
 	virtual void update(float deltaTime, Application2D* app);

@@ -3,8 +3,9 @@
 #include "Sphere.h"
 #include "Box.h"
 #include "IFixedUpdater.h"
+#include "ICollisionObserver.h"
 
-class Slug : public physics::IFixedUpdater {
+class Slug : public physics::IFixedUpdater, public physics::ICollisionObserver {
 public:
 	static const size_t k_body_cols = 8;
 	static const size_t k_body_rows = 4;
@@ -29,20 +30,29 @@ public:
 
 	static const glm::vec4 k_body_colour;
 	static const glm::vec4 k_head_colour;
+	static const glm::vec4 k_eye_colour;
+	static const glm::vec4 k_pupil_colour;
 
 	Slug(glm::vec2 pos);
 
 	physics::SoftBody& getBody() { return m_body; }
 	physics::SpherePtr getHead() { return m_head; }
 
+	bool hasWon() { return m_won; }
+
 	void addToScene(physics::PhysicsScene* scene);
 	virtual void update(float deltaTime);
 
 	virtual void fixedUpdate(physics::PhysicsScene* scene);
+
+	virtual void OnCollision(physics::PhysicsObject * publisher, const physics::Collision & collision) override;
+
+	void drawEyes();
 
 private:
 	physics::SoftBody m_body;
 	physics::SpherePtr m_head;
 	std::vector<physics::SpringPtr> m_headSprings;
 	bool m_relaxed;
+	bool m_won;
 };

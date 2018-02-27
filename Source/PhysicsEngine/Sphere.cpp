@@ -3,8 +3,8 @@
 #include "Plane.h"
 #include "Box.h"
 
-physics::Sphere::Sphere(glm::vec2 position, float radius, glm::vec2 velocity, float angularVelocity, float mass, float elasticity, float friction, float drag, float angularDrag, glm::vec4 colour)
-	: RigidBody(position,velocity, 0,mass,elasticity,angularVelocity,friction, drag, angularDrag,colour), m_radius(radius)
+physics::Sphere::Sphere(glm::vec2 position, float radius, glm::vec2 velocity, float angularVelocity, float mass, float elasticity, float friction, float drag, float angularDrag, glm::vec4 colour, bool showLine)
+	: RigidBody(position,velocity, 0,mass,elasticity,angularVelocity,friction, drag, angularDrag,colour), m_radius(radius), m_showLine(showLine)
 {
 
 	if (radius <= 0 || isnan(radius) || isinf(radius)) {
@@ -25,11 +25,13 @@ physics::PhysicsObject * physics::Sphere::clone()
 
 void physics::Sphere::makeGizmo(float timeRatio)
 {
-	glm::vec2 interpolated = glm::mix(m_pastPosition, m_position, timeRatio );
-	aie::Gizmos::add2DCircle(interpolated, m_radius, k_segments, m_colour);	
+	glm::vec2 interpolated = glm::mix(m_pastPosition, m_position, timeRatio);
+	aie::Gizmos::add2DCircle(interpolated, m_radius, k_segments, m_colour);
 	// draw a line to show orientation
-	glm::vec2 interpolatedLine = glm::mix(m_pastY * m_radius, m_localY * m_radius, timeRatio);
-	aie::Gizmos::add2DLine(interpolated, interpolatedLine + interpolated, { 0,0,0,1 });
+	if (m_showLine) {
+		glm::vec2 interpolatedLine = glm::mix(m_pastY * m_radius, m_localY * m_radius, timeRatio);
+		aie::Gizmos::add2DLine(interpolated, interpolatedLine + interpolated, { 0,0,0,1 });
+	}
 }
 
 bool physics::Sphere::isPointInside(glm::vec2 point)

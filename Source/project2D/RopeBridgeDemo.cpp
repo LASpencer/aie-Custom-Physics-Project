@@ -38,6 +38,7 @@ void RopeBridgeDemo::update(float deltaTime, Application2D * app)
 	// TODO R to reset
 	if (input->wasKeyPressed(aie::INPUT_KEY_R))
 	{
+		app->setCameraPos({ 0,0 });
 		m_selectedObject.reset();
 		// Reset
 		m_scene->clear();

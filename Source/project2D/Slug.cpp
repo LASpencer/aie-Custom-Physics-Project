@@ -4,6 +4,8 @@
 
 #include "Spring.h"
 
+#include "SlugDemo.h"
+
 using namespace physics;
 
 const float Slug::k_particle_distance = 2.f;
@@ -27,13 +29,15 @@ const float Slug::k_side_force = 40.f;
 
 const glm::vec4 Slug::k_body_colour = {0,0.3f,0.8f,1};
 const glm::vec4 Slug::k_head_colour = {0.8f,0,0.8f,1};
+const glm::vec4 Slug::k_eye_colour = { 1,1,1,1 };
+const glm::vec4 Slug::k_pupil_colour = { 0,0,0,1 };
 
-Slug::Slug(glm::vec2 pos) : m_headSprings(), m_relaxed(false)
+Slug::Slug(glm::vec2 pos) : m_headSprings(), m_relaxed(false), m_won(false)
 {
-	Sphere particle({ 0,0 }, k_particle_radius, { 0,0 },0,k_body_mass,k_elasticity,k_friction,k_body_drag,0.f,k_body_colour);
+	Sphere particle({ 0,0 }, k_particle_radius, { 0,0 },0,k_body_mass,k_elasticity,k_friction,k_body_drag,0.f,k_body_colour, false);
 	m_body = SoftBody(pos, &particle, k_body_cols, k_body_rows, k_particle_distance, k_high_tightness, k_high_tightness * k_shear_multiple, k_high_tightness * k_bend_multiple, k_damping);
 	glm::vec2 headPos = { k_particle_distance * (k_body_cols - 1) + k_head_distance,(k_particle_distance * 0.5f * k_body_rows) - k_particle_radius};
-	m_head = SpherePtr(new Sphere(headPos + pos, k_head_radius, { 0,0 }, 0, k_head_mass, k_elasticity, k_friction, k_head_drag, 0.f, k_head_colour));
+	m_head = SpherePtr(new Sphere(headPos + pos, k_head_radius, { 0,0 }, 0, k_head_mass, k_elasticity, k_friction, k_head_drag, 0.f, k_head_colour, false));
 
 	// TODO attach head to body
 	for (auto bodyPart : m_body.getParticles()[k_body_cols - 1]) {
@@ -104,4 +108,23 @@ void Slug::fixedUpdate(physics::PhysicsScene * scene)
 		m_head->applyForce({ -k_side_force, 0 });
 	}
 
+}
+
+void Slug::OnCollision(PhysicsObject * publisher, const Collision & collision)
+{
+	if (collision.second->hasTags(SlugDemo::k_goal_tag)) {
+		m_won = true;
+	}
+}
+
+void Slug::drawEyes()
+{
+	glm::vec2 eyePos = m_head->localToWorldSpace({ 0.6f,1.f });
+
+	aie::Gizmos::add2DCircle(eyePos, 0.5f, 8, k_eye_colour);
+	aie::Gizmos::add2DCircle(eyePos, 0.2f, 8, k_pupil_colour);
+
+	eyePos = m_head->localToWorldSpace({ 0.6f, -1.f });
+	aie::Gizmos::add2DCircle(eyePos, 0.5f, 8, k_eye_colour);
+	aie::Gizmos::add2DCircle(eyePos, 0.2f, 8, k_pupil_colour);
 }
