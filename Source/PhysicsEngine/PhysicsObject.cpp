@@ -51,7 +51,6 @@ void physics::PhysicsObject::resetAlive()
 
 bool physics::PhysicsObject::addObserver(const CollisionObserverPtr & observer)
 {
-	// TODO test add observer
 	// Check if already subscribed
 	if (!isSubscribed(observer)) {
 		m_observers.push_back(CollisionObserverWeakPtr(observer));
@@ -62,7 +61,6 @@ bool physics::PhysicsObject::addObserver(const CollisionObserverPtr & observer)
 
 bool physics::PhysicsObject::removeObserver(const CollisionObserverPtr & observer)
 {
-	// TODO test remove observer
 	for_each(m_observers.begin(), m_observers.end(),
 		[observer](CollisionObserverWeakPtr o) {
 			if (o.lock() == observer) {

@@ -53,7 +53,7 @@ namespace physics {
 		}
 	};
 
-	// Abstract base 
+	// Abstract base class for all physical objects
 	class PhysicsObject {
 		
 	protected:

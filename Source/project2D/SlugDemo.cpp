@@ -22,8 +22,8 @@ void SlugDemo::update(float deltaTime, Application2D * app)
 {
 	aie::Input* input = aie::Input::getInstance();
 
-	//middle mouse to center camera on slug
-	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_MIDDLE)) {
+	//middle mouse or right ctrl to center camera on slug
+	if (input->wasMouseButtonPressed(aie::INPUT_MOUSE_BUTTON_MIDDLE) || input->wasKeyPressed(aie::INPUT_KEY_RIGHT_CONTROL)) {
 		app->setCameraPos(m_slug->getHead()->getPosition());
 	}
 

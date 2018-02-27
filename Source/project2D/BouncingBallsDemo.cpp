@@ -12,8 +12,8 @@
 
 using namespace physics;
 
-const float BouncingBallsDemo::k_stick_force_multiplier = 10.f;
-const float BouncingBallsDemo::k_stick_max_force = 500.f;
+const float BouncingBallsDemo::k_stick_force_multiplier = 5.f;
+const float BouncingBallsDemo::k_stick_max_force = 200.f;
 
 BouncingBallsDemo::BouncingBallsDemo() : m_scene(new PhysicsScene()), m_cueActive(false), m_gravityOn(true)
 {
@@ -101,11 +101,11 @@ void BouncingBallsDemo::setup()
 	m_scene->addActor(new physics::Plane({ 0,1 }, 40, 1, 1));
 	m_scene->addActor(new physics::Plane({ 0,-1 }, 40, 1, 1));
 
-	m_scene->addActor(new physics::Sphere({ 20,0 }, 3, { 0,-40 }, 0, 0.16f, 1, 0.0f, 0, 0.1f, {1,0,0,1}));
-	m_scene->addActor(new physics::Sphere({ -20,0 }, 3, { 10,0.5f }, 0, 0.17f, 0.8f, 0.2f, 0, 0.1f, { 0,1,0,1 }));
-	m_scene->addActor(new physics::Sphere({ 20,-20 }, 3, { 0,0 }, 0, 0.17f, 1, 0.2f, 0, 0.1f, { 0,0,1,1 }));
-	m_scene->addActor(new physics::Box({ 0,10 }, 8, 3, 0.5f, { 10,-3 }, 0, 1, 0.8f, 0.2f, 0, 0.1f, { 1,1,0,1 }));
-	m_scene->addActor(new physics::Box({ 30,10 }, 5, 5, 0, { -2,-1 }, 5, 1, 0.8f, 0.2f, 0, 0.1f, {0,1,1,1}));
+	m_scene->addActor(new physics::Sphere({ 20,0 }, 3, { 0,-40 }, 0, 3.f, 1, 0.0f, 0, 0.1f, {1,0,0,1}));
+	m_scene->addActor(new physics::Sphere({ -20,0 }, 3, { 10,0.5f }, 0, 3.f, 0.8f, 0.2f, 0, 0.1f, { 0,1,0,1 }));
+	m_scene->addActor(new physics::Sphere({ 20,-20 }, 3, { 0,0 }, 0, 3.f, 1, 0.2f, 0, 0.1f, { 0,0,1,1 }));
+	m_scene->addActor(new physics::Box({ 0,10 }, 8, 3, 0.5f, { 10,-3 }, 0, 2, 0.8f, 0.2f, 0, 0.1f, { 1,1,0,1 }));
+	m_scene->addActor(new physics::Box({ 30,10 }, 5, 5, 0, { -2,-1 }, 5, 2, 0.8f, 0.2f, 0, 0.1f, {0,1,1,1}));
 
 	// Spring connected to kinematic centre
 	SpherePtr s1(new Sphere({ 10,0 }, 3, { 0,0 }, 0, INFINITY));
