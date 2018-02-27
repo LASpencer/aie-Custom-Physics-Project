@@ -21,12 +21,14 @@ namespace physics
 
 		virtual void fixedUpdate(PhysicsScene* scene);
 
+		// Instantaneous change in momentum
 		void applyImpulse(glm::vec2 force);
 		void applyImpulse(glm::vec2 force, glm::vec2 contact);
 
 		void applyImpulseFromOther(RigidBody* other, glm::vec2 force);
 		void applyImpulseFromOther(RigidBody* other, glm::vec2 force, glm::vec2 contact);
 
+		// Force given as rate of change per second
 		void applyForce(glm::vec2 force);
 		void applyForce(glm::vec2 force, glm::vec2 contact);
 

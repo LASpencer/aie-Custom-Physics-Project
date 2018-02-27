@@ -81,15 +81,14 @@ void physics::RigidBody::fixedUpdate(PhysicsScene* scene)
 
 void physics::RigidBody::applyImpulse(glm::vec2 force)
 {
-	// TODO decide how to deal with infinite/zero masses
+	// if not dynamic, invMass will be 0
 	m_velocity += force * m_invMass;
 }
 
 void physics::RigidBody::applyImpulse(glm::vec2 force, glm::vec2 contact)
 {
-	// TODO apply the torque from this
-	// TODO apply some force
 	m_velocity += force * m_invMass;
+	// Calculate and apply torque
 	glm::vec2 pos = contact - m_position;
 	m_angularVelocity += (force.y * pos.x - force.x * pos.y) * m_invMoment;
 }
@@ -113,6 +112,7 @@ void physics::RigidBody::applyForce(glm::vec2 force)
 
 void physics::RigidBody::applyForce(glm::vec2 force, glm::vec2 contact)
 {
+	// Keep running total of force and torque to apply at update
 	m_totalForce += force;
 	glm::vec2 pos = contact - m_position;
 	m_totalTorque += (force.y * pos.x - force.x * pos.y);
@@ -154,6 +154,7 @@ void physics::RigidBody::setMass(float mass)
 	}
 	else if (!m_static) {
 		 if (mass == 0 || isinf(mass)) {
+			 // 0 or infinity becomes kinematic
 			m_mass = INFINITY;
 			m_invMass = 0;
 			m_moment = INFINITY;
@@ -254,7 +255,6 @@ glm::vec2 physics::RigidBody::worldToLocalSpace(glm::vec2 worldPos)
 
 float physics::RigidBody::calculateEnergy(PhysicsScene* scene)
 {
-	// TODO change to work with static/kinematic
 	if (isDynamic()) {
 		float potential = -glm::dot(m_position, scene->getGravity()) * m_mass;
 		float kinetic = 0.5f * m_mass * glm::dot(m_velocity, m_velocity);
@@ -285,7 +285,6 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 {
 	
 	if (isDynamic() || other->isDynamic()) {
-		//TODO implement friction between objects
 		float friction = combineFriction(this, other);
 		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
@@ -294,34 +293,31 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 		}
 		glm::vec2 perpendicular(-normal.y, normal.x);
 
-		//HACK maybe signs on perpendicular/v1 v2 are wrong, check when boxes implemented
+		// Calculate point of contact's effective radius both along normal and tangent
 		float r1 = glm::dot(col.contact - m_position, perpendicular);
 		float t1 = glm::dot(col.contact - m_position, -normal);
 		float r2 = glm::dot(col.contact - other->m_position, -perpendicular);
 		float t2 = glm::dot(col.contact - other->m_position, normal);
 
-		/*float oldAngular1 = m_angularVelocity;
-		float oldAngular2 = other->m_angularVelocity;*/
-
+		// Get velocity along collision normal
 		glm::vec2 relative = other->getVelocity() - getVelocity();
 		float normalRvel = glm::dot(relative, normal) + r1 * m_angularVelocity + r2 * other->m_angularVelocity;
+		
 		if (normalRvel > 0) {
+			// Effective inverse mass, taking angular moment into account
 			float invEffMass1 = m_invMass + r1 * r1 * m_invMoment;
 			float invEffMass2 = other->m_invMass + r2 * r2 * other->m_invMoment;
 
+			// Effective inverse mass for tangent force
 			float invEffTanMass1 = m_invMass + t1 * t1*m_invMoment;
 			float invEffTanMass2 = other->m_invMass + t2 * t2 * other->m_invMoment;
-
-			
 
 			// Calculate normal impulse
 			float impulse = normalRvel * (1 + elasticity) / (invEffMass1 + invEffMass2);
 
-			
-
 			applyImpulseFromOther(other, impulse * normal, col.contact);
 
-			//float tangentRvel = glm::dot(relative, perpendicular) + t1 *(0.5f *(oldAngular1 + m_angularVelocity) + t2 * 0.5f * (oldAngular2 + other->m_angularVelocity));
+			relative = other->getVelocity() - getVelocity();
 			float tangentRvel = glm::dot(relative, perpendicular) + t1 * m_angularVelocity + t2 * other->m_angularVelocity;
 
 			float frictionToStop = tangentRvel / (invEffTanMass1 + invEffTanMass2);
@@ -331,10 +327,6 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 			float frictionImpulse = std::max(std::min(frictionToStop, maxFriction), -maxFriction);
 			applyImpulseFromOther(other, frictionImpulse * perpendicular, col.contact);
 		}
-		// Get new relative velocity
-		/*relative = other->getVelocity() - getVelocity();
-		normalRvel = glm::dot(relative, normal);*/
-		// TODO maybe check if moving apart fast enough before resolving penetration?
 		seperateObjects(other, normal * col.depth);
 	}
 	
@@ -343,7 +335,6 @@ void physics::RigidBody::resolveRigidbodyCollision(RigidBody * other, const Coll
 void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & col)
 {
 	if (isDynamic()) {
-		//TODO implement friction between objects
 		float friction = combineFriction(this, other);
 		float elasticity = combineElasticity(this, other);
 		glm::vec2 normal = col.normal;
@@ -355,25 +346,21 @@ void physics::RigidBody::resolvePlaneCollision(Plane * other, const Collision & 
 		float tangentRadius = glm::dot(col.contact - m_position, -normal);
 		glm::vec2 relative = -getVelocity();
 		float normalRvel = glm::dot(relative, normal) + radius * m_angularVelocity;
-		//float oldAngular = m_angularVelocity;
 		if (normalRvel > 0) {
 			float invEffMass = m_invMass + radius * radius * m_invMoment;
 			float invEffTanMas = m_invMass + tangentRadius * tangentRadius * m_invMoment;
-
-				// TODO figure out c
 
 			// Apply impulse
 			float impulse = normalRvel * (1 + elasticity) / invEffMass;
 			applyImpulse(impulse * normal, col.contact);
 
-			//float tangentRvel = glm::dot(relative, perpendicular) + tangentRadius * 0.5f * (oldAngular + m_angularVelocity);
+			relative = -getVelocity();
 			float tangentRvel = glm::dot(relative, perpendicular) + tangentRadius * m_angularVelocity;
 			float frictionToStop = tangentRvel / invEffTanMas;
 			float maxFriction = friction * impulse;
 			float frictionImpulse = std::max(std::min(frictionToStop, maxFriction), -maxFriction);
 			applyImpulse(frictionImpulse * perpendicular, col.contact);
 		}
-		// TODO maybe only do it if not moving apart fast enough?
 		m_position += normal * col.depth;
 	}
 }
