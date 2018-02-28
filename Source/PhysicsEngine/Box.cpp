@@ -63,16 +63,20 @@ physics::Collision physics::Box::checkSphereCollision(Sphere * other)
 		float minOverlap = INFINITY;
 		std::array<glm::vec2, 4> corners = getCorners();
 		// Get axes to test: x, y, and circle to nearest corner
-		glm::vec2 minCircleToCorner;
-		float minCornerDistanceSqr = INFINITY;
-		for (glm::vec2 corner : corners) {
-			glm::vec2 circleToCorner = corner - other->getPosition();
-			float cornerDistanceSqr = glm::dot(circleToCorner, circleToCorner);
-			if (cornerDistanceSqr < minCornerDistanceSqr) {
-				minCornerDistanceSqr = cornerDistanceSqr;
-				minCircleToCorner = circleToCorner;
-			}
-		}
+
+		float xProjection = copysignf(m_xExtent, glm::dot(displacement, m_localX));
+		float yProjection = copysignf(m_yExtent, glm::dot(displacement, m_localY));
+		glm::vec2 minCircleToCorner = displacement - m_localX * xProjection - m_localY * yProjection;
+		//float minCornerDistanceSqr = INFINITY;
+		//for (glm::vec2 corner : corners) {
+		//	glm::vec2 circleToCorner = corner - other->getPosition();
+		//	float cornerDistanceSqr = glm::dot(circleToCorner, circleToCorner);
+		//	if (cornerDistanceSqr < minCornerDistanceSqr) {
+		//		minCornerDistanceSqr = cornerDistanceSqr;
+		//		minCircleToCorner = circleToCorner;
+		//	}
+		//}
+
 		if (minCircleToCorner == glm::zero<glm::vec2>()) {
 			// If corner in circle, axis is to center
 			minCircleToCorner = displacement;
