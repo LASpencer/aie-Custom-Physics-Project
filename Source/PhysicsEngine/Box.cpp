@@ -42,6 +42,12 @@ void physics::Box::makeGizmo(float timeRatio)
 	aie::Gizmos::add2DTri(p1, p3, p4, m_colour);
 }
 
+bool physics::Box::isPointInside(glm::vec2 point)
+{
+	glm::vec2 localPoint = worldToLocalSpace(point);
+	return (abs(localPoint.x) < m_xExtent && abs(localPoint.y) < m_yExtent);
+}
+
 physics::Collision physics::Box::checkCollision(PhysicsObject * other)
 {
 	return other->checkBoxCollision(this);
@@ -51,13 +57,31 @@ physics::Collision physics::Box::checkSphereCollision(Sphere * other)
 {
 	Collision collision(true, this, other);
 	// Start by assuming collision
-	glm::vec2 displacement = other->getPosition() - m_position;
+	glm::vec2 displacement = m_position - other->getPosition();
 	if (displacement != glm::zero<glm::vec2>()) {
 		glm::vec2 minAxis;
 		float minOverlap = INFINITY;
 		std::array<glm::vec2, 4> corners = getCorners();
-		// Get axes to test: x, y, and 
-		glm::vec2 axes[3] = { m_localX, m_localY, glm::normalize(displacement) };
+		// Get axes to test: x, y, and circle to nearest corner
+
+		float xProjection = copysignf(m_xExtent, glm::dot(displacement, m_localX));
+		float yProjection = copysignf(m_yExtent, glm::dot(displacement, m_localY));
+		glm::vec2 minCircleToCorner = displacement - m_localX * xProjection - m_localY * yProjection;
+		//float minCornerDistanceSqr = INFINITY;
+		//for (glm::vec2 corner : corners) {
+		//	glm::vec2 circleToCorner = corner - other->getPosition();
+		//	float cornerDistanceSqr = glm::dot(circleToCorner, circleToCorner);
+		//	if (cornerDistanceSqr < minCornerDistanceSqr) {
+		//		minCornerDistanceSqr = cornerDistanceSqr;
+		//		minCircleToCorner = circleToCorner;
+		//	}
+		//}
+
+		if (minCircleToCorner == glm::zero<glm::vec2>()) {
+			// If corner in circle, axis is to center
+			minCircleToCorner = displacement;
+		}
+		glm::vec2 axes[3] = { m_localX, m_localY, glm::normalize(minCircleToCorner) };
 		// Test circle/box overlap on each axis
 		for(size_t a = 0; a < 3; ++a ) {
 			float boxMin = INFINITY;
@@ -77,7 +101,7 @@ physics::Collision physics::Box::checkSphereCollision(Sphere * other)
 				break;
 			}
 			else if (overlap < minOverlap) {
-				//TODO if new smallest overlap, set axis and depth
+				// if new smallest overlap, set axis and depth
 				minOverlap = overlap;
 				// If axis points to circle, reverse its direction
 				if (boxMax - circleMin < circleMax - boxMin) {
@@ -171,12 +195,11 @@ physics::Collision physics::Box::checkBoxCollision(Box * other)
 		otherEdge.clip(-myEdge.direction, glm::dot(-myEdge.direction, myEdge.end));
 		myEdge.clip(otherEdge.direction, glm::dot(otherEdge.direction, otherEdge.start));
 		myEdge.clip(-otherEdge.direction, glm::dot(-otherEdge.direction, otherEdge.end));
-		// TODO check for intersection to determine if triangle or quad manifold
+		//  check for intersection to determine if triangle or quad manifold
 		glm::vec2 intersection;
 		bool linesIntersect = myEdge.checkIntersection(otherEdge, intersection);
 		if (linesIntersect) {
-			//TODO figure out what other two points are used
-			// Probably: get whichever from other is furthest "in" from collision normal, and based on that determine own point
+			// Figure out which other two points define manifold
 			float otherAlignment = glm::dot(otherEdge.direction, collision.normal);
 			float myAlignment = glm::dot(myEdge.direction, collision.normal);
 			glm::vec2 myPoint, otherPoint;
@@ -210,7 +233,8 @@ physics::Collision physics::Box::checkBoxCollision(Box * other)
 			collision.contact = (myPoint + otherPoint + intersection) * (1.f / 3.f);
 		}
 		else {
-			// TODO maybe try centroid calculation?
+			// Quadrilateral manifold
+			// HACK maybe try centroid calculation?
 			// Average 
 			collision.contact = 0.25f * (myEdge.start + myEdge.end + otherEdge.start + otherEdge.end);
 		}

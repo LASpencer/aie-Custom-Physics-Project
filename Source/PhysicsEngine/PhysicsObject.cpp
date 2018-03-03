@@ -3,7 +3,7 @@
 #include "ICollisionObserver.h"
 
 physics::PhysicsObject::PhysicsObject(float elasticity, float friction, glm::vec4 colour) 
-	: m_colour(colour), m_alive(true), m_trigger(false), m_draw(true)
+	: m_colour(colour), m_alive(true), m_trigger(false), m_draw(true), m_tags(0)
 {
 	setElasticity(elasticity);
 	setFriction(friction);
@@ -11,7 +11,7 @@ physics::PhysicsObject::PhysicsObject(float elasticity, float friction, glm::vec
 
 physics::PhysicsObject::PhysicsObject(const PhysicsObject & other) 
 	: m_elasticity(other.m_elasticity), m_friction(other.m_friction), m_colour(other.m_colour),
-	m_trigger(other.m_trigger), m_draw(other.m_draw), m_alive(true)
+	m_trigger(other.m_trigger), m_draw(other.m_draw), m_tags(other.m_tags), m_alive(true)
 {
 }
 
@@ -44,9 +44,13 @@ void physics::PhysicsObject::kill()
 	m_alive = false;
 }
 
+void physics::PhysicsObject::resetAlive()
+{
+	m_alive = true;
+}
+
 bool physics::PhysicsObject::addObserver(const CollisionObserverPtr & observer)
 {
-	// TODO test add observer
 	// Check if already subscribed
 	if (!isSubscribed(observer)) {
 		m_observers.push_back(CollisionObserverWeakPtr(observer));
@@ -57,7 +61,6 @@ bool physics::PhysicsObject::addObserver(const CollisionObserverPtr & observer)
 
 bool physics::PhysicsObject::removeObserver(const CollisionObserverPtr & observer)
 {
-	// TODO test remove observer
 	for_each(m_observers.begin(), m_observers.end(),
 		[observer](CollisionObserverWeakPtr o) {
 			if (o.lock() == observer) {
@@ -71,6 +74,26 @@ bool physics::PhysicsObject::removeObserver(const CollisionObserverPtr & observe
 bool physics::PhysicsObject::isSubscribed(const CollisionObserverPtr & observer)
 {
 	return std::any_of(m_observers.begin(), m_observers.end(), [observer](CollisionObserverWeakPtr c) {return c.lock() == observer; });
+}
+
+void physics::PhysicsObject::setTags(unsigned int tags)
+{
+	m_tags = tags;
+}
+
+void physics::PhysicsObject::addTags(unsigned int tags)
+{
+	m_tags |= tags;
+}
+
+void physics::PhysicsObject::removeTags(unsigned int tags)
+{
+	m_tags &= ~tags;
+}
+
+bool physics::PhysicsObject::hasTags(unsigned int tags)
+{
+	return m_tags & tags;
 }
 
 void physics::PhysicsObject::setElasticity(float elasticity)

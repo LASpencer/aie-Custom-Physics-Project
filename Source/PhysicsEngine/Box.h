@@ -42,6 +42,9 @@ namespace physics {
 		virtual PhysicsObject* clone();
 
 		virtual void makeGizmo(float timeRatio);
+
+		virtual bool isPointInside(glm::vec2 point);
+
 		virtual Collision checkCollision(PhysicsObject* other);
 		virtual Collision checkSphereCollision(Sphere* other);
 		virtual Collision checkBoxCollision(Box* other);

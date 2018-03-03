@@ -110,7 +110,6 @@ bool physics::PhysicsScene::addUpdater(FixedUpdaterPtr updater)
 
 bool physics::PhysicsScene::removeUpdater(IFixedUpdater * updater)
 {
-	//TODO test removing updater
 	if (!std::any_of(m_updaterToRemove.begin(), m_updaterToRemove.end(), [updater](IFixedUpdater* a) { return a == updater; })) {
 			m_updaterToRemove.push_back(updater);
 	}
@@ -119,12 +118,20 @@ bool physics::PhysicsScene::removeUpdater(IFixedUpdater * updater)
 
 bool physics::PhysicsScene::removeUpdater(FixedUpdaterPtr updater)
 {
-	//TODO test removing updater
 	if (!std::any_of(m_updaterToRemove.begin(), m_updaterToRemove.end(), [updater](IFixedUpdater* a) { return a == updater.get(); })) {
 		// Check if already going to be removed
 		m_updaterToRemove.push_back(updater.get());
 	}
 	return true;
+}
+
+void physics::PhysicsScene::clear()
+{
+	m_updaters.clear();
+	for ( auto actor : m_actors) {
+		actor->kill();
+	}
+	m_actors.clear();
 }
 
 void physics::PhysicsScene::update(float deltaTime)
@@ -143,18 +150,13 @@ void physics::PhysicsScene::update(float deltaTime)
 		for (auto actor : m_actors) {
 			actor->fixedUpdate(this);
 		}
-		// TODO collision detection
+		// Test Collisions
 		for (auto firstActor = m_actors.begin(); firstActor != m_actors.end(); ++firstActor) {
-			// TODO skip if set to not collide
-			// TODO skip if killed
 			for (auto otherActor = std::next(firstActor,1); otherActor != m_actors.end(); ++otherActor) {
-				// TODO skip if set to not collide
-				// TODO skip if killed
 				// TODO check layers and masks
 				if (!(*firstActor)->isStatic() || !(*otherActor)->isStatic())
 				{
 					Collision col = (*firstActor)->checkCollision(otherActor->get());
-					//TODO maybe add collisions to list, and resolve collisions all at once
 					if (col) {
 						resolveCollision(col);
 					}
@@ -215,7 +217,8 @@ void physics::PhysicsScene::resolveCollision(const Collision& collision)
 {
 	// Involved objects inform their subscribers
 	collision.first->broadcastCollision(collision);
-	collision.second->broadcastCollision(collision);
+	Collision reversed = collision.reverse();
+	collision.second->broadcastCollision(reversed);
 
 	// If neither are triggers, resolve collision
 	if (!collision.first->isTrigger() && !collision.second->isTrigger()) {

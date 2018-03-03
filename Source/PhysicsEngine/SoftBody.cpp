@@ -55,8 +55,6 @@ physics::SoftBody::SoftBody(glm::vec2 position, RigidBody* particle, size_t cols
 	glm::vec2 topRight = glm::normalize(top + right) * diagonal;
 	glm::vec2 bottomRight = glm::normalize(bottom + right) * diagonal;
 
-	// TODO maybe should set springs at ends of particles to allow friction
-
 	for (size_t x = 0; x < cols; ++x) {
 		for (size_t y = 0; y < rows; ++y) {
 			m_particles[x][y] = RigidBodyPtr((RigidBody*)particle->clone());
@@ -66,8 +64,7 @@ physics::SoftBody::SoftBody(glm::vec2 position, RigidBody* particle, size_t cols
 				m_structureSprings.push_back(std::make_shared<Spring>(strength, yEdgeDistance, damping, m_particles[x][y], m_particles[x][y - 1], bottom, top));
 				if (y >= 2) {
 					// Attach bend spring two rows back
-					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, damping, m_particles[x][y], m_particles[x][y-2]));	// TODO figure out if bend needs damping too
-					// TODO figure out if bend springs should be at edge too
+					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, damping, m_particles[x][y], m_particles[x][y-2]));	
 				}
 			}
 			if (x >= 1) {
@@ -75,12 +72,11 @@ physics::SoftBody::SoftBody(glm::vec2 position, RigidBody* particle, size_t cols
 				m_structureSprings.push_back(std::make_shared<Spring>(strength, xEdgeDistance, damping, m_particles[x][y], m_particles[x-1][y], left, right));
 				if ( x >= 2) {
 					// Attach bend spring two columns back
-					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, damping, m_particles[x][y], m_particles[x-2][y]));	// TODO figure out if bend needs damping too
+					m_bendSprings.push_back(std::make_shared<Spring>(bendStrength, 2* distance, damping, m_particles[x][y], m_particles[x-2][y]));	
 				}
 				if (y >= 1) {
 					// Attach shear spring to last column and row
-					m_shearSprings.push_back(std::make_shared<Spring>(shearStrength, diagonalDistance, damping, m_particles[x][y], m_particles[x - 1][y - 1],-topRight,topRight));	// TODO figure out if shear needs damping too
-					// TODO figure out if shear springs should be at edge too
+					m_shearSprings.push_back(std::make_shared<Spring>(shearStrength, diagonalDistance, damping, m_particles[x][y], m_particles[x - 1][y - 1],-topRight,topRight));	
 				}
 				if (y + 1 < rows) {
 					// Attach shear spring to last column and next row

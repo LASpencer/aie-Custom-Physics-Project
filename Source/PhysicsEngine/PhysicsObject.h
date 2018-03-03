@@ -48,13 +48,13 @@ namespace physics {
 		operator bool() const { return success; }
 
 		// Returns collision with first and second objects swapped
-		Collision reverse() {
+		Collision reverse() const {
 			return Collision(success, second, first, -normal, contact, depth);
 		}
 	};
 
-	// Abstract base 
-	class PhysicsObject {
+	// Abstract base class for all physical objects
+	class PhysicsObject : public std::enable_shared_from_this<PhysicsObject> {
 		
 	protected:
 		PhysicsObject(float elasticity, float friction, glm::vec4 colour);
@@ -65,6 +65,7 @@ namespace physics {
 
 		float m_elasticity;	// Coefficient of elasticity
 		float m_friction;	// Coefficient of friction
+		unsigned int m_tags;	// Bitmask for use by observers
 		bool m_alive;		// True until object set as dead
 		bool m_trigger;		// If true, no physical effect from collision
 		bool m_draw;		// If true, gizmo will be created for rendering
@@ -88,6 +89,8 @@ namespace physics {
 
 		float getFriction() { return m_friction; }
 		void setFriction(float friction);
+
+		virtual bool isPointInside(glm::vec2 point) = 0;
 
 		// test collision against other object
 		// returns struct describing collision
@@ -133,6 +136,9 @@ namespace physics {
 		// referring to it can remove it
 		void kill();
 
+		// Call to set object as alive again, allowing it to be added back to the scene
+		virtual void resetAlive();
+
 		// Adds new observer to inform about collisions
 		// returns true if added, false if already observing
 		bool addObserver(const CollisionObserverPtr& observer);
@@ -143,5 +149,17 @@ namespace physics {
 		bool isSubscribed(const CollisionObserverPtr& observer);
 		const std::vector<CollisionObserverWeakPtr>& getObservers() { return m_observers; }
 
+		unsigned int getTags() { return m_tags; }
+
+		void setTags(unsigned int tags);
+
+		// Sets passed bits to true in object's tags
+		void addTags(unsigned int tags);
+
+		// Sets passed bits to false in object's tags
+		void removeTags(unsigned int tags);
+
+		// Returns true if all bits passed are set to true in object's tags
+		bool hasTags(unsigned int tags);
 	};
 }

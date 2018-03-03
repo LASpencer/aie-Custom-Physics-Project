@@ -73,7 +73,6 @@ physics::Collision physics::Plane::checkPlaneCollision(Plane * other)
 
 void physics::Plane::setNormal(glm::vec2 normal)
 {
-	// TODO check normalization succeeded
 	glm::vec2 normalized = glm::normalize(normal);
 	if (isnan(normalized.x) || isnan(normalized.y)) {
 		throw std::invalid_argument("Invalid normal");

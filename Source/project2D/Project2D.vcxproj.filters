@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Pool">
+      <UniqueIdentifier>{82c09125-493d-45f3-b4cf-35aaa84e58a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pool">
+      <UniqueIdentifier>{b7f1abf5-728c-40ae-946a-928a605c5fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Slug">
+      <UniqueIdentifier>{101e745d-5560-4d86-a121-b99ed0156db4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Slug">
+      <UniqueIdentifier>{5842bd0a-8937-4feb-8e7f-b11bd10b2abf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application2D.cpp">
@@ -21,10 +33,61 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PoolGame.cpp">
+      <Filter>Source Files\Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolBall.cpp">
+      <Filter>Source Files\Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolPlayer.cpp">
+      <Filter>Source Files\Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BouncingBallsDemo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RopeBridgeDemo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Slug.cpp">
+      <Filter>Source Files\Slug</Filter>
+    </ClCompile>
+    <ClCompile Include="SlugDemo.cpp">
+      <Filter>Source Files\Slug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Demo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolGame.h">
+      <Filter>Header Files\Pool</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolBall.h">
+      <Filter>Header Files\Pool</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolPlayer.h">
+      <Filter>Header Files\Pool</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BouncingBallsDemo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RopeBridgeDemo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlugDemo.h">
+      <Filter>Header Files\Slug</Filter>
+    </ClInclude>
+    <ClInclude Include="Slug.h">
+      <Filter>Header Files\Slug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
