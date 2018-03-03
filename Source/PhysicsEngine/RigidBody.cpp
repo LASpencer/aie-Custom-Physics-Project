@@ -71,7 +71,7 @@ void physics::RigidBody::fixedUpdate(PhysicsScene* scene)
 		}
 		m_position +=  m_velocity * scene->getTimeStep();
 		m_orientation += m_angularVelocity * scene->getTimeStep();
-		// TODO modulus of 2pi?
+		// modulus 2pi
 		m_orientation = remainderf(m_orientation, glm::two_pi<float>());
 		calculateAxes();
 	}

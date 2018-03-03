@@ -13,7 +13,6 @@ physics::Rope::Rope(glm::vec2 position, RigidBody * particle, size_t segments,
 	m_particles = std::vector<std::vector<RigidBodyPtr>>(1, std::vector<RigidBodyPtr>(segments, RigidBodyPtr()));
 	// Reserve memory for springs
 	m_structureSprings.reserve(segments - 1);
-	// TODO see if bend spring needed?
 
 	glm::vec2 localX = particle->getLocalX();
 	float edgeDistance = std::max(0.f, distance - particle->getWidth());

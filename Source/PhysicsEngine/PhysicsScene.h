@@ -14,7 +14,7 @@ namespace physics {
 	public:
 		static const float k_def_max_frame;
 
-		PhysicsScene(float timeStep = 0.01f, glm::vec2 gravity = glm::vec2(0,-10)); //TODO default gravity, timestep arguments
+		PhysicsScene(float timeStep = 0.01f, glm::vec2 gravity = glm::vec2(0,-10));
 		~PhysicsScene();
 
 		bool inScene(PhysicsObject* actor);
@@ -25,7 +25,6 @@ namespace physics {
 
 		bool removeActor(PhysicsObject* actor);
 		bool removeActor(PhysicsObjectPtr actor);
-		// TODO have some kind of FixedUpdateListener object that can have FixedUpdate called
 
 		bool inScene(IFixedUpdater* updater);
 		bool inScene(FixedUpdaterPtr updater);
@@ -63,9 +62,8 @@ namespace physics {
 		float m_accumulatedTime;
 		std::vector<PhysicsObjectPtr> m_actors;
 		std::vector<FixedUpdaterPtr> m_updaters;
-		//std::vector<FixedUpdaterPtr> m_updaterToAdd;
 		std::vector<IFixedUpdater *> m_updaterToRemove;
-		// TODO some flag to check if in loop, and toAdd and toRemove lists
+
 		void updateGizmos();
 
 		void removeDeadActors();

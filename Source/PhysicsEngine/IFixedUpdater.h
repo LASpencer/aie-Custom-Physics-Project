@@ -12,5 +12,4 @@ namespace physics {
 	public:
 		virtual void fixedUpdate(PhysicsScene* scene) = 0;
 	};
-	// TODO write tests for adding fixedUpdater, calling fixedUpdate
 }

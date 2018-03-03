@@ -54,7 +54,7 @@ namespace physics {
 	};
 
 	// Abstract base class for all physical objects
-	class PhysicsObject {
+	class PhysicsObject : public std::enable_shared_from_this<PhysicsObject> {
 		
 	protected:
 		PhysicsObject(float elasticity, float friction, glm::vec4 colour);

@@ -52,7 +52,7 @@ physics::Collision physics::Sphere::checkSphereCollision(Sphere * other)
 	float distance = glm::length(displacement);
 	if (distance < m_radius + other->m_radius) {
 		collision.success = true;
-		if (distance != 0) {		//TODO use a "nearly zero" check instead
+		if (distance != 0) {
 			collision.normal = glm::normalize(displacement);
 			collision.depth = m_radius + other->m_radius - distance;
 

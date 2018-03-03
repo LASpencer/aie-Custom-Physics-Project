@@ -101,7 +101,7 @@ physics::Collision physics::Box::checkSphereCollision(Sphere * other)
 				break;
 			}
 			else if (overlap < minOverlap) {
-				//TODO if new smallest overlap, set axis and depth
+				// if new smallest overlap, set axis and depth
 				minOverlap = overlap;
 				// If axis points to circle, reverse its direction
 				if (boxMax - circleMin < circleMax - boxMin) {
@@ -234,7 +234,7 @@ physics::Collision physics::Box::checkBoxCollision(Box * other)
 		}
 		else {
 			// Quadrilateral manifold
-			// TODO maybe try centroid calculation?
+			// HACK maybe try centroid calculation?
 			// Average 
 			collision.contact = 0.25f * (myEdge.start + myEdge.end + otherEdge.start + otherEdge.end);
 		}
