@@ -98,7 +98,7 @@ void PoolBall::fixedUpdate(physics::PhysicsScene * scene)
 		m_sphere->setVelocity({ 0,0 });
 		m_sphere->setAngularVelocity(0);	// Also stop spin when at rest
 	}
-	if (m_sphere->getAngularVelocity() < k_min_rotate) {
+	if (abs(m_sphere->getAngularVelocity()) < k_min_rotate) {
 		m_sphere->setAngularVelocity(0);
 	}
 }
